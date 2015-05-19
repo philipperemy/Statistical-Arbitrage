@@ -1,4 +1,4 @@
-classdef StochasticVolatilityModel < HiddenMarkovModel
+classdef StochasticVolatilityModelStudent < HiddenMarkovModel
     properties(GetAccess = 'public', SetAccess = 'private')
         rho = 0.91;       %Scale parameter for X
         sigma = 1;        %Standard deviation of the X (process)
@@ -9,7 +9,7 @@ classdef StochasticVolatilityModel < HiddenMarkovModel
   
     methods
 
-        function this = StochasticVolatilityModel(rho, sigma, beta, steps, nu)
+        function this = StochasticVolatilityModelStudent(rho, sigma, beta, steps, nu)
             this = this@HiddenMarkovModel();
             if nargin == 5
                 this.rho = rho;

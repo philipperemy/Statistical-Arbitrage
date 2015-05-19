@@ -1,0 +1,47 @@
+addpath('filters/'); %rmpath('h/')
+addpath('helpers/');
+addpath('likelihoods/');
+addpath('models/');
+addpath('pmcmc/');
+addpath('doc/');
+Main
+{Operation terminated by user during <a href="matlab:helpUtils.errorDocCallback('tpdf', 'c:\matlab\R2014a\toolbox\stats\stats\tpdf.m', 40)" style="font-weight:bold">tpdf</a> (<a href="matlab: opentoline('c:\matlab\R2014a\toolbox\stats\stats\tpdf.m',40,0)">line 40</a>)
+
+
+In <a href="matlab:helpUtils.errorDocCallback('Ex2_bootstrap_filter_SIR', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\filters\Ex2_bootstrap_filter_SIR.m', 38)" style="font-weight:bold">Ex2_bootstrap_filter_SIR</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\filters\Ex2_bootstrap_filter_SIR.m',38,0)">line 38</a>)
+        w(:,i) = tpdf(y(i)./sigma_vec, nu)./sigma_vec;
+
+In <a href="matlab:helpUtils.errorDocCallback('Ex4_Compute_Log_Likelihood', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\likelihoods\Ex4_Compute_Log_Likelihood.m', 4)" style="font-weight:bold">Ex4_Compute_Log_Likelihood</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\likelihoods\Ex4_Compute_Log_Likelihood.m',4,0)">line 4</a>)
+    [~, ~, p_y] = Ex2_bootstrap_filter_SIR(y, rho_prop, sigma_prop, beta, N, steps, nu);
+
+In <a href="matlab:helpUtils.errorDocCallback('ParticleMarkovChainMonteCarloSV/call_likelihood', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarloSV.m', 24)" style="font-weight:bold">ParticleMarkovChainMonteCarloSV/call_likelihood</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarloSV.m',24,0)">line 24</a>)
+                    log_val = Ex4_Compute_Log_Likelihood(hmm.y, this.rho_prop(step-1), fieldval, hmm.beta, this.particles,
+                    this.nu_prop(step-1));
+
+In <a href="matlab:helpUtils.errorDocCallback('ParticleMarkovChainMonteCarlo/run', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarlo.m', 70)" style="font-weight:bold">ParticleMarkovChainMonteCarlo/run</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarlo.m',70,0)">line 70</a>)
+                        log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
+
+In <a href="matlab:helpUtils.errorDocCallback('Main', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\Main.m', 19)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\Main.m',19,0)">line 19</a>)
+pmcmc.run(st);
+} 
+Main
+{Operation terminated by user during <a href="matlab:helpUtils.errorDocCallback('tpdf', 'c:\matlab\R2014a\toolbox\stats\stats\tpdf.m', 40)" style="font-weight:bold">tpdf</a> (<a href="matlab: opentoline('c:\matlab\R2014a\toolbox\stats\stats\tpdf.m',40,0)">line 40</a>)
+
+
+In <a href="matlab:helpUtils.errorDocCallback('Ex2_bootstrap_filter_SIR', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\filters\Ex2_bootstrap_filter_SIR.m', 38)" style="font-weight:bold">Ex2_bootstrap_filter_SIR</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\filters\Ex2_bootstrap_filter_SIR.m',38,0)">line 38</a>)
+        w(:,i) = tpdf(y(i)./sigma_vec, nu)./sigma_vec;
+
+In <a href="matlab:helpUtils.errorDocCallback('Ex4_Compute_Log_Likelihood', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\likelihoods\Ex4_Compute_Log_Likelihood.m', 4)" style="font-weight:bold">Ex4_Compute_Log_Likelihood</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\likelihoods\Ex4_Compute_Log_Likelihood.m',4,0)">line 4</a>)
+    [~, ~, p_y] = Ex2_bootstrap_filter_SIR(y, rho_prop, sigma_prop, beta, N, steps, nu);
+
+In <a href="matlab:helpUtils.errorDocCallback('ParticleMarkovChainMonteCarloSV/call_likelihood', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarloSV.m', 26)" style="font-weight:bold">ParticleMarkovChainMonteCarloSV/call_likelihood</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarloSV.m',26,0)">line 26</a>)
+                    log_val = Ex4_Compute_Log_Likelihood(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), hmm.beta, this.particles,
+                    fieldval);
+
+In <a href="matlab:helpUtils.errorDocCallback('ParticleMarkovChainMonteCarlo/run', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarlo.m', 70)" style="font-weight:bold">ParticleMarkovChainMonteCarlo/run</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\pmcmc\ParticleMarkovChainMonteCarlo.m',70,0)">line 70</a>)
+                        log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
+
+In <a href="matlab:helpUtils.errorDocCallback('Main', 'H:\HSBC\workspace\matlab\Statistical-Arbitrage\Main.m', 17)" style="font-weight:bold">Main</a> (<a href="matlab: opentoline('H:\HSBC\workspace\matlab\Statistical-Arbitrage\Main.m',17,0)">line 17</a>)
+pmcmc.run(st);
+} 
+Main
