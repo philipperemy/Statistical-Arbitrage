@@ -68,12 +68,21 @@ classdef ParticleMarkovChainMonteCarlo < handle
                     if(strendswith(fieldname, '_prop'))
                         prior_val = this.call_prior(fieldname);
                         log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
+                        
+                        if(log_numerator == -Inf || log_denominator == -Inf)
+                            %fprintf('something went wrong\n');
+                            %Think about it. How can we unstick from here?
+                            %We could think of putting back the medians
+                            %So that the convergence is not broken
+                            %break; 
+                        end
+                        
                         this.update_field(log_numerator, log_denominator, step, fieldname, prior_val);
                     end
                 end
 
                 %print
-                if(mod(step, 10) == 0)
+                if(mod(step, 1) == 0)
                     str = 'MCMC step: %i , ';
                     vals = [step];
                     for i = 1:length(fields)
@@ -83,7 +92,9 @@ classdef ParticleMarkovChainMonteCarlo < handle
                         vals = [vals, val];
                         str = strcat(str, ' ', fieldname, ' = %f , ');
                     end
+                    str = strcat(str, ' likelihood = %f');
                     str = strcat(str, '\n');
+                    vals = [vals, log_denominator];
                     fprintf(str, vals);
                 end
             end
