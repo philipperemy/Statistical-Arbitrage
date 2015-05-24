@@ -3,6 +3,7 @@ classdef ParticleMarkovChainMonteCarlo < handle
     properties(GetAccess = 'public', SetAccess = 'protected')
         steps_mcmc = 100;
         particles = 1000;
+        filtername = 'noname';
         
         NO_UPDATE = 0;
         UPDATE = 1;
@@ -15,10 +16,16 @@ classdef ParticleMarkovChainMonteCarlo < handle
 	end
   
     methods
-        function this = ParticleMarkovChainMonteCarlo(steps_mcmc, particles)
-            if nargin == 2
+        function this = ParticleMarkovChainMonteCarlo(steps_mcmc, particles, filtername)
+            if nargin == 3
                 this.steps_mcmc = steps_mcmc; 
                 this.particles = particles;
+                this.filtername = filtername;
+            else
+                if nargin == 2
+                    this.steps_mcmc = steps_mcmc; 
+                    this.particles = particles;
+                end
             end
         end
  
@@ -29,6 +36,24 @@ classdef ParticleMarkovChainMonteCarlo < handle
             end
         end
         
+%         function [Y_log_SV] = compute_Log_Likelihood_From_Filter(varargin)
+%             bootstrapFilterHandler = str2func(strcat('TST_Bootstrap_filter_SIR_', this.filtername));
+%             [~, ~, ~, p_y] = bootstrapFilterHandler(varargin);
+%             steps = size(p_y, 2);
+%             Y_log_SV = Ex2_Estimate_Py( p_y , steps );
+%             Y_log_SV = Y_log_SV(length(Y_log_SV));
+%         end
+        
+        function [Y_log_SV] = Compute_Log_Likelihood_Generic2(varargin)
+            if nargin == 1
+            end
+            bootstrapFilterHandler = str2func(strcat('TST_Bootstrap_filter_SIR_', 'TwoFactors'));
+            [~, ~, ~, p_y] = bootstrapFilterHandler(varargin);
+            steps = size(p_y, 2);
+            Y_log_SV = Ex2_Estimate_Py( p_y , steps );
+            Y_log_SV = Y_log_SV(length(Y_log_SV));
+        end
+
         %http://uk.mathworks.com/help/matlab/ref/getfield.html
         %http://uk.mathworks.com/help/matlab/ref/setfield.html
         %Not efficient at all but not the bottleneck!

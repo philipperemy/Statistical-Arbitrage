@@ -16,6 +16,12 @@ sigma = 1;        %Standard deviation of the X (process)
 rho2 = 0.5;
 sigma2 = 3;
 
+%rho = 0.47
+%sigma = 2.76
+
+%rho2 = 0.80
+%sigma2 = 1.55
+
 beta = 0.5;       %Scale parameter for Y
 
 st = StochasticVolatilityModelTwoFactors;

@@ -11,8 +11,8 @@ classdef ParticleMarkovChainMonteCarloSVTwoFactors < ParticleMarkovChainMonteCar
     end
   
     methods
-        function this = ParticleMarkovChainMonteCarloSVTwoFactors(steps_mcmc, particles)
-            this = this@ParticleMarkovChainMonteCarlo(steps_mcmc, particles);
+        function this = ParticleMarkovChainMonteCarloSVTwoFactors(steps_mcmc, particles, filtername)
+            this = this@ParticleMarkovChainMonteCarlo(steps_mcmc, particles, filtername);
             this.rho_prop = zeros(1, this.steps_mcmc);
             this.sigma_prop = zeros(1, this.steps_mcmc);
             this.rho2_prop = zeros(1, this.steps_mcmc);
@@ -22,18 +22,18 @@ classdef ParticleMarkovChainMonteCarloSVTwoFactors < ParticleMarkovChainMonteCar
         function [log_val] = call_likelihood(this, hmm, fieldname, fieldval, step)
             switch fieldname
                 case 'rho_prop'
-                    log_val = Compute_Log_Likelihood_TwoFactors(hmm.y, fieldval, this.sigma_prop(step-1), this.rho2_prop(step-1), this.sigma2_prop(step-1), hmm.beta, this.particles);
+                    log_val = Compute_Log_Likelihood_Generic(hmm.y, fieldval, this.sigma_prop(step-1), this.rho2_prop(step-1), this.sigma2_prop(step-1), hmm.beta, this.particles);
                 case 'sigma_prop'
-                    log_val = Compute_Log_Likelihood_TwoFactors(hmm.y, this.rho_prop(step-1), fieldval, this.rho2_prop(step-1), this.sigma2_prop(step-1), hmm.beta, this.particles);
+                    log_val = Compute_Log_Likelihood_Generic(hmm.y, this.rho_prop(step-1), fieldval, this.rho2_prop(step-1), this.sigma2_prop(step-1), hmm.beta, this.particles);
                 case 'rho2_prop'
-                    log_val = Compute_Log_Likelihood_TwoFactors(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), fieldval, this.sigma2_prop(step-1), hmm.beta, this.particles);
+                    log_val = Compute_Log_Likelihood_Generic(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), fieldval, this.sigma2_prop(step-1), hmm.beta, this.particles);
                 case 'sigma2_prop'
-                    log_val = Compute_Log_Likelihood_TwoFactors(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), this.rho2_prop(step-1), fieldval, hmm.beta, this.particles);
+                    log_val = Compute_Log_Likelihood_Generic(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), this.rho2_prop(step-1), fieldval, hmm.beta, this.particles);
             end
         end
         
         function [log_val] = call_likelihood_denom(this, hmm, step)
-           log_val = Compute_Log_Likelihood_TwoFactors(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), this.rho2_prop(step-1), this.sigma2_prop(step-1), hmm.beta, this.particles); 
+           log_val = Compute_Log_Likelihood_Generic_From_Filter(this.filtername, hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), this.rho2_prop(step-1), this.sigma2_prop(step-1), hmm.beta, this.particles); 
         end
         
         function [val] = call_prior(this, fieldname)
