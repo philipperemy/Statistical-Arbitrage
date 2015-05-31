@@ -15,7 +15,7 @@ for i = 1:stocks_count
 end
 
 tic;
-thres_corr = 0.8;
+thres_corr = 0.85;
 pairs_count = 0;
 parfor i = 1:stocks_count
     for j = (i+1):stocks_count
@@ -33,7 +33,8 @@ parfor i = 1:stocks_count
 
                 try
                     if(isequal(stock_1, stock_2) || isequal(stock_1, stock_3) || isequal(stock_2, stock_3))
-                       continue; 
+                        %continue if at least two stocks are equal
+                        continue; 
                     end
 
                     if(corr(stock_1, stock_2) > thres_corr && corr(stock_2, stock_3) > thres_corr && corr(stock_1, stock_3) > thres_corr)
