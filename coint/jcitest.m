@@ -263,9 +263,9 @@ function [h,pValue,stat,cValue,mles] = jcitest(Y,varargin)
 %   [2] Johansen, S. Likelihood-Based Inference in Cointegrated Vector
 %       Autoregressive Models. Oxford: Oxford University Press, 1995.
 %
-%   [3] MacKinnon, J. G., A. A. Haug, and L. Michelis. “Numerical
+%   [3] MacKinnon, J. G., A. A. Haug, and L. Michelis. â€œNumerical
 %       Distribution Functions of Likelihood Ratio Tests for
-%       Cointegration.�? Journal of Applied Econometrics. v. 14, 1999,
+%       Cointegration.â€? Journal of Applied Econometrics. v. 14, 1999,
 %       pp. 563-577.
 %
 %   [4] Turner, P. M. "Testing for Cointegration Using the Johansen
@@ -1148,45 +1148,45 @@ function displayResults
     
     if ~strcmp(testDisplay,'params')
         
-    fprintf('\n************************')
-    fprintf('\nResults Summary (Test %d)\n',testNum)
+    %fprintf('\n************************')
+    %fprintf('\nResults Summary (Test %d)\n',testNum)
 
-    fprintf('\nData: %s',dataName)
-    fprintf('\nEffective sample size: %d',testT)
-    fprintf('\nModel: %s',testModel)
-    fprintf('\nLags: %d',testLags)
-    fprintf('\nStatistic: %s',testType)
-    fprintf('\nSignificance level: %3.2f\n\n',testAlpha)
+    %fprintf('\nData: %s',dataName)
+    %fprintf('\nEffective sample size: %d',testT)
+    %fprintf('\nModel: %s',testModel)
+    %fprintf('\nLags: %d',testLags)
+    %fprintf('\nStatistic: %s',testType)
+    %fprintf('\nSignificance level: %3.2f\n\n',testAlpha)
 
-    fprintf('\n%-3s%-3s%-10s%-9s%-9s%-9s',...
-            'r','h','stat','cValue','pValue','eigVal')
-    fprintf('\n----------------------------------------')
+    %fprintf('\n%-3s%-3s%-10s%-9s%-9s%-9s',...
+           % 'r','h','stat','cValue','pValue','eigVal')
+    %fprintf('\n----------------------------------------')
     
     for r = 0:numDims-1
 
         idx = r+1;
 
-        fprintf('\n%-3d%-3d%-9.4f% -9.4f% -9.4f% -9.4f',...
-                r,testH(idx),testStat(idx),testCValue(idx),testPValue(idx),lambda(idx))
+        %fprintf('\n%-3d%-3d%-9.4f% -9.4f% -9.4f% -9.4f',...
+                %r,testH(idx),testStat(idx),testCValue(idx),testPValue(idx),lambda(idx))
 
     end
 
-    fprintf('\n')
+    %fprintf('\n')
     
     end
     
     if any(strcmp(testDisplay,{'params','full'}))
         
-        fprintf('\n****************************')
-        fprintf('\nParameter Estimates (Test %d)\n',testNum)
+        %fprintf('\n****************************')
+        %fprintf('\nParameter Estimates (Test %d)\n',testNum)
         
         for r = 0:numDims-1
             
             idx = r+1;
             paramNames = testMLEs(idx).paramNames;
             paramVals = testMLEs(idx).paramVals;
-            fprintf('\nr = %d',r)
-            fprintf('\n------\n')
+            %fprintf('\nr = %d',r)
+            %fprintf('\n------\n')
             
             if r == 0 % Remove empty parameters from display
                 paramNames(ismember(paramNames,{'A','B','c0','d0'})) = [];
@@ -1194,7 +1194,7 @@ function displayResults
             
             for param = 1:length(paramNames)
                 
-                fprintf('%s =\n',paramNames{param})
+                %fprintf('%s =\n',paramNames{param})
                 disp(paramVals.(paramNames{param}))
                 
             end
