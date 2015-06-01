@@ -1,5 +1,6 @@
 clear;
 load spx.mat;
+format shortG;
 tuples(1) = 713;
 tuples(2) = 949;
 tuples(3) = 1187;
@@ -21,7 +22,7 @@ for nstd = nstd_range
       for wsize = wsize_range
    
         boll_conf = struct('wsize', wsize, 'wts', wts, 'nstd', nstd);
-        pl = SimpleTradingStrategy( Spread, 1, 6000, boll_conf );
+        pl = SimpleTradingStrategy2( Spread, 1, 6000, boll_conf );
         cumsum_pl = cumsum(pl);
         profit = cumsum_pl(end);
         vol = std(pl);
@@ -46,7 +47,7 @@ for nstd = nstd_range
 end
 
 mat = mat(all(~isnan(mat),2),:); % for nan - rows
-sorted_mat = sortrows(mat, 6);
+sorted_mat = sortrows(mat, 7);
 l = size(sorted_mat,1);
 sorted_mat = sorted_mat((l - 50):l,:);
 mean(sorted_mat, 1)
@@ -57,3 +58,6 @@ sorted_mat = sorted_mat(:,all(~isnan(sorted_mat)));   % for nan - columns
 %1.2000   60.0000    1.0000   78.8323    0.2682  293.9238  138.0000
 boll_conf = struct('wsize', 60, 'wts', 1, 'nstd', 1.2);
 pl = SimpleTradingStrategy( Spread, 1, 6000, boll_conf );
+
+boll_conf = struct('wsize', 5, 'wts', 0, 'nstd', 1);
+pl = SimpleTradingStrategy2( Spread, 1, 6000, boll_conf );
