@@ -15,8 +15,9 @@ for i = 1:stocks_count
 end
 
 tic;
-thres_corr = 0.85;
-pairs_count = 0;
+thres_corr = 0.80;
+ids = zeros(1,1);
+
 parfor i = 1:stocks_count
     for j = (i+1):stocks_count
         for k = (j+1):stocks_count
@@ -38,13 +39,12 @@ parfor i = 1:stocks_count
                     end
 
                     if(corr(stock_1, stock_2) > thres_corr && corr(stock_2, stock_3) > thres_corr && corr(stock_1, stock_3) > thres_corr)
-                        [~,pval,~,~,~] = jcitest([stock_1, stock_2, stock_3]);
+                        [~,pval,~,~,~] = jcitest([stock_1, stock_2, stock_3]); %Check lags as well.
                         pval_r1 = pval.r1;
                         pval_r2 = pval.r2;
                         pval_r0 = pval.r0;
                         if(pval_r0 < 0.05)
-                            %pairs_count = pairs_count + 1;
-
+                            
                             ret_1 = diff(log(stock_1));
                             ret_2 = diff(log(stock_2));
                             ret_3 = diff(log(stock_3));
@@ -68,32 +68,3 @@ parfor i = 1:stocks_count
 end
 
 toc;
-% 
-% pAPPLE = Convert(pp, 239);
-% pSIGMA = Convert(pp, 1036);
-% pROSS = Convert(pp, 1000);
-% 
-% corr(pAPPLE, pSIGMA)
-% corr(pAPPLE, pROSS)
-% corr(pSIGMA, pROSS)
-% 
-% % 239 - APPLE INC
-% % 1036 - SIGMA-ALDRICH
-% % 1000 - ROSS STORES INC
-% 
-% % No intercept
-% 
-% tbl = table(pAPPLE, pSIGMA, pROSS, 'VariableNames',{'APPLE_INC','SIGMA_ALDRICH', 'ROSS_STORES_INC'});
-% lm = fitlm(tbl,'APPLE_INC~SIGMA_ALDRICH + ROSS_STORES_INC - 1');
-% 
-% apple_inc = pSIGMA * (-0.65828) + pROSS * 8.9398;
-% length = size(apple_inc, 1);
-% plot(1:length, pAPPLE, 'b', 1:length, apple_inc, 'r');
-% 
-% beta1 = lm.Coefficients.Estimate(1);
-% beta2 = lm.Coefficients.Estimate(2);
-% 
-% spread = pAPPLE - beta1 * pSIGMA - beta2 * pROSS;
-% 
-% [~, pValue] = adftest(spread, 'model','TS','lags', 0);
-% pValue
