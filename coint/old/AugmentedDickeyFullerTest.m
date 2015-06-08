@@ -1,5 +1,5 @@
 %ids = matrix of the tuples
-function [ pValue, lm_formula, beta, spr, ids ] = AugmentedDickeyFullerTest( pp, id1, id2, id3 )
+function [ pValue, lm_formula, beta, spr, tuples ] = AugmentedDickeyFullerTest( pp, id1, id2, id3 )
 
     s1_px = Convert(pp, id1);
     s2_px = Convert(pp, id2);
@@ -15,6 +15,7 @@ function [ pValue, lm_formula, beta, spr, ids ] = AugmentedDickeyFullerTest( pp,
     lm_formula = strcat(s1_name, ' ~ ', ' ', s2_name, ' + ', s3_name);
     mod = fitlm(tbl, 'stock1 ~ stock2 + stock3 - 1');
     beta = mod.Coefficients.Estimate;
+    tuples = [id1, id2, id3];
     spr = s1_px - beta(1) * s2_px - beta(2) * s3_px;
     [~, pValue] = adftest(spr, 'model','TS','lags', 0);
         
@@ -23,6 +24,7 @@ function [ pValue, lm_formula, beta, spr, ids ] = AugmentedDickeyFullerTest( pp,
         lm_formula = strcat(s2_name, ' ~ ', s1_name, ' + ', s3_name);
         mod = fitlm(tbl, 'stock2 ~ stock1 + stock3 - 1');
         beta = mod.Coefficients.Estimate;
+        tuples = [id2, id1, id3];
         spr = s2_px - beta(1) * s1_px - beta(2) * s3_px;
         [~, pValue] = adftest(spr, 'model','TS','lags', 0);
 
@@ -31,6 +33,7 @@ function [ pValue, lm_formula, beta, spr, ids ] = AugmentedDickeyFullerTest( pp,
             lm_formula = strcat(s3_name, ' ~ ', s1_name, ' + ', s2_name);
             mod = fitlm(tbl, 'stock3 ~ stock1 + stock2 - 1');
             beta = mod.Coefficients.Estimate;
+            tuples = [id3, id1, id2];
             spr = s3_px - beta(1) * s1_px - beta(2) * s2_px;
             [~, pValue] = adftest(spr, 'model','TS','lags', 0);
 

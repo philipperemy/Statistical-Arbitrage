@@ -1,5 +1,5 @@
 clear;
-load spx.mat;
+load ../spx.mat;
 format shortG;
 tuples(1) = 713;
 tuples(2) = 949;

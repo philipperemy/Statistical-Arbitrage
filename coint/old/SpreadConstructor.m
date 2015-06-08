@@ -1,6 +1,6 @@
 
 %Works now for lags = 0 ONLY
-function [ Spreads ] = SpreadConstructor( pp, tuples )
+function [ Spreads, beta, tuples_ret ] = SpreadConstructor( pp, tuples )
     c = 1;
     for i = 1:size(tuples,1)
         s1 = tuples(i, 1);
@@ -14,7 +14,7 @@ function [ Spreads ] = SpreadConstructor( pp, tuples )
         tbl = table(s1_px, s2_px, s3_px);
         tbl.Properties.VariableNames = { 'stock1', 'stock2', 'stock3'};
         
-        [ pValue, lm_formula, beta, spr ]  = AugmentedDickeyFullerTest(pp, s1, s2, s3);
+        [ pValue, lm_formula, beta, spr, tuples_ret ]  = AugmentedDickeyFullerTest(pp, s1, s2, s3);
 
         if(pValue > 0.05)
             continue;
@@ -38,3 +38,4 @@ end
 
 %Optimal lag
 %http://fr.mathworks.com/help/econ/var-models.html#bswxr8u-27
+%http://stats.stackexchange.com/questions/21539/what-is-the-correct-procedure-to-choose-the-lag-when-performing-johansen-cointeg

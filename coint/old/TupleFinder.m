@@ -6,7 +6,7 @@ function [ tuples ] = TupleFinder( pp )
     stocks_count = size(stocks, 2);
     days_count = size(stocks, 1);
 
-    fprintf('Name 1, Id 1, Sector 1, Name 2, Id 2, Sector 2, Name 3, Id 3, Sector3, P Value No Cointegration, p val r1, pval r2, Corr 12, Corr 23, Corr 13, Corr Ret 12, Corr Ret 23, Corr ret 13\n');
+    fprintf('Name 1, Id 1, Sector 1, Name 2, Id 2, Sector 2, Name 3, Id 3, Sector3, P Value No Cointegration, p val r1, pval r2, Corr 12, Corr 23, Corr 13, Corr Ret 12, Corr Ret 23, Corr ret 13, sum h\n');
 
     %init
     m_support = zeros(days_count, stocks_count);
@@ -19,7 +19,7 @@ function [ tuples ] = TupleFinder( pp )
     pairs_count = 0;
     tuples = zeros(1,1);
 
-    for i = 1:stocks_count
+    for i = 236:stocks_count
         for j = (i+1):stocks_count
             for k = (j+1):stocks_count
 
@@ -36,14 +36,14 @@ function [ tuples ] = TupleFinder( pp )
                     try
                         if(isequal(stock_1, stock_2) || isequal(stock_1, stock_3) || isequal(stock_2, stock_3))
                             %continue if at least two stocks are equal
-                            continue; 
+                            continue;
                         end
 
                         if(corr(stock_1, stock_2) > thres_corr && corr(stock_2, stock_3) > thres_corr && corr(stock_1, stock_3) > thres_corr)
-                            [~,pval,~,~,~] = jcitest([stock_1, stock_2, stock_3]);
-                            pval_r1 = pval.r1;
-                            pval_r2 = pval.r2;
-                            pval_r0 = pval.r0;
+                            [h,pval,~,~,~] = jcitest([stock_1, stock_2, stock_3], 'lags', 0:30);
+                            pval_r1 = pval.r1(1);
+                            pval_r2 = pval.r2(1);
+                            pval_r0 = pval.r0(1);
                             if(pval_r0 < 0.05)
                                 pairs_count = pairs_count + 1;
 
@@ -55,13 +55,13 @@ function [ tuples ] = TupleFinder( pp )
                                 tuples(pairs_count, 2) = j;
                                 tuples(pairs_count, 3) = k;
 
-                                fprintf('%s, %i, %s, %s, %i, %s, %s, %i, %s, %f, %f, %f, %f, %f, %f, %f, %f, %f\n', ...
+                                fprintf('%s, %i, %s, %s, %i, %s, %s, %i, %s, %f, %f, %f, %f, %f, %f, %f, %f, %f, %i\n', ...
                                 char(pp.names(i)), i, char(pp.sector(i)),...
                                 char(pp.names(j)), j, char(pp.sector(j)),...
                                 char(pp.names(k)), k, char(pp.sector(k)),...
                                 pval_r0, pval_r1, pval_r2, ...
                                 corr(stock_1, stock_2), corr(stock_2, stock_3), corr(stock_1, stock_3), ...
-                                corr(ret_1, ret_2), corr(ret_2, ret_3), corr(ret_1, ret_3));
+                                corr(ret_1, ret_2), corr(ret_2, ret_3), corr(ret_1, ret_3), sum(h.r0));
 
                             end
                         end

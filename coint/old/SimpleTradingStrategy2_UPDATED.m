@@ -1,5 +1,11 @@
-function [ pl ] = SimpleTradingStrategy2( Spread, start_idx, end_idx, boll_conf)
-    spr = Spread.px;
+function [ pl ] = SimpleTradingStrategy2_UPDATED( Spread, start_idx, end_idx, boll_conf)
+    
+    try
+        spr = Spread.px;
+    catch
+        spr = Spread;
+    end
+    
     spr = spr(start_idx:end_idx);
     [mid, uppr, lowr] = bollinger(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd);
     plot([mid, uppr, lowr, spr]);
@@ -11,7 +17,8 @@ function [ pl ] = SimpleTradingStrategy2( Spread, start_idx, end_idx, boll_conf)
     
     UP = 1;
     DOWN = -1;
-    pos = false;
+    pos_buy = false;
+    pos_sell = false;
     last_px = 0;
     pl = zeros(1,T);
 
@@ -23,26 +30,26 @@ function [ pl ] = SimpleTradingStrategy2( Spread, start_idx, end_idx, boll_conf)
         % BUY-2   : UP between Uppr and Spr
         % When a position is initiated, no other positions are allowed
         
-        if(spr_uppr_trends(i) == DOWN && ~pos)
-            pos = true; %init pos
+        if(spr_uppr_trends(i) == DOWN && ~pos_buy && ~pos_sell)
+            pos_sell = true; %init pos
             last_px = spr(i);
             continue;
         end
         
-        if(spr_lowr_trends(i) == DOWN && pos)
-           pos = false; %unwind pos
+        if(spr_lowr_trends(i) == DOWN && pos_sell && ~pos_buy)
+           pos_sell = false; %unwind pos
            pl(i) = last_px - spr(i);
            continue;
         end
         
-        if(spr_lowr_trends(i) == UP && ~pos)
-           pos = true;
+        if(spr_lowr_trends(i) == UP && ~pos_buy && ~pos_sell)
+           pos_buy = true;
            last_px = spr(i);
            continue;
         end
         
-        if(spr_uppr_trends(i) == UP && pos)
-           pos = false;
+        if(spr_uppr_trends(i) == UP && pos_buy && ~pos_sell)
+           pos_buy = false;
            pl(i) = spr(i) - last_px;
            continue;
         end
