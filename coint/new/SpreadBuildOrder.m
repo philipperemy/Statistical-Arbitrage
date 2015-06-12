@@ -1,4 +1,4 @@
-function [ order ] = SpreadBuildOrder( pp, spread, direction, nominal, max_ss_per, t )
+function [ order ] = SpreadBuildOrder( pp, spread, direction, nominal, max_ss_per, t, disp )
     %SpreadSendOrder(pp, [713, 949, 1187], [0.628830509030226, 0.148724199923458], 1, 1000, 0.5, 10)	
 	
     BUY = 1;
@@ -24,7 +24,7 @@ function [ order ] = SpreadBuildOrder( pp, spread, direction, nominal, max_ss_pe
             borrowing_nominal = (s2_px*beta(2) + s3_px*beta(3)) * spr_qty;
         end
         spr_qty = spr_qty - 1;
-        fprintf('BUY %i Spr, buying_nominal = %f, borrowing_nominal = %f, balance = %f\n', spr_qty, buying_nominal, borrowing_nominal, nominal);
+        if(disp) fprintf('BUY %i Spr, buying_nominal = %f, borrowing_nominal = %f, balance = %f\n', spr_qty, buying_nominal, borrowing_nominal, nominal); end;
         
     else
         borrowing_nominal = s1_px*1;
@@ -36,7 +36,7 @@ function [ order ] = SpreadBuildOrder( pp, spread, direction, nominal, max_ss_pe
             buying_nominal = (s2_px*beta(2) + s3_px*beta(3)) * spr_qty;
         end
         spr_qty = spr_qty - 1;
-        fprintf('SELL %i Spr, borrowing_nominal = %f, buying_nominal = %f, balance = %f\n', spr_qty, borrowing_nominal, buying_nominal, nominal);
+        if(disp) fprintf('SELL %i Spr, borrowing_nominal = %f, buying_nominal = %f, balance = %f\n', spr_qty, borrowing_nominal, buying_nominal, nominal); end;
     end
 	
 	order = struct('spr_qty', spr_qty, 'direction', direction, 'beta', beta);

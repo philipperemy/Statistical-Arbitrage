@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf)
+function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, disp)
     
     try
         spr = Spread.px;
@@ -40,8 +40,8 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
         % When a position is initiated, no other positions are allowed
         
         if(spr_uppr_trends(i) == DOWN && ~pos_sell)
-            fprintf('[%i] Initiating SELL at price %f\n', i, spr(i));
-            order_sell = SpreadBuildOrder( pp, Spread, 0, balance, 0.5, i );
+            if(disp) fprintf('[%i] Initiating SELL at price %f\n', i, spr(i)); end;
+            order_sell = SpreadBuildOrder( pp, Spread, 0, balance, 0.5, i, disp );
             pos_sell = true; %init pos
             last_px_sell = spr(i);
             continue;
@@ -50,13 +50,13 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
         if(spr_lowr_trends(i) == DOWN && pos_sell)
            pos_sell = false; %unwind pos
            pl(i) = (last_px_sell - spr(i)) * order_sell.spr_qty;
-           fprintf('[%i] unwind SELL at price %f, diff %f\n', i, spr(i), pl(i));
+           if(disp) fprintf('[%i] unwind SELL at price %f, diff %f\n', i, spr(i), pl(i)); end;
            continue;
         end
         
         if(spr_lowr_trends(i) == UP && ~pos_buy)
-           fprintf('[%i] Initiating BUY at price %f\n', i, spr(i));
-           order_buy = SpreadBuildOrder( pp, Spread, 0, balance, 0.5, i );
+           if(disp) fprintf('[%i] Initiating BUY at price %f\n', i, spr(i)); end;
+           order_buy = SpreadBuildOrder( pp, Spread, 0, balance, 0.5, i, disp );
            pos_buy = true;
            last_px_buy = spr(i);
            continue;
@@ -65,7 +65,7 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
         if(spr_uppr_trends(i) == UP && pos_buy)
            pos_buy = false;
            pl(i) = (spr(i) - last_px_buy) * order_buy.spr_qty;
-           fprintf('[%i] unwind BUY at price %f diff %f\n', i, spr(i), pl(i));
+           if(disp) fprintf('[%i] unwind BUY at price %f diff %f\n', i, spr(i), pl(i)); end;
            continue;
         end
     end

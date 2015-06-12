@@ -19,7 +19,7 @@ function [ spreads ] = SpreadFinder( pp, filename, corr_thres )
     end
 
     spreads_count = 0;
-    for i = 236:240
+    for i = 236:240 %CHANGE THIS SHIT
         for j = (i+1):stocks_count
             for k = (j+1):stocks_count
 
