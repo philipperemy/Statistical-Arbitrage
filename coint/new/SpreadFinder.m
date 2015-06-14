@@ -1,15 +1,15 @@
 
 %Works ONLY for lags = 0
-function [ spreads ] = SpreadFinder( pp, filename, corr_thres )
+function [ spreads ] = SpreadFinder( pp, corr_thres, i_range )
 
     tic;
     stocks       = pp.px;
     stocks_count = size(stocks, 2);
     days_count   = size(stocks, 1);
 
-    f = fopen(filename, 'w');
+    %f = fopen(filename, 'w');
     s = 'Name 1, Id 1, Sector 1, Name 2, Id 2, Sector 2, Name 3, Id 3, Sector3, P Value No Cointegration, p val r1, pval r2, Corr 12, Corr 23, Corr 13, Corr Ret 12, Corr Ret 23, Corr ret 13, sum h\n';
-    fprintf(f, s);
+    %fprintf(f, s);
     fprintf(s);
 
     %init for performance
@@ -19,7 +19,7 @@ function [ spreads ] = SpreadFinder( pp, filename, corr_thres )
     end
 
     spreads_count = 0;
-    for i = 236:240 %CHANGE THIS SHIT
+    for i = i_range
         for j = (i+1):stocks_count
             for k = (j+1):stocks_count
 
@@ -55,12 +55,13 @@ function [ spreads ] = SpreadFinder( pp, filename, corr_thres )
                                 corr(stock_1, stock_2), corr(stock_2, stock_3), corr(stock_1, stock_3), ...
                                 corr(ret_1, ret_2), corr(ret_2, ret_3), corr(ret_1, ret_3));
                             
-                                fprintf(f, s);
+                                %fprintf(f, s);
                                 fprintf(s);
                             
                             end
                         end
                     catch ex
+                        disp(getReport(ex));
                         rethrow(ex);
                     end
                 end
@@ -69,6 +70,6 @@ function [ spreads ] = SpreadFinder( pp, filename, corr_thres )
     end
     toc;
     
-    fclose(f);
+    %fclose(f);
 end
 
