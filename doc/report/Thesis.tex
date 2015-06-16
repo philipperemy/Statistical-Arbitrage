@@ -142,7 +142,7 @@ copied or distributed except with permission from the author.}
 \declaration
 
 \begin{abstract}
-This project is aimed to investigate the practical benefit of using more complex modelling than what is currently standard practice in applications related to statistical arbitrage. The underlying assets will be modelled using appropriate mean-reverting time series or state space models. In order to fit these models to real data the project will involve using advanced particle methods such as Particle Markov Chain Monte Carlo. The primary aim of the project is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practise. This will be illustrated in numerical examples, where the computed portfolio is used for a realistic scenario obtained by popular trading platforms. Simulations will be mainly run in Matlab, but embedding C/C++ routines may be required to speed up computations. The project is a challenging computational Statistics application to finance and is this suitable for a student with an interest in finance, very good apptitute to computing and understanding of the material in the course related to Monte Carlo methods and Time Series.
+This project is aimed to investigate the practical benefit of using more complex modelling than what is currently standard practice in applications related to statistical arbitrage. The underlying assets will be modelled using appropriate mean-reverting time series or state space models. In order to fit these models to real data the project will involve using advanced particle methods such as Particle Markov Chain Monte Carlo. The primary aim of the project is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practise. This will be illustrated in numerical examples, where the computed portfolio is used for a realistic scenario obtained by popular trading platforms. Simulations will be mainly run in Matlab, but embedding C/C++ routines may be required to speed up computations. The project is a challenging computational Statistics application to finance and is this suitable for a student with an interest in finance, very good aptitute to computing and understanding of the material in the course related to Monte Carlo methods and Time Series.
 \end{abstract}
 \newpage
 %\chapter*{Acknowledgements}
@@ -153,9 +153,9 @@ This project is aimed to investigate the practical benefit of using more complex
 %\newpage
 
 % Automatically create a table of contents
-\renewcommand{\contentsname}{Table of Contents}
-\tableofcontents
-\newpage
+%\renewcommand{\contentsname}{Table of Contents}
+%\tableofcontents
+%\newpage
 
 % Figure and table lists if you want them.
 %\cleardoublepage
@@ -236,13 +236,94 @@ The marginal log likelihood and its estimator are:
 
 \newpage
 \section{Stochastic Volatility}
+In this section, we introduce the standard stochastic volatility with Gaussian errors. Next, we consider different well-known extensions of the SV model. The first extension is a SV model with Student-t errors. In the second extension, we incorporate a leverage effect by modeling a correlation parameter between measurement and state errors. In the third extension, we implement a model that has both stochastic volatility and moving average errors.
+
 \subsection{Simple SV Model}
-The following scalar non-linear Hidden Markov model is considered:
+The standard discrete-time stochastic volatility model for the returns $Y_n$ is defined as:
 \begin{align*}
-  X_n &=  \rho X_{n-1} + \sigma V_n\\
+  X_{n+1} &=  \rho X_{n} + \sigma V_n \\
   Y_n &=  \beta \exp \left( \frac{X_n}{2} \right) W_n
 \end{align*}
-where  $W_n, V_n \sim \mathcal{N}(0,1)$ iid and $X_0 \sim \mathcal{N} \left(0, \frac{\sigma^2}{1-\rho^2} \right)$. The model is non-linear because the component $Y_n$ has some non-additive noise and because it is non-linear with $X_n$. A bootstrap particle filter is derived with respect to this model. With little surprise, the SIR (Sequential Importance Sampling) Sequential Monte Carlo filter provides a better estimate than the SIS (Sequential Importance Sampling) filter. It is able to better track the peaks of the process $x^*_{0:T}$.
+where  $\{V_n\}$,$\{W_n\}$ are two independent sequences of independent standard normal random variables. Let $\theta = (\rho, \sigma^2, \beta)$. Notice that the non-linearity of the models relies in the non-additive noise of the transition Kernel. $X_n$ is the unobserved log-volatility associated to the observed log-returns $Y_n$, $\sigma$ is the volatility of the log-volatility and $\rho$ is the persistence parameter. The condition $|\rho| < 1$  is imposed to have a stationary process with the initial condition $X_0 \sim \mathcal{N} \left(0, \frac{\sigma^2}{1-\rho^2} \right)$.
+
+\subsection{SVt - Student-t innovations}
+The first extension is a stochastic volatility model with ${W_n} \sim St(\nu)$ where $St$ stands for the Student-t distribution with $\nu > 2$. The conditional density becomes (pdf variable substitution):
+
+$$p(y_n | x_n, Y_{n-1},  \theta) = \frac{\Gamma(\frac{\nu+1}{2})}{\Gamma(\frac{\nu}{2}) \sqrt{(\nu-2)\pi}} \frac{1}{\sigma_n}\left( 1 + \frac{y_n^2}{\sigma_n^2 \nu}\right)^{-\frac{v+1}{2}}$$
+where $\sigma_n = \beta \exp \left(\frac{x_n}{2} \right)$. We then follow the sampling steps as before.
+
+\subsection{SVL - Stochastic Volatility Leverage}
+In the second extension, we incorporate a leverage effect by letting $c$ denote the correlation between $V_n$ and $W_n$. Here, we use the fact that $V_n = c W_n + \sqrt{1-c^2} \Psi_n$ where $\Psi_n \sim N(0,1) :$
+
+\begin{align*}
+X_{n+1} &=  \rho X_{n} + \sigma \left(c W_n + \sqrt{1-c^2} B_n \right) \\
+X_{n+1} &=  \rho X_{n} + \sigma \left(c Y_n \exp \left( - \frac{X_n}{2} - \log(\beta) \right)  + \sqrt{1-c^2} B_n \right)
+\end{align*}
+
+Notice that we need to sample the additional parameter $c$.
+
+\subsection{SV-MA(1) - Moving Average}
+We can also expand the plain stochastic volatility model by allowing the errors in the measurement equation to follow a moving average (MA) process of order $m$. This means that the errors in the measurement equation are no longer serially independent as for the plain SV model. Here, we choose a more simple specification and set $m = 1$. Hence, our model becomes:
+
+\begin{align*}
+Y_n &=  \beta \exp \left( \frac{X_n}{2} \right) W_n + \Psi \beta \exp \left( \frac{X_{n-1}}{2} \right) W_{n-1} \\
+X_{n+1} &=  \rho X_{n} + \sigma V_n
+\end{align*}
+We ensure that the root of the characteristic polynomial assocaited with the MA coefficient $\Psi$ is outside the unit circle, $|\Psi$| \\
+
+In the following, we will assume that a process $(X_t)_{t \in \mathbb{N}}$ is adapted to a filtration $(\mathcal{F}_t)_{t \in \mathbb{N}}$ which presents the accrual of information over time. We denote by $\mathcal{F}_t = \sigma \{X_s : s \leq t \}$ the $\sigma$-algebra generated by the history of $X$ up to time $t$. The corresponding filtration is then called the natural filtration.
+
+$$Var(y_t | \mathcal{F}_{t-1}) = \exp(X_t) + \Psi^2 \exp(X_{t-1})$$
+because $X_t$ is measurable with regard to $\mathcal{F}_{t-1}$. It turns out that the conditional variance of $y_t$ is varying through two channels. Estimating this model is straightfoward as again we only need to make small adjustments in the codes.
+
+\subsection{SV-M}
+Let's consider the population stochastic volatility in mean (SVM) model where $\exp(X_t /2)$ appears in both the conditional mean and the conditional volatility. We follow the same notation as before and define the SVM model as: 
+
+$$y_t = \beta \exp\left(\frac{X_t}{2}\right) + \exp\left(\frac{X_t}{2}\right) + W_t, \text{ }, W_t \sim N(0,1)$$
+where $X_t$ is ruled by the dynamics of a simple SV model. The conditional probability density of $y_t$ is $p(y_t | x_t, Y_{t-1}, \theta) \sim N(\beta \exp(x_t/2), exp(x_t))$.
+
+\subsection{TFSV - Two Factors}
+Finally, we estimate a two factor SV model. It is defined as:
+\begin{align*}
+  X_{n+1} &=  \rho_1 X_{n} + \sigma_2 V_n, \text{ } |\rho_1| < 1, V_n \sim N(0,1)\\
+  Z_{n+1} &=  \rho_2 Z_{n} + \sigma_2 P_n, \text{ } |\rho_2| < 1, P_n \sim N(0,1) \\
+  Y_n &=  \exp \left(\frac{\mu}{2} + \frac{X_n+Z_n}{2} \right) W_n, \text{ } |\rho_2| < 1, W_n \sim N(0,1)
+\end{align*}
+$\theta$ is enriched with the new parameters. Thus, we only need to modify the particle filter such that we drawa two sets of particles (one for $X_t$ and one for $Z_t$) instead of one.
+
+\section{Model Comparison}
+The output of the particle filter is an estimate of $p(y|\theta)$, with the unobserved states integrated out. The marginal likelihood for a model $\mathcal{M}$ is defined as:
+
+$$p(Y_T | \mathcal{M}) = \int_{\theta} p(Y_T | \theta, \mathcal{M}) p(\theta | \mathcal{M}) d\theta$$
+
+Gelfand and Dey (1994) proposed a very general estimate for this marginal likelihood:
+
+$$\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_T | \theta_i) p(\theta_i)} \rightarrow \frac{1}{p(Y_T)}  \text{ as It}_{mcmc} \rightarrow +\infty$$
+For this estimator to be consistent, $g(\theta_i)}$ must be thin-tailed relative to the denominator. For most cases, a multivariate Normal distribution $N(\theta^*, \Sigma^*)$ can be used, where $\theta^* = \frac{1}{N} \sum_{i=1}^N \theta^i$ and $\Sigma^* = \frac{1}{N-1} \sum_{i=1}^N \left(\theta^i - \theta^*\right)\left(\theta^i - \theta^*\right)^T$. The difficulty of this approach resides in the implementation. As a matter of fact, $p(Y_T | \theta)$ is usually very small as $T$ grows. The trick here is to consider the sum of the exponential of the logarithms and factorize by the maximum logarithm to avoid rounding errors. For example, when N = 3 and let assume that the log-terms on the LHS are equal to $-120$, $-121$ and $-122$ :
+
+\begin{align*}
+p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
+- \log p(Y_T) &= \log (e^{-120} ( 1 + e^{-1} + e^{-2})) \\
+ \log p(Y_T) &= 120 - \log ( 1 + e^{-1} + e^{-2})) \simeq 119.6
+\end{align*}
+
+
+When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ have been estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison, $2 \log BF_{\mathcal{M_{AB}}}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
+
+\section{Resampling}
+Resampling is a key component of the Particle Filter. Different methods exist: stratified, systematic and residuals resampling. In practical applications, they are generally found to provide comparable results. Despite the lack of complete theoretical analysis of its behavior, systematic resampling is often preferred because it is the simplest method to implement. Randal Douc proved that residual and stratified resampling methods dominate the basic multinomial approach, in the sense of having lower conditional variance for all configurations of the weights.
+
+\begin{table}[h]
+\centering
+\label{table1}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Resampling method     & Residual & Stratified & Systematic & Multinomial \\ \hline
+Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
+\end{tabular}
+\caption{Time spent to resample 100K times 1000 weights}
+\end{table}
+The multinomial implementation is the MATLAB default version. According to Randal Douc and the performance results, the stratified resampling seems the most compelling method to use inside the particle filters. This part is critical because it can represent up to 50$\%$ of the total time spent in the filter.
 
 \section{PMMH}
 
@@ -270,100 +351,6 @@ Using the basic marginal likelihood identity of Chib (1995), the ratio is simpli
 \end{align*}
 Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used.
 
-\chapter{Then you get to the meaty stuff}
-\begin{myquote}
-The main sections should guide the reader through your results, analysing them and explaining them.
-It should show both your successes and your failures in trying to solve your problem (your unsuccessful
-attempts should be discussed, especially if you have ideas or explanations as to why they failed).
-\end{myquote}
-\section{With things like Methods}
-It turns out that doing mathematics properly requires paying attention to many subtle details. For example
-\begin{equation}
-2=2+(1-1)=(2-1)+1=1+1.
-\label{eq:obvious}
-\end{equation}
-Beware of the different mathematical fonts, and note that often punctuation should be included at the end of equations. For example, if you understand that 
-\begin{equation*}
-0=c\cdot o \cdot s^2 \cdot 0=\int_{-\pi}^\pi cos^2(x) dx \neq \int_{-\pi}^\pi \cos^2(x) \mathrm{d}x=\pi,
-\end{equation*}
-then your equations will look much nicer.
-\begin{myquote}
-Maths: In formulas use \verb|\exp| and not \verb|exp|.
-\end{myquote}
-\subsection{organised into subsections if you want}
-Because well ordered thoughts are easier to follow.
-\subsubsection{or even subsubsections}
-And paragraphs. You most likely \emph{don't} want to use the \verb|\paragraph| command for this; just skip a line between paragraphs (or use \verb|\par| or \verb|\indent|).
-
-You may wish to have a separate \verb|*.tex| file for each chapter, and use the \verb|\include{}| (or \verb|\input{}|) commands, if that helps you keep things organised. You can then use \verb|\includeonly{}| to only compile the chapter(s) you are currently working on.
-
-\chapter{And yet more meaty stuff}
-\begin{myquote}
-You have to submit a thesis, a substantial written thesis normally not exceeding 12000 words. This is a
-guideline: the appropriate length is a function of the project itself and its subject matter. Excess length
-disproportionate to the content may be penalised.
-
-The thesis should be on A4-sized paper and typed (ideally using LaTeX), and words or paragraphs
-must not be crossed out. They should be in a simple binding; a ring or springback binder is suffcient. It
-is important that students sign the declaration ``The work contained in this these is my own work unless
-otherwise stated". Each thesis should include (i) a brief summary, (ii) an introduction (iii) the main body
-of the thesis, and (iv) a bibliography.
-
-Two printed copies of the thesis must be submitted to the MSc Administrator before the deadline listed
-in Section 3. An electronic copy of the thesis (one PDF document) must also be submitted via the Virtual
-Learning Environment. Late submission may be penalised and will normally delay consideration of the
-thesis to the following year.
-The thesis is worth 90\% of the project mark.
-\end{myquote}
-
-\begin{figure}[tbp] % Sometimes, you want your figure to appear in between the text you put before it and the text you put after it. h stands for `here' and does that.
-\centering
-\includegraphics[width=0.8\textwidth]{mandelbrot.jpg} % You probably shouldn't use JPEG for graphs. Use the vector graphics formats EPS or PDF instead. If you really want a non-vector format then use PNG.
-
-\caption{``Graphs
-and simple diagrams (especially when they are neat) can sometimes be far more effective in presenting results
-than lots of numbers and/or lots of words.''
-{\small This figure is by Irina Pechkareva.}
-\label{fig:mandelbrot}}
-\end{figure}
-%
-\begin{myquote}
-Figures: The best place is at the top or at the bottom of a page. If this is not possible they should go
-on a separate page. In LaTeX this can be achieved by
-\begin{verbatim}
-\begin{figure}[tbp]
-...
-\end{figure}
-\end{verbatim}
-When generating plots from R it is usually best to export them as pdf or eps for inclusion in LaTeX. To get
-Greek letters, sub and superscripts into labels use eg \verb|xlab=expression(alpha[5])|.
-\end{myquote}
-
-\chapter{Conclusion}
-It's up to you whether you want your introduction/conclusion to be numbered chapters or not. (un-numbered chapters can be created with \verb|\chapter*{}|, but may require you to manually edit the table of contents (see the list of tables in the code comments or the bibliography for an example).
-
-\begin{myquote}
-The conclusion section should summarise what you have learned. If you would have done more, given
-more time, you should indicate where your effort would have gone. If your work has raised any unsettled
-questions, you should address them and indicate what further work needs doing.
-\end{myquote}
-\section{About Referencing}
-The numbers in this sentence are clickable and refer to equation~(\ref{eq:obvious}) on page~\pageref{eq:obvious} and Figure~\ref{fig:mandelbrot}.
-
-\begin{myquote}
-List of references: Using author (year) style notation is good practice (the reader may know the paper, but
-she will definitively not know the number in your reference list. To achieve this in LaTeX you can use BibTeX
-together with the package natbib. If citing several references together, use \verb|\citep{ref1,ref2,ref3}|. Use
-a coherent style - either all authors get their first full names or none gets their full names. Books need the
-name of the publisher, journal articles need the name of the journal. When using BibTeX for generating
-references, make sure that appropriate capitalisation is used, eg it should be Monte Carlo and not monte
-carlo. To achieve this in BibTeX, use \verb|{M}onte {C}arlo|.
-\end{myquote}
-
-The bibliography below was generated by BibTeX using the natbib package. You should reference any material you use, e.g. journal articles \citep{cox_regression_1972}. For example \citet{mccullagh_generalized_1989} explain the theory of generalized linear models in their book. Not citing your sources usually constitutes plagiarism \citep{plagiarism}. I recommend using \verb|Ctrl+F| to search for question marks in your thesis, as these will often result from errors in referencing and cross-referencing \citep{nonexistingreference}.
-
-There are various software options for managing references, which will allows you to automatically generate BibTeX files. Note however that some manual adjustments are typically required.
-
 \cleardoublepage
 \phantomsection
 \addcontentsline{toc}{chapter}{\bibname} % Add an entry for the Bibliography in the Table of Contents
@@ -381,47 +368,6 @@ There are various software options for managing references, which will allows yo
 % If you want a single Appendix and want it to be called Appendix instead of Appendix A, the following should work:
 %\setcounter{secnumdepth}{-1} %This turns off automatic chapter numbering
 %\chapter{Appendix}
-
-\chapter{You probably want to put things like computer programs and long boring proofs in an appendix}
-\begin{myquote}
-Any programs in the appendices should be representative. A copy of every single version of every code
-is unnecessary. Programs should be documented with many comment lines and a discussion of the input
-necessary to drive them and the output resulting from them as appropriate. Large tables of results should
-be organised in reference form (as should large sets of graphs) with indices and tables of contents to guide
-the interested reader through them. Appendices do not count towards the word limit.
-\end{myquote}
-
-There are better ways to include code than the example below, e.g. through the listings package (especially if you intend to print in colour). 
-Although you could write your thesis in Sweave, I would not recommend it since it will make compilation slower.
-\section{R code}
-\begin{verbatim}
-addone <- function(x) {
-# This function inputs a numeric variable x
-# and outputs x+1.
-# If x is a non-negative integer, then it outputs the next positive integer.
-  return(x+1)
-}
-\end{verbatim}
-\chapter{More Guidelines}
-\section{Titlepage}
-\begin{myquote}
-The title page is your own design however it should include your name, CID, project title, supervisor's
-name. You may want to include the wording: ``Submitted in partial fulfilment of the requirements for the
-MSc in Statistics of Imperial College London''. You should not be using the Imperial crest, but you can use
-the Imperial logo:
-
-\url{http://www3.imperial.ac.uk/graphicidentity/applyingthegraphicidentity/usingthecrest}
-
-\url{http://www3.imperial.ac.uk/graphicidentity/applyingthegraphicidentity/usingthelogo}
-\end{myquote}
-The logo has been included in the current title design but must be downloaded into the same folder as your \verb|*.tex| file.
-
-\section{Declaration}
-\begin{myquote}
-The second page must contain a signed and dated plagiarism statement, ``The work contained
-in this thesis is my own work unless otherwise stated''. It is sufficient if you sign the hard copies.
-\end{myquote}
-
 
 
 \end{document}
