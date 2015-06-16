@@ -1,5 +1,5 @@
 clear;
-addpath('filters/'); %rmpath('h/')
+addpath('filters/');
 addpath('helpers/');
 addpath('likelihoods/');
 addpath('models/');
