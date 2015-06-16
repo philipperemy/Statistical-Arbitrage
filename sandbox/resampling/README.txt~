@@ -1,0 +1,18 @@
+-------------------------------------------
+       Particle filter resampling 
+
+ Author: Jose Luis Blanco
+ Web:    http://www.isa.uma.es/jlblanco
+-------------------------------------------
+
+This MATLAB toolkit contains functions and scripts demonstrating four 
+different approaches to resampling:
+- Multinomial
+- Residual
+- Stratified
+- Systematic (universal sampling).
+
+A C++ version of these algorithms are part of the 
+MRPT library (http://mrpt.sourceforge.net/).
+
+
