@@ -35,8 +35,10 @@ function [estimated_states, return_weights, p_y] = Ex2_bootstrap_filter_SIR(y, r
         %Update the weights.
         sigma_vec = beta * exp(0.5*p(:,i));
         %w(:,i) = normpdf(y(i), 0, sigma_vec);
-        w(:,i) = tpdf(y(i)./sigma_vec, nu)./sigma_vec;
-
+        w(:,i) = (1/N) * tpdf(y(i)./sigma_vec, nu)./sigma_vec;
+        
+        %Since the beginning we forgot this 1/N! OMG
+        
         return_weights(i) = sum(w(:,i));
         
         %Normalize the importance weights.
