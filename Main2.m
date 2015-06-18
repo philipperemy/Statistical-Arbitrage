@@ -5,7 +5,6 @@ addpath('likelihoods/');
 addpath('models/');
 addpath('pmcmc/');
 addpath('doc/');
-diary('log/log.txt');
 
 mySeed = 58; 
 %mySeed = 57; % an integer number
