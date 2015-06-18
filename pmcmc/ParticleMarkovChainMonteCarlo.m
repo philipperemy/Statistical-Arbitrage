@@ -24,15 +24,11 @@ classdef ParticleMarkovChainMonteCarlo < handle
  
         function [ret] = check_update(this, log_numerator, log_denominator)
             ret = this.NO_UPDATE;
-            if (rand <  min(1, exp(log_numerator - log_denominator)))
+            if (rand < min(1, exp(log_numerator - log_denominator)))
                 ret = this.UPDATE;
             end
         end
         
-        %http://uk.mathworks.com/help/matlab/ref/getfield.html
-        %http://uk.mathworks.com/help/matlab/ref/setfield.html
-        %Not efficient at all but not the bottleneck!
-        %Can be used at the root of the base class PMCMC. PMCMC_SV and on.
         function this = update_field(this, log_numerator, log_denominator, step, fieldname, value)
             new_val = value;
             if(check_update(this, log_numerator, log_denominator) == this.NO_UPDATE)
@@ -66,15 +62,14 @@ classdef ParticleMarkovChainMonteCarlo < handle
                 for i = 1:length(fields)
                     fieldname = fields{i};
                     if(strendswith(fieldname, '_prop'))
-                        prior_val = this.call_prior(fieldname);
-                        log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
                         
-                        if(log_numerator == -Inf || log_denominator == -Inf)
-                            %fprintf('something went wrong\n');
-                            %Think about it. How can we unstick from here?
-                            %We could think of putting back the medians
-                            %So that the convergence is not broken
-                            %break; 
+                        while true
+                            prior_val = this.call_prior(fieldname);
+                            log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
+                            
+                            if(~isnan(log_numerator))
+                               break; 
+                            end
                         end
                         
                         this.update_field(log_numerator, log_denominator, step, fieldname, prior_val);
