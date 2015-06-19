@@ -1,5 +1,5 @@
 
-function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_NormalLeverage(y, rho, sigma, beta, cor, N, p_y_given_x)
+function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_NormalLeverage(y, rho, sigma, beta, cor, mu, N, p_y_given_x)
     
     %fprintf('[PF] rho = %f, sigma = %f\n', rho, sigma);
     T = length(y);
@@ -21,9 +21,9 @@ function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_Norma
         catch
             nIdx = 1:N;
         end
-        
+        %this.mu + this.rho  * (x(i)-this.mu)
         innov_x                 = sigma * (cor * last_innov_y + sqrt(1-cor^2)*randn(N,1));
-        p(:,t)                  = rho * p(nIdx,t-1) + innov_x;
+        p(:,t)                  = mu + rho * (p(nIdx,t-1)-mu) + innov_x;
         w(:,t)                  = p_y_given_x(y(t), beta * exp(0.5*p(:,t)));
         log_p_y_given_theta(t)  = log_p_y_given_theta(t-1) + log(mean(w(:,t)));
         

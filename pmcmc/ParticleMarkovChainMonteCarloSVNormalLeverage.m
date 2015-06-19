@@ -21,16 +21,16 @@ classdef ParticleMarkovChainMonteCarloSVNormalLeverage < ParticleMarkovChainMont
         function [log_val] = call_likelihood(this, hmm, fieldname, fieldval, step)
             switch fieldname
                 case 'rho_prop'
-                    log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, fieldval, this.sigma_prop(step-1), hmm.beta, this.cor_prop(step-1), this.particles, this.p_y_given_x);
+                    log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, fieldval, this.sigma_prop(step-1), hmm.beta, this.cor_prop(step-1), 0, this.particles, this.p_y_given_x);
                 case 'sigma_prop'
-                    log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, this.rho_prop(step-1), fieldval, hmm.beta, this.cor_prop(step-1), this.particles, this.p_y_given_x);
+                    log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, this.rho_prop(step-1), fieldval, hmm.beta, this.cor_prop(step-1), 0, this.particles, this.p_y_given_x);
                 case 'cor_prop'
-                    log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), hmm.beta, fieldval, this.particles, this.p_y_given_x);
+                    log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), hmm.beta, fieldval, 0, this.particles, this.p_y_given_x);
             end
         end
         
         function [log_val] = call_likelihood_denom(this, hmm, step)
-           log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), hmm.beta, this.cor_prop(step-1), this.particles, this.p_y_given_x);
+           log_val = BootstrapParticleFilter_NormalLeverage(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), hmm.beta, this.cor_prop(step-1), 0, this.particles, this.p_y_given_x);
         end
         
         function [val] = call_prior(~, fieldname)
