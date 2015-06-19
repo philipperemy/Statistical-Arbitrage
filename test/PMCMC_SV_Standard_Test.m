@@ -3,8 +3,8 @@ addpath('../filters/');
 addpath('../models/');
 addpath('../pmcmc/');
 
-mySeed = 57; % an integer number
-rng(mySeed,'twister') %You can replace 'twister' with other generators
+mySeed = 57;
+rng(mySeed,'twister');
 
 st = StochasticVolatilityModel;
 pmcmc = ParticleMarkovChainMonteCarloSV(1000, 1000);

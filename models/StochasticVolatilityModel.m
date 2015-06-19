@@ -8,14 +8,13 @@ classdef StochasticVolatilityModel < HiddenMarkovModel
   
     methods
 
-        function this = StochasticVolatilityModel(rho, sigma, beta, steps, nu)
+        function this = StochasticVolatilityModel(rho, sigma, beta, steps)
             this = this@HiddenMarkovModel();
             if nargin == 5
                 this.rho = rho;
                 this.sigma = sigma;
                 this.beta = beta;
                 this.steps = steps;
-                this.nu = nu;
             end
             generate(this);
         end

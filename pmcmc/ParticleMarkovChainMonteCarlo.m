@@ -67,9 +67,10 @@ classdef ParticleMarkovChainMonteCarlo < handle
                             prior_val = this.call_prior(fieldname);
                             log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
                             
-                            if(~isnan(log_numerator))
+                            if(~isnan(log_numerator) && log_numerator ~= -Inf)
                                break; 
                             end
+                          
                         end
                         
                         this.update_field(log_numerator, log_denominator, step, fieldname, prior_val);

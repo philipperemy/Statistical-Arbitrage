@@ -4,7 +4,7 @@ classdef StochasticVolatilityModelNormalLeverage < HiddenMarkovModel
         rho = 0.91;       %Scale parameter for X
         sigma = 1;        %Standard deviation of the X (process)
         beta = 0.5;       %Scale parameter for Y
-        steps = 400;     %Number of steps
+        steps = 1000;     %Number of steps
         cor = 0.7;        %Correlation factor between the innovations
         innov_Y;
         innov_X;
@@ -35,6 +35,7 @@ classdef StochasticVolatilityModelNormalLeverage < HiddenMarkovModel
                 
                 this.innov_Y(i) = innov_y;
                 this.innov_X(i) = innov_x;
+                
                 x(i+1) = this.rho  * x(i)  + this.sigma*innov_x;
                 y(i)   = this.beta * exp(0.5*x(i))*innov_y;
             end

@@ -7,9 +7,6 @@ load('../data/spx.mat');
 
 p_y_given_x = @(y,sig) normpdf(y, 0, sig);
 
-st = StochasticVolatilityModel;
-
-
 APPLE_TICKER = 239;
 appl_prices = GetPrice(pp, APPLE_TICKER);
 
