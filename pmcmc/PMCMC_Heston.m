@@ -33,39 +33,23 @@ classdef PMCMC_Heston < ParticleMarkovChainMonteCarlo
         function [log_val] = call_likelihood_denom(this, hmm, step)
            log_val = BootstrapParticleFilter_Heston(hmm.y, this.mu_prop(step-1), this.theta_prop(step-1), this.kappa_prop(step-1), this.zeta_prop(step-1), this.particles); 
         end
+
         
-        function [val] = call_prior(this, fieldname)
-            last_val = this.last_val_prior;
-            
-            %init first val;
-            if(last_val == 0)
-               val = rand; 
-            end
-            
+        function [val] = call_prior(~, fieldname)
             switch fieldname
                 case 'mu_prop'
-                    val = Truncated_Randn(last_val, 0.01,  0, 1);
+                    val = randn*0.05;
+                    %val = rand*10;
                 case 'theta_prop'
-                    val = Truncated_Randn(last_val, 0.01,  0, 1);
+                    val = rand;
+                    %val = 1/gamrnd(1, 1/1); %inverse gamma
                 case 'kappa_prop'
-                    val = Truncated_Randn(last_val, 0.01,  0, 1);
+                    val = rand;
                 case 'zeta_prop'
-                    val = Truncated_Randn(last_val, 0.01,  0, 1);
+                    val = rand;
+                    %val = 1/gamrnd(1, 1/1); %inverse gamma
             end
         end
-        
-%         function [val] = call_prior(this, fieldname)
-%             switch fieldname
-%                 case 'mu_prop'
-%                     val = randn*0.01;
-%                 case 'theta_prop'
-%                     val = rand;
-%                 case 'kappa_prop'
-%                     val = rand;
-%                 case 'zeta_prop'
-%                     val = rand;
-%             end
-%         end
         
     end
 end

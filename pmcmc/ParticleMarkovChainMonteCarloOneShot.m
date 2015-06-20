@@ -7,7 +7,6 @@ classdef ParticleMarkovChainMonteCarloOneShot < handle
         NO_UPDATE = 0;
         UPDATE = 1;
         
-        last_val_prior = 0;
     end
 	
 	methods (Abstract)
@@ -53,7 +52,7 @@ classdef ParticleMarkovChainMonteCarloOneShot < handle
                     i = i + 1;
                     
                     %init field with prior
-                    this.(fieldname)(1) = this.call_prior(fieldname);
+                    this.(fieldname)(1) = this.call_prior(fieldname, 0.5);
                 end
             end
             
@@ -61,32 +60,34 @@ classdef ParticleMarkovChainMonteCarloOneShot < handle
 
                 %Core
                 log_denominator = this.call_likelihood_denom(hmm, step);
-                for i = 1:length(fields)
-                    fieldname = fields{i};
-                    if(strendswith(fieldname, '_prop'))
-                        
-                        c = 1;
-                        while true
-                            prior_val = this.call_prior(fieldname);
-                            this.last_val_prior = prior_val;
-                            log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
-                            
-                            if(~isnan(log_numerator) && log_numerator ~= -Inf)
-                               break; 
-                            end
-                            
-                            if(c == 10)
-                               fprintf('stuck in an infinite loop...\n');
-                               return;
-                            end
-                            
-                            c = c + 1;
-                        end
-                        
-                        this.update_field(log_numerator, log_denominator, step, fieldname, prior_val);
+                
+                attempts = 1;
+                while true
+                    
+                    T = length(fields);
+                    thetas = zeros(1,T);
+                    for i = 1:T
+                        fieldname = fields{i};
+                        prior_val = this.call_prior(fieldname, this.(fieldname)(step - 1));
+                        thetas(i) = prior_val;
                     end
+                    
+                    log_numerator = this.call_likelihood(hmm, thetas);
+                    
+                    if(~isnan(log_numerator) && log_numerator ~= -Inf)
+                        break; 
+                    end
+                    
+                    if(attempts == 10)
+                        fprintf('stuck in an infinite loop...\n');
+                       return;
+                    end
+                    
+                    attempts = attempts + 1;
                 end
-
+                
+                this.update_field(log_numerator, log_denominator, step, fieldname, prior_val);
+               
                 %print
                 if(mod(step, 1) == 0)
                     str = 'MCMC step: %i , ';
