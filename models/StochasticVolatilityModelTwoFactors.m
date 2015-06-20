@@ -8,13 +8,22 @@ classdef StochasticVolatilityModelTwoFactors < HiddenMarkovModel
         
         beta = 0.5;       %Scale parameter for Y
         steps = 2000;     %Number of steps
-        z;
+        
+        z; %second process
     end
   
     methods
 
-        function this = StochasticVolatilityModelTwoFactors()
-            this = this@HiddenMarkovModel();
+        function this = StochasticVolatilityModelTwoFactors(rho, sigma, rho2, sigma2, beta, steps)
+            this        = this@HiddenMarkovModel();
+            if(nargin == 6)
+                this.rho    = rho;
+                this.sigma  = sigma;
+                this.rho2   = rho2;
+                this.sigma2 = sigma2;
+                this.beta   = beta;
+                this.steps  = steps;
+            end
             generate(this);
         end
  

@@ -8,9 +8,10 @@ function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter(y, rh
     estimated_states = zeros(1,T);
     log_p_y_given_theta = zeros(1,T);
     
-    p(:,1)              =   randn(N,1) * sqrt(sigma^2/(1-rho^2));
-    w(:,1)              =   p_y_given_x(y(1), beta*exp(0.5*p(:,1)));
+    p(:,1)                  =   randn(N,1) * sqrt(sigma^2/(1-rho^2));
+    w(:,1)                  =   p_y_given_x(y(1), beta*exp(0.5*p(:,1)));
     log_p_y_given_theta(1)  =   log(mean(w(:,1)));
+    estimated_states(1)     =   (w(:,1) / sum(w(:,1)))'*p(:,1);
     
     for t = 2:T
 
@@ -20,9 +21,9 @@ function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter(y, rh
             nIdx = 1:N;
         end
         
-        p(:,t)             = rho * p(nIdx,t-1) + sigma * randn(N,1);
-        w(:,t)             = p_y_given_x(y(t), beta * exp(0.5*p(:,t)));
-        log_p_y_given_theta(t) = log_p_y_given_theta(t-1) + log(mean(w(:,t)));
+        p(:,t)                  = rho * p(nIdx,t-1) + sigma * randn(N,1);
+        w(:,t)                  = p_y_given_x(y(t), beta * exp(0.5*p(:,t)));
+        log_p_y_given_theta(t)  = log_p_y_given_theta(t-1) + log(mean(w(:,t)));
         
         % Calculate state estimate
         norm_w = w(:,t) / sum(w(:,t));

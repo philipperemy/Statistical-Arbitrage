@@ -63,6 +63,7 @@ classdef ParticleMarkovChainMonteCarlo < handle
                     fieldname = fields{i};
                     if(strendswith(fieldname, '_prop'))
                         
+                        c = 1;
                         while true
                             prior_val = this.call_prior(fieldname);
                             log_numerator = this.call_likelihood(hmm, fieldname, prior_val, step);
@@ -70,7 +71,13 @@ classdef ParticleMarkovChainMonteCarlo < handle
                             if(~isnan(log_numerator) && log_numerator ~= -Inf)
                                break; 
                             end
-                          
+                            
+                            if(c == 10)
+                               fprintf('stuck in an infinite loop...\n');
+                               return;
+                            end
+                            
+                            c = c + 1;
                         end
                         
                         this.update_field(log_numerator, log_denominator, step, fieldname, prior_val);
