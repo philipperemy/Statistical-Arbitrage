@@ -1,4 +1,4 @@
-classdef ParticleMarkovChainMonteCarlo < handle
+classdef ParticleMarkovChainMonteCarloOneShot < handle
     
     properties(GetAccess = 'public', SetAccess = 'protected')
         steps_mcmc = 100;
@@ -17,7 +17,7 @@ classdef ParticleMarkovChainMonteCarlo < handle
 	end
   
     methods
-        function this = ParticleMarkovChainMonteCarlo(steps_mcmc, particles)
+        function this = ParticleMarkovChainMonteCarloOneShot(steps_mcmc, particles)
             if nargin == 2
                 this.steps_mcmc = steps_mcmc; 
                 this.particles = particles;
