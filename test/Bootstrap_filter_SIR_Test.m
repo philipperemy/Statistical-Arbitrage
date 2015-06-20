@@ -49,7 +49,7 @@ for N = N_seq
     i = i + 1;
 end
 vars = var(p_y_given_th_mat, 0,2);
-assert(vars(10:end) < 10);
+assert(any(vars(20:end)' < 10));
 
 %%%%%
 % Idea bollinger bands for SV model

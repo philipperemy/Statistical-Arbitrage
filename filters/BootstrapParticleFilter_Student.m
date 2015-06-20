@@ -1,7 +1,7 @@
 
 function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_Student(y, rho, sigma, beta, nu, N, p_y_given_x)
     
-    %fprintf('[PF] rho = %f, sigma = %f\n', rho, sigma);
+    fprintf('[PF] rho = %f, sigma = %f, beta = %f, nu = %f\n', rho, sigma, beta, nu);
     T = length(y);
     p = zeros(N, T);
     w = zeros(N, T);

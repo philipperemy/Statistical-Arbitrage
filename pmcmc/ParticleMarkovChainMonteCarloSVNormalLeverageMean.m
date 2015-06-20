@@ -40,7 +40,7 @@ classdef ParticleMarkovChainMonteCarloSVNormalLeverageMean < ParticleMarkovChain
         function [val] = call_prior(~, fieldname)
             switch fieldname
                 case 'rho_prop'
-                    val = -1 + 2*rand; %unif
+                    val = rand; %unif
                 case 'sigma_prop'
                     val = 1/gamrnd(1, 1/1); %inverse gamma
                 case 'cor_prop'

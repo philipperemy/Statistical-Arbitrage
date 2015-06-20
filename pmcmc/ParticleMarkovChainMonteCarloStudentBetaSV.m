@@ -15,11 +15,15 @@ classdef ParticleMarkovChainMonteCarloStudentBetaSV < ParticleMarkovChainMonteCa
             switch fieldname
                 case 'beta_prop' 
                     log_val = BootstrapParticleFilter_Student(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), fieldval, this.nu_prop(step-1), this.particles, this.p_y_given_x);
-                otherwise
-                    log_val = call_likelihood@ParticleMarkovChainMonteCarloStudentSV(this, hmm, fieldname, fieldval, step);
+                case 'rho_prop'
+                    log_val = BootstrapParticleFilter_Student(hmm.y, fieldval, this.sigma_prop(step-1), this.beta_prop(step-1), this.nu_prop(step-1), this.particles, this.p_y_given_x);
+                case 'sigma_prop'
+                    log_val = BootstrapParticleFilter_Student(hmm.y, this.rho_prop(step-1), fieldval, this.beta_prop(step-1), this.nu_prop(step-1), this.particles, this.p_y_given_x);
+                case 'nu_prop'
+                    log_val = BootstrapParticleFilter_Student(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), this.beta_prop(step-1), fieldval, this.particles, this.p_y_given_x);
             end
         end
-        
+
         function [log_val] = call_likelihood_denom(this, hmm, step)
            log_val = BootstrapParticleFilter_Student(hmm.y, this.rho_prop(step-1), this.sigma_prop(step-1), this.beta_prop(step-1), this.nu_prop(step-1), this.particles, this.p_y_given_x); 
         end

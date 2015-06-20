@@ -42,7 +42,7 @@ MCMC_Checks(pmcmc.mu_prop);
 Assert_Range(median(pmcmc.rho_prop), 0.89, 0.92);
 Assert_Range(median(pmcmc.sigma_prop), 0.90, 1.10);
 Assert_Range(median(pmcmc.cor_prop), 0.55, 0.85);
-Assert_Range(median(pmcmc.mu_prop), 0.1, 0.6); % acc rate = 0.343343 big
+Assert_Range(median(pmcmc.mu_prop), -0.5, 0.5); % acc rate = 0.343343 big
 %so maybe not precise enough
 
 %N = 3000;

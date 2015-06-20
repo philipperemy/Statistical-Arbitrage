@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.9.2)  14 JUN 2015 23:00
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.9.2)  20 JUN 2015 17:47
 entering extended mode
 **Thesis.tex
 ("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\Thesis.tex"
@@ -136,6 +136,24 @@ File: babel.def 2008/07/08 v3.8m Babel common definitions
 \l@australian = a dialect from \language\l@british 
 \l@newzealand = a dialect from \language\l@british 
 ))
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.7 $
+     \newcommand{\Var}{\mathrm{Var}}$
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 7.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 7.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 7.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\amsfonts.sty"
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \@emptytoks=\toks17
@@ -434,21 +452,22 @@ LaTeX Info: Redefining \cite on input line 694.
 LaTeX Warning: Unused global option(s):
     [a4,twosided,singlespacing,titlepagenumber=on].
 
-("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\out\Thesis.aux")
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 137.
-LaTeX Font Info:    ... okay on input line 137.
+("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\Thesis.aux")
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 139.
+LaTeX Font Info:    ... okay on input line 139.
+
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count124
@@ -464,7 +483,7 @@ LaTeX Font Info:    ... okay on input line 137.
 \everyMPtoPDFconversion=\toks34
 ) ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box34
-Package hyperref Info: Link coloring OFF on input line 137.
+Package hyperref Info: Link coloring OFF on input line 139.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -474,33 +493,36 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count130
 )
-LaTeX Info: Redefining \ref on input line 137.
-LaTeX Info: Redefining \pageref on input line 137.
-LaTeX Info: Redefining \nameref on input line 137.
+LaTeX Info: Redefining \ref on input line 139.
+LaTeX Info: Redefining \pageref on input line 139.
+LaTeX Info: Redefining \nameref on input line 139.
 
-("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\out\Thesis.out")
-("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\out\Thesis.out")
+("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\Thesis.out")
+("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\Thesis.out")
 \@outlinefile=\write3
-<Imperial__4_colour_process.jpg, id=71, 564.60938pt x 148.30406pt>
+
+[1
+
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<Imperial__4_colour_process.jpg, id=9, 564.60938pt x 148.30406pt>
 File: Imperial__4_colour_process.jpg Graphic file (type jpg)
 
 <use Imperial__4_colour_process.jpg>
-Package pdftex.def Info: Imperial__4_colour_process.jpg used on input line 140.
+Package pdftex.def Info: Imperial__4_colour_process.jpg used on input line 142.
 
 (pdftex.def)             Requested size: 199.16928pt x 52.31451pt.
-LaTeX Font Info:    Try loading font information for T1+cmss on input line 140.
+LaTeX Font Info:    Try loading font information for T1+cmss on input line 142.
 
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\t1cmss.fd"
 File: t1cmss.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-) [1
+) [2
 
 
-
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/Users/Philippe Rémy/g
-it/Statistical-Arbitrage/doc/report/Imperial__4_colour_process.jpg>]
+ <C:/Users/Philippe Rémy/git/Statistical-Arbitrage/doc/report/Imperial__4_colo
+ur_process.jpg>]
 ! Undefined control sequence.
-l.142 \declaration
+l.144 \declaration
                   
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -508,23 +530,20 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-[2
 
-]
-("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\out\Thesis.toc"
-LaTeX Font Info:    Try loading font information for U+msa on input line 3.
+Underfull \hbox (badness 10000) in paragraph at lines 147--148
 
+ []
+
+LaTeX Font Info:    Try loading font information for U+msa on input line 149.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 3.
+LaTeX Font Info:    Try loading font information for U+msb on input line 149.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
-\tf@toc=\write4
- [3
-
+) [3
 
 ]
 Chapter 1.
@@ -537,6 +556,7 @@ Class scrreprt Warning: \float@addtolists detected!
 
 [4
 
+
 ]
 
 ! Package amsmath Error: \hat allowed only in math mode.
@@ -545,7 +565,7 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.190 ...inal MCMC scheme, substituting in \hat{p}
+l.214 ...inal MCMC scheme, substituting in \hat{p}
                                                   _\theta(y_{1:T}) from a bo...
 
 You're in trouble here.  Try typing  <return>  to proceed.
@@ -554,7 +574,7 @@ If that doesn't work, type  X <return>  to quit.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.190 ...nal MCMC scheme, substituting in \hat{p}_
+l.214 ...nal MCMC scheme, substituting in \hat{p}_
                                                   \theta(y_{1:T}) from a boo...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -562,128 +582,73 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.190 ...otstrap particle filter in place of $p(y_
+l.214 ...otstrap particle filter in place of $p(y_
                                                   {1:T}|\theta)$. This turns...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
+[5]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 213.
-[5] [6] [7]
-Chapter 2.
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 291.
+put line 237.
+ [6] [7]
+Underfull \hbox (badness 10000) in paragraph at lines 297--299
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\t1cmtt.fd"
-File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-) [8
+ []
 
-]
-Chapter 3.
-<mandelbrot.jpg, id=149, 616.704pt x 462.528pt>
-File: mandelbrot.jpg Graphic file (type jpg)
- <use mandelbrot.jpg>
-Package pdftex.def Info: mandelbrot.jpg used on input line 321.
-(pdftex.def)             Requested size: 334.60571pt x 250.95412pt.
- [9
+[8]
+! Extra }, or forgotten $.
+l.328 ...estimator to be consistent, $g(\theta_i)}
+                                                  $ must be thin-tailed rela...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
 
-]
-[10 <C:/Users/Philippe Rémy/git/Statistical-Arbitrage/doc/report/mandelbrot.jp
-g>]
-Chapter 4.
-
-Package natbib Warning: Citation `cox_regression_1972' on page 11 undefined on 
-input line 363.
-
-
-Package natbib Warning: Citation `mccullagh_generalized_1989' on page 11 undefi
-ned on input line 363.
-
-
-Package natbib Warning: Citation `plagiarism' on page 11 undefined on input lin
-e 363.
-
-
-Package natbib Warning: Citation `nonexistingreference' on page 11 undefined on
- input line 363.
-
-[11
-
-]
+[9] [10] [11]
 No file Thesis.bbl.
-Appendix A.
-
-Overfull \hbox (11.78064pt too wide) in paragraph at lines 404--404
-[]\T1/cmtt/m/n/10.95 # If x is a non-negative integer, then it outputs the next
- positive integer.[] 
- []
-
-[12
-
-
-
-]
-Appendix B.
-
-Overfull \hbox (32.58054pt too wide) in paragraph at lines 413--414
-[][]$\T1/cmtt/m/n/10.95 http : / / www3 . imperial . ac . uk / graphicidentity 
-/ applyingthegraphicidentity /$
- []
-
-
-Overfull \hbox (32.58054pt too wide) in paragraph at lines 415--416
-[][]$\T1/cmtt/m/n/10.95 http : / / www3 . imperial . ac . uk / graphicidentity 
-/ applyingthegraphicidentity /$
- []
-
-
-Package natbib Warning: There were undefined citations.
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 427.
-[13
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 427.
-
-("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\out\Thesis.aux")
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 427.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 427.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 399.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 399.
+("C:\Users\Philippe Rémy\git\Statistical-Arbitrage\doc\report\Thesis.aux")
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 399.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 399.
 Package rerunfilecheck Info: File `Thesis.out' has not changed.
-(rerunfilecheck)             Checksum: 11CEF14CCB286188F214BA97BCD0B927;1125.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 427.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 399.
  ) 
 Here is how much of TeX's memory you used:
- 8864 strings out of 493921
- 130175 string characters out of 3144850
- 243590 words of memory out of 3000000
- 11984 multiletter control sequences out of 15000+200000
- 19215 words of font info for 47 fonts, out of 3000000 for 9000
+ 8789 strings out of 493921
+ 128598 string characters out of 3144850
+ 243268 words of memory out of 3000000
+ 11926 multiletter control sequences out of 15000+200000
+ 18994 words of font info for 44 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 36i,10n,36p,1157b,361s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\Philippe Rémy\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\e
-c\dpi600\ecrm1000.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dp
-i600\ectt1095.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600
-\ecsx1200.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecr
-m0900.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx109
-5.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx1440.pk
-> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx1095.pk> <C
-:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx2074.pk> <C:\Pr
-ogramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecti1095.pk> <C:\Users\
-Philippe Rémy\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm
-1200.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1440
-.pk> <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx2488.pk>
- <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1095.pk><C:/
-Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Prog
-ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program
- Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Fi
-les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files 
-(x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86
-)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+ 36i,10n,36p,1159b,362s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx1200.pk> <
+C:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm0900.pk> <C:\P
+rogramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx1095.pk> <C:\Progr
+amData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx1440.pk> <C:\ProgramDa
+ta\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx2074.pk> <C:\ProgramData\M
+iKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecti1095.pk> <C:\Users\Philippe R�
+�my\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1200.pk> <C
+:\ProgramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1440.pk> <C:\Pr
+ogramData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecsx2488.pk> <C:\Progra
+mData\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1095.pk><C:/Program Fil
+es (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files
+ (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files (
+x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files (x86
+)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files (x86)/M
+iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
+type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/symbols/msbm10.pfb>
 Output written on "C:/Users/Philippe Rémy/git/Statistical-Arbitrage/doc/report
-/out/Thesis.pdf" (13 pages, 1629329 bytes).
+/out/Thesis.pdf" (11 pages, 292164 bytes).
 PDF statistics:
- 664 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 500000)
- 147 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 440 PDF objects out of 1000 (max. 8388607)
+ 29 named destinations out of 1000 (max. 500000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

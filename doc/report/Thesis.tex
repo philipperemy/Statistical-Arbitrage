@@ -4,6 +4,8 @@
 \usepackage[latin1]{inputenc} % May or may not be needed. Says that your *.tex file is a text file with ASCII latin1 encoding. You could use e.g. utf8 instead for easier accents etc.
 \usepackage[UKenglish]{babel} % Let LaTeX know what language the text is in so it can select the correct hyphenation pattern etc
 
+$\newcommand{\Var}{\mathrm{Var}}$
+
 %%% American Mathematical Society packages
 \usepackage{amsfonts,amssymb,amsmath,amsthm}
 \usepackage{amsbsy}
@@ -142,7 +144,10 @@ copied or distributed except with permission from the author.}
 \declaration
 
 \begin{abstract}
-This project is aimed to investigate the practical benefit of using more complex modelling than what is currently standard practice in applications related to statistical arbitrage. The underlying assets will be modelled using appropriate mean-reverting time series or state space models. In order to fit these models to real data the project will involve using advanced particle methods such as Particle Markov Chain Monte Carlo. The primary aim of the project is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practise. This will be illustrated in numerical examples, where the computed portfolio is used for a realistic scenario obtained by popular trading platforms. Simulations will be mainly run in Matlab, but embedding C/C++ routines may be required to speed up computations. The project is a challenging computational Statistics application to finance and is this suitable for a student with an interest in finance, very good aptitute to computing and understanding of the material in the course related to Monte Carlo methods and Time Series.
+This project is aimed to investigate the practical benefit of using more complex modelling than what is currently standard practice in applications related to statistical arbitrage. The underlying assets will be modelled using appropriate mean-reverting time series or state space models. In order to fit these models to real data the project will involve using advanced particle methods such as Particle Markov Chain Monte Carlo. The primary aim of the project is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practise. This will be illustrated in numerical examples, where the computed portfolio is used for a realistic scenario obtained by popular trading platforms. Simulations will be mainly run in Matlab, but embedding C/C++ routines may be required to speed up computations. The project is a challenging computational Statistics application to finance and is this suitable for a student with an interest in finance, very good aptitute to computing and understanding of the material in the course related to Monte Carlo methods and Time Series. \\
+
+Throughout, $p(\cdot)$ and $p(\cdot| \cdot)$ are used to denote general marginal and conditional probability density functions, with the arguments making it clear which distributions these relate to. \\
+A realization of a stochastic process $X$ on a finite discrete space $\{0,...,T\}$ is denoted $x_{0:T} = (x_1,...,x_T)$.
 \end{abstract}
 \newpage
 %\chapter*{Acknowledgements}
@@ -170,10 +175,29 @@ This project is aimed to investigate the practical benefit of using more complex
 
 
 %\pagestyle{headings} % uncomment this if you want headers on your pages. Google fancyhdr or look into the options of scrreprt if you want different headers.
-\chapter{State Space Modelling}
+\chapter{Particle MCMC}
+
+\section{Introduction}
+Particle MCMC embeds a particle filter within an MCMC scheme. The standard version uses a particle filter to propose new values for the stochastic process (basically $x_{0:T}$), and MCMC moves to propose new values for the parameters (usually named $\theta$). One of the most challenging task in designing a PMCMC sampler is considering the trade-off between the Monte Carlo error of the particle filter and the mixing of the MCMC moves. Intuitively, when $N$, the number of particles grows to infinity, the variance of the error becomes very small and the mixing of the chain becomes very poor.
+
+\section{State-Space Models}
+The state-space models are parameterised by $\theta = (\theta_1,...,\theta_n)$ and all components are considered to be independent one another. $\theta$ is associated a prior distribution $p(\theta) = \prod_i p(\theta_i)$ State-space models are usually defined in continuous time because physical laws are most often described in terms of differential equations. However, most of the time, a discrete-time representation exists. It is often written in the innovation form that describes noise. An example of such a process is describe in the Stochastic Volatility section. The model is composed of an unobserved process $X_{0:T}$ and $Y_{1:T}$, known as the observations. $X_{0:T}$ is assumed to be first order markovian, governed by a transition kernel $K(x_{t+1}|x_t)$. The probability density of a realization $x_{0:T}$ is written as:
+
+$$p(X_{0:T} = x_{0:T} | \theta) = p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) $$
+
+The process $X$ is not observed directly, but through $y_{1:T}$. The state-space model assumes that each $y_t$ is dependent of $x_t$. As a consequence, the conditional likelihood of the observations, given the state process can be derived as:
+
+$$p(y_{1:T} | x_{1:T}, \theta) = \prod_{t=1}^T p(y_t | x_t, \theta) $$
+
+The general idea is to find $\theta$ which maximize the marginal likelihood $p(y_{1:T}|\theta)$, $x$ integrated out. It is interesting to begin by the approximation of $p(x_{1:T}, \theta | y_{1:T})$. By Bayes theorem:
+
+$$p(x_{1:T}, \theta | y_{1:T}) \propto p(\theta)p(x_{1:T}|\theta)p(y_{1:T}|x_{1:T}, \theta) $$
+
+
+
 \section{Bootstrap Particle Filter}
 
-The bootstrap particle filter is an iterative method for carrying out Bayesian inference for dynamic state space (partially observed Markov process) models, sometimes also known as hidden Markov models (HMMs). Here, an unobserved Markov process, $x_0,x_1,\ldots,x_T$ governed by a transition kernel $p(x_{t+1}|x_t)$ is partially observed via some measurement model $p(y_t|x_t)$ leading to data $y_1,\ldots,y_T$. The idea is to make inference for the hidden states $x_{0:T}$ given the data $y_{1:T}$. The method is a very simple application of the importance resampling technique. At each time, t, we assume that we have a (approximate) sample from $p(x_t|y_{1:t}$) and use importance resampling to generate an approximate sample from $p(x_{t+1}|y_{1:t+1}$).
+The bootstrap particle filter is an iterative method for carrying out Bayesian inference on state-space models, sometimes also known as hidden Markov models (HMMs). Here, an unobserved Markov process, $x_0,x_1,\ldots,x_T$ governed by a transition kernel $p(x_{t+1}|x_t)$ is partially observed via some measurement model $p(y_t|x_t)$ leading to data $y_1,\ldots,y_T$. The idea is to make inference for the hidden states $x_{0:T}$ given the data $y_{1:T}$. The method is a very simple application of the importance resampling technique. At each time, t, we assume that we have a (approximate) sample from $p(x_t|y_{1:t}$) and use importance resampling to generate an approximate sample from $p(x_{t+1}|y_{1:t+1}$).
 
 More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_0),\ k=1,\ldots,M$ with uniform normalised weights ${w'}_0^k=1/M$. Then suppose that we have a weighted sample $\{x_t^k,{w'}_t^k|k=1,\ldots,M\}$ from $p(x_t|y_{1:t}$). First generate an equally weighted sample by resampling with replacement M times to obtain $\{\tilde{x}_t^k|k=1,\ldots,M\}$ (giving an approximate random sample from $p(x_t|y_{1:t}$)). Note that each sample is independently drawn from $\sum_{i=1}^M {w'}_t^i\delta(x-x_t^i)$. Next propagate each particle forward according to the Markov process model by sampling $x_{t+1}^k\sim p(x_{t+1}|\tilde{x}_t^k),\ k=1,\ldots,M$ (giving an approximate random sample from $p(x_{t+1}|y_{1:t}$)). Then for each of the new particles, compute a weight $w_{t+1}^k=p(y_{t+1}|x_{t+1}^k$), and then a normalised weight ${w'}_{t+1}^k=w_{t+1}^k/\sum_i w_{t+1}^i$.
 
@@ -235,6 +259,8 @@ The marginal log likelihood and its estimator are:
 \end{algorithm}
 
 \newpage
+
+
 \section{Stochastic Volatility}
 In this section, we introduce the standard stochastic volatility with Gaussian errors. Next, we consider different well-known extensions of the SV model. The first extension is a SV model with Student-t errors. In the second extension, we incorporate a leverage effect by modeling a correlation parameter between measurement and state errors. In the third extension, we implement a model that has both stochastic volatility and moving average errors.
 
@@ -333,12 +359,12 @@ In a more general context, a Metropolis Hastings scheme can be used to target $p
 \min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p({y}|\theta^\star)}{p({y}|\theta)} \right)
 \end{align*}
 
-where $q(\theta^\star|\theta)$ is the proposal density. In Hidden Markov Models, the marginal likelihood $p(y|\theta)$ is often intractable and the ratio is hard to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,x|y)$. Usually $p(x|\theta)$ is tractable. For instance, in the linear Gaussian case, $x_{0:T}$ can be simulated when $\rho$ and $\tau$ are known. The MH is built in two stages. First, a new $\theta^*$ is proposed from $q(\theta^\star|\theta)$ and then, $x^*$ is sampled from $p(x^\star|\theta^\star)$. The pair $(\theta^\star,x^\star)$ is accepted with the ratio:
+where $q(\theta^\star|\theta)$ is the proposal density. In Hidden Markov Models, the marginal likelihood $p(y|\theta) = \int_{\mathbb{R}^T} p(y|x)p(x|\theta) dx$ is often intractable and the ratio is hard to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,x|y)$. Usually the knowledge of the kernel $K(x_t|x_{t-1})$ makes $p(x|\theta)$ tractable. For instance, in the linear Gaussian case, a path $x_{0:T}$ can be simulated when $\rho$ and $\tau$ are known. The MH is built in two stages. First, a new $\theta^*$ is proposed from $q(\theta^\star|\theta)$ and then, $x^*$ is sampled from $p(x^\star|\theta^\star)$. The pair $(\theta^\star,x^\star)$ is accepted with the ratio:
 
 \begin{align*}
 \min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)} \right)
 \end{align*}
-At each step, the $x^*$ is consistent of $\theta^*$ thanks to this proposed mecanism. The main drawback is that $T$ must be really small to have a good acceptance rate. As a matter of fact, since the conditional likelihood $p(y|{x}^\star,\theta^\star)$ is a product of $T$ terms over the path $x_{0:T}$, it becomes intractable very quickly as $T$ increases. The sampled $x^*$ must also be consistent with $y$. This is the reason why $x^*$ should be sampled from $p(x^\star|\theta^\star,y)$. The ratio becomes:
+At each step, the $x^*$ is consistent of $\theta^*$ thanks to the tractability of $p(x^\star|\theta^\star)$. The problem of this approach is that the sampled $x^*$ may not be consistent with $y$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $x^\star$ to track $p(y|x^\star,\theta)$. This is the reason why $x^*$ should be sampled from $p(x^\star|\theta^\star,y)$. The ratio becomes:
 
 \begin{align*}
  \min \left(1, \frac{p(\theta^\star)}{p(\theta)}   \frac{p({x}^\star|\theta^\star)}{p({x}|\theta)}   \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)}   \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)}  \frac{p({x}|y,\theta)}{p({x}^\star|y,\theta^\star)} \right)

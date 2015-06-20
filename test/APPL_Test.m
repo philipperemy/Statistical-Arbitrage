@@ -3,6 +3,7 @@ addpath('../filters/');
 addpath('../helpers/');
 addpath('../pmcmc/');
 addpath('../models/');
+addpath('../likelihoods/');
 
 load('../data/spx.mat');
 
@@ -20,8 +21,10 @@ steps_mcmc = 50000;
 particles = 1000;
 
 %%%%%%%%%%%% STOCHASTIC VOLATILITY SIMPLE MODEL %%%%%%%%%%%%
-pmcmc = ParticleMarkovChainMonteCarloSV(steps_mcmc, particles*3);
-%pmcmc.run(st);
+tic;
+pmcmc = ParticleMarkovChainMonteCarloSV(20, particles);
+pmcmc.run(st);
+toc;
 
 rho = 0.9989;
 sigma = 0.2243;
@@ -54,7 +57,7 @@ pmcmc = ParticleMarkovChainMonteCarloStudentBetaSV(steps_mcmc, particles*3);
 pmcmc.run(st);
 
 [log_p_y_given_theta_SVT, ~] = BootstrapParticleFilter_Student(st.y, 0.9989, 0.266967, 0.998863, 6.74, 10000, pmcmc.p_y_given_x);
-BayesFactor(log_p_y_given_theta_SVT, log_p_y_given_theta_SV)
+BayesFactor(log_p_y_given_theta_SVT, log_p_y_given_theta_SV) %bayes factor is 8-20
 
 MCMC_Checks(pmcmc.rho_prop(1000:6000));
 figure;
