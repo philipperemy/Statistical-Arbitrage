@@ -191,13 +191,16 @@ $$p(y_{1:T} | x_{1:T}, \theta) = \prod_{t=1}^T p(y_t | x_t, \theta) $$
 
 The general idea is to find $\theta$ which maximize the marginal likelihood $p(y_{1:T}|\theta)$, $x$ integrated out. It is interesting to begin by the approximation of $p(x_{1:T}, \theta | y_{1:T})$. By Bayes theorem:
 
-$$p(x_{1:T}, \theta | y_{1:T}) \propto p(\theta)p(x_{1:T}|\theta)p(y_{1:T}|x_{1:T}, \theta) $$
+\begin{align*}
+p(x_{1:T}, \theta | y_{1:T}) &\propto p(\theta)p(x_{1:T}|\theta)p(y_{1:T}|x_{1:T}, \theta) \\
+ &= p(\theta) p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) \prod_{t=1}^T p(y_t | x_t, \theta)
+\end{align*}
 
+Usually, this probability density function is intractable since it becomes incredibly demanding in resources when $T$ grows. That is where the particle filter comes in.
 
+\section{Particle Filter}
 
-\section{Bootstrap Particle Filter}
-
-The bootstrap particle filter is an iterative method for carrying out Bayesian inference on state-space models, sometimes also known as hidden Markov models (HMMs). Here, an unobserved Markov process, $x_0,x_1,\ldots,x_T$ governed by a transition kernel $p(x_{t+1}|x_t)$ is partially observed via some measurement model $p(y_t|x_t)$ leading to data $y_1,\ldots,y_T$. The idea is to make inference for the hidden states $x_{0:T}$ given the data $y_{1:T}$. The method is a very simple application of the importance resampling technique. At each time, t, we assume that we have a (approximate) sample from $p(x_t|y_{1:t}$) and use importance resampling to generate an approximate sample from $p(x_{t+1}|y_{1:t+1}$).
+The particle filter is an iterative MC method for carrying out bayesian inference on state-space models. The method is a very simple application of the importance resampling technique. At each time, t, we assume that we have a (approximate) sample from $p(x_t|y_{1:t}$) and use importance resampling to generate an approximate sample from $p(x_{t+1}|y_{1:t+1}$).
 
 More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_0),\ k=1,\ldots,M$ with uniform normalised weights ${w'}_0^k=1/M$. Then suppose that we have a weighted sample $\{x_t^k,{w'}_t^k|k=1,\ldots,M\}$ from $p(x_t|y_{1:t}$). First generate an equally weighted sample by resampling with replacement M times to obtain $\{\tilde{x}_t^k|k=1,\ldots,M\}$ (giving an approximate random sample from $p(x_t|y_{1:t}$)). Note that each sample is independently drawn from $\sum_{i=1}^M {w'}_t^i\delta(x-x_t^i)$. Next propagate each particle forward according to the Markov process model by sampling $x_{t+1}^k\sim p(x_{t+1}|\tilde{x}_t^k),\ k=1,\ldots,M$ (giving an approximate random sample from $p(x_{t+1}|y_{1:t}$)). Then for each of the new particles, compute a weight $w_{t+1}^k=p(y_{t+1}|x_{t+1}^k$), and then a normalised weight ${w'}_{t+1}^k=w_{t+1}^k/\sum_i w_{t+1}^i$.
 
