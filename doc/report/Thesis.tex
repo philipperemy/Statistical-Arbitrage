@@ -200,68 +200,131 @@ Usually, this probability density function is intractable since it becomes incre
 
 \section{Particle Filter}
 
-The particle filter is an iterative MC method for carrying out bayesian inference on state-space models. The method is a very simple application of the importance resampling technique. At each time, t, we assume that we have a (approximate) sample from $p(x_t|y_{1:t}$) and use importance resampling to generate an approximate sample from $p(x_{t+1}|y_{1:t+1}$).
+The particle filter is an iterative Monte Carlo method for carrying out bayesian inference on state-space models. The main idea is to assume that, at each time $t$, an approximation of $p(x_t|y_{1:t}$) can help generating approximate samples of $p(x_{t+1}|y_{1:t+1}$), using importance resampling.
 
-More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_0),\ k=1,\ldots,M$ with uniform normalised weights ${w'}_0^k=1/M$. Then suppose that we have a weighted sample $\{x_t^k,{w'}_t^k|k=1,\ldots,M\}$ from $p(x_t|y_{1:t}$). First generate an equally weighted sample by resampling with replacement M times to obtain $\{\tilde{x}_t^k|k=1,\ldots,M\}$ (giving an approximate random sample from $p(x_t|y_{1:t}$)). Note that each sample is independently drawn from $\sum_{i=1}^M {w'}_t^i\delta(x-x_t^i)$. Next propagate each particle forward according to the Markov process model by sampling $x_{t+1}^k\sim p(x_{t+1}|\tilde{x}_t^k),\ k=1,\ldots,M$ (giving an approximate random sample from $p(x_{t+1}|y_{1:t}$)). Then for each of the new particles, compute a weight $w_{t+1}^k=p(y_{t+1}|x_{t+1}^k$), and then a normalised weight ${w'}_{t+1}^k=w_{t+1}^k/\sum_i w_{t+1}^i$.
+More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_0),\ k=1,\ldots,M$ with uniform normalised weights ${w'}_0^k=1/M$. Then suppose that we have a weighted sample $\{x_t^k,{w'}_t^k|k=1,\ldots,M\}$ from $p(x_t|y_{1:t}$). First generate an equally weighted sample by resampling with replacement M times to obtain $\{\tilde{x}_t^k|k=1,\ldots,M\}$ (giving an approximate random sample from $p(x_t|y_{1:t}$)). Note that each sample is independently drawn from $\sum_{i=1}^M {w'}_t^i\delta(x-x_t^i)$. Next propagate each particle forward according to the Markov process model by sampling $x_{t+1}^k\sim p(x_{t+1}|\tilde{x}_t^k),\ k=1,\ldots,M$ (giving an approximate random sample from $p(x_{t+1}|y_{1:t}$)). Then for each of the new particles, compute a weight $w_{t+1}^k=p(y_{t+1}|x_{t+1}^k$), and then a normalised weight ${w'}_{t+1}^k=w_{t+1}^k/\sum_i w_{t+1}^i$. \\
 
-It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(x_{t+1}|y_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define
-
-$$\displaystyle \hat{p}(y_t|y_{1:t-1})=\frac{1}{M}\sum_{k=1}^M w_t^k$$
-
-and
-
-$$\displaystyle \hat{p}(y_{1:T}) = \hat{p}(y_1)\prod_{t=2}^T \hat{p}(y_t|y_{1:t-1}).$$
-
-Again, from our understanding of importance resampling, it should be reasonably clear that $\hat{p}(y_{1:T})$ is a consistent estimator of ${p}(y_{1:T}$). It is much less clear, but nevertheless true that this estimator is also unbiased. The standard reference for this fact is Del Moral (2004), but this is a rather technical monograph. A much more accessible proof (for a very general particle filter) is given in Pitt et al (2011).
-
-It should therefore be clear that if one is interested in developing MCMC algorithms for state space models, one can use a pseudo-marginal MCMC scheme, substituting in \hat{p}_\theta(y_{1:T}) from a bootstrap particle filter in place of $p(y_{1:T}|\theta)$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in Andreiu et al (2010). 
-
-In bootstrap particle filter, $\pi(x_k^{(i)} | x_{0:k-1}^{(i)}, y_{0:k}) = p(x_k^{(i)}|x_{k-1}^{(i)})$. When the transition prior probability is used as the importance function, the weights update formula is simplified:
+Sequential Importance Resampling (SIR) filters with transition prior probability distribution as importance function are commonly known as bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(x_k| x_{0:k-1}, y_{0:k}) = p(x_k|x_{k-1})$ and the weights formula is now:
 
 $$
 w_k^{(i)} = w_{k-1}^{(i)} \frac{p(y_k|x_k^{(i)})p(x_k^{(i)}|x^{(i)}_{k-1})}{\pi(x_k^{(i)}|x^{(i)}_{0:k-1},y_{0:k})}= w_{k-1}^{(i)} p(y_k|x_k^{(i)})
 $$ 
 
-In the bootstrap particle filter, it is clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far:
 
-$$ p^N_{\theta}(y_t | y_{0:t-1}) = \frac{1}{N} \sum_{k=1}^N w_t^k$$
-The marginal likelihood at time $T$ is:
-$$ p_{\theta}(y_{0:T}) = p(y_0)\prod_{t=1}^T p(y_t | y_{1:t-1})$$
+It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(x_{t+1}|y_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $y_t$:
 
-Again, from our understanding of importance resampling, it should be reasonably clear that $\hat{p}^N_{\theta}(y_{0:T})$ is a consistent estimator of $p_{\theta}(y_{0:T})$. It is much less clear, but nevertheless true that this estimator is also unbiased according to Del Moral (2004).
+$$ p^N_{\theta}(y_t | y_{1:t-1}) = \frac{1}{N} \sum_{k=1}^N w_t^k$$
 
-The marginal log likelihood and its estimator are:
+and the conditional marginal $y_{1:T}$ over all the state space is:
+
+$$ p^N_{\theta}(y_{0:T}) = p(y_1)\prod_{t=2}^T p(y_t | y_{1:t-1})$$
+
+As $T$ is usually large, it is preferred to work with the log likelihoods:
 \begin{align*}
-\log(p_{\theta}(y_{0:t})) &= \log(p(y_0)) + \sum_{t=1}^t \log \left(p(y_t | y_{1:t-1}) \right) \\
-\log(p^N_{\theta}(y_{0:t})) &= - \log(N) + \sum_{t=1}^t \log \left(\frac{1}{N} \sum_{k=1}^N w_t^k \right)
+\log p_{\theta}(y_{1:t}) &= \log(p_\theta(y_1)) + \sum_{t=2}^t \log p_\theta(y_t | y_{1:t-1}) \\
+\log \hat{p}^N_{\theta}(y_{1:t}) &= \sum_{t=2}^t \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{(t)} \right)
 \end{align*}
 
 \begin{algorithm}
 \caption{Bootstrap Particle Filtering Algorithm (SIR)}\label{euclid}
 \begin{algorithmic}[1]
-\Procedure{}{}
-\\
-\For{i from 1 to N} 
-	\State $x_k^{(i)} \sim \pi(x_k | x_{0:k-1}^{(i)}, y_{0:k})$
-	\State $w_k^{(i)} = \hat{w}_k^{(i-1)} p(y_k | x_k^{(i)})$
+\Procedure{Input}{$y_{1:T}$, $\theta$, N}
+\For{i from 1 to N}
+	\State Sample $x_1^{(i)}$ independently from $p(x_1)$
+	\State Calculate weights $w_1^{(i)} = p(y_1 | x_1^{(i)})$
+\EndFor{end}
+\State $x^*_1 = \sum_{i=1}^N x_1^{(i)}.w_1^{(i)}$
+\State Set $\hat{p}(y_1) = \frac{1}{N} \sum_{i=1}^N w_1^{(i)}$
+
+\For{t from 1 to T}
+	\For{i from 1 to N}
+		\State Sample $j$ from 1:N with probabilities proportional to $\{w_{t-1}^{(1)},..., w_{t-1}^{(N)}\}$
+		\State Sample $x_t^{(i)}$ from $p(x_t|x_{t-1})$
+		\State Calculate weights $w_t^{(i)} = p(y_t|x_t^{(i)})$
+	\EndFor{end}
+	\State $x^*_t = \sum_{i=1}^N x_t^{(i)}.w_t^{(i)}$
+	\State Set $\hat{p}(y_{1:t}) = \hat{p}(y_{1:t-1}) \left(\frac{1}{N} \sum_{i=1}^N w_t^{(i)} \right)$
 \EndFor{end}
 \\
-\For{i from 1 to N} 
-	\State $w_k^{(i)} = \hat{w}_k^{(i)} / \sum_{j=1}^N \hat{w}_k^{(j)} $
-\EndFor{end}
-\\
-\State $x_k$ = resampling($x_k$, $w_k)$
-\For{i from 1 to N} 
-	\State $w_k^{(i)} = 1 / N$
+\Return ($x^*_{1:T}$, $\hat{p}(y_{1:T})$)}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Again, from the importance resampling scheme, it should be reasonably clear that $p^N_{\theta}(y_{1:T})$ is a consistent estimator of $p_{\theta}(y_{1:T})$. It is much less obvious, but nevertheless true that this estimator is also unbiased. This result is the cornerstone of Particle MCMC models, especially for the particle marginal Metropolis-Hastings Algorithm  explained in the next section.
+
+\section{Particle marginal Metropolis-Hastings Algorithm}
+
+Before explaining in details how the Particle marginal Metropolis-Hastings Algorithm (PMMH) works, a more general context is presented. The Metropolis Hastings MCMC scheme is used to target $p(\theta| y) \propto p(y|\theta)p(\theta)$ with the ratio:
+
+\begin{align*}
+\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p({y}|\theta^\star)}{p({y}|\theta)} \right)
+\end{align*}
+
+where $q(\theta^\star|\theta)$ is the proposal density. As discussed before, in hidden Markov models, the marginal likelihood $p(y|\theta) = \int_{\mathbb{R}^T} p(y|x)p(x|\theta) dx$ is often intractable and the ratio is hard to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,x|y)$. Usually the knowledge of the kernel $K(x_t|x_{t-1})$ makes $p(x|\theta)$ tractable. For instance, for a linear Gaussian process $x_{t+1} = \rho x_t + \tau \epsilon_{t+1}$, a path $x_{0:T}$ can be simulated as long as $\rho$, $\tau$ and $x_0$ are known quantities. The MH is built in two stages. First, a new $\theta^*$ is proposed from $q(\theta^\star|\theta)$. Then, $x^*$ is sampled from $p(x^\star|\theta^\star)$. The generated pair $(\theta^\star,x^\star)$ is accepted with the ratio:
+
+\begin{align*}
+\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)} \right)
+\end{align*}
+At each step, $x^*$ is consistent with $\theta^*$ because it was generated from $p(x^\star|\theta^\star)$. The problem of this approach is that the sampled $x^*$ may not be consistent with $y$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $x^\star$ to track $p(y|x^\star,\theta)$. This is the reason why $x^*$ should be sampled from $p(x^\star|\theta^\star,y)$. With the remark, the ratio now becomes:
+
+\begin{align*}
+ \min \left(1, \frac{p(\theta^\star)}{p(\theta)}   \frac{p({x}^\star|\theta^\star)}{p({x}|\theta)}   \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)}   \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)}  \frac{p({x}|y,\theta)}{p({x}^\star|y,\theta^\star)} \right)
+\end{align*}
+
+Using the basic marginal likelihood identity of Chib (1995), the ratio is simplified to:
+
+\begin{align*}
+ \min \left(1, \frac{p(\theta^\star)}{p(\theta)}  \frac{p(y|\theta^\star)}{p(y|\theta)} \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)} \right)
+\end{align*}
+
+It is now clear that a pseudo-marginal MCMC scheme for state space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in Andreiu et al (2010).
+
+Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used.
+
+The PMMH algorithm is depicted below.
+
+\begin{algorithm}
+\caption{Particle pseudo marginal Metropolis-Hastings Algorithm}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{Input}{$y_{1:T}$, a proposal distribution $q(\cdot|\cdot)$, the number of particles $N$, the number of MCMC steps $M$}
+
+\State $\hat{p}^N_{\theta^{(0)}}(y_{1:T}), x^*_{1:T}^{(0)}$ $ \gets$ Call Bootstrap Particle Filter with ($y_{1:T}$, $\theta^{(0)}$, N)
+
+\For{i from 1 to M}
+	\State Sample $\theta'}$ from q(\theta|\theta^{(i-1)})$
+	\State $\hat{p}^N_{\theta'}(y_{1:T}), x^*_{1:T}'$ $ \gets$ Call Bootstrap Particle Filter with ($y_{1:T}$, $\theta'$, N)
+	\State With probability,
+	
+	$$\min \left\{1, \frac{q(\theta^{(i-1)}|\theta')\hat{p}_N(y_{1:T}|\theta')p(\theta')}{q(\theta'|\theta^{(i-1)})\hat{p}_N(y_{1:T}|\theta^{(i-1)})p(\theta^{(i-1)})}  \right\} $$
+	
+	\State Set $x^*_{1:T}^{(i)} \gets x^*_{1:T}',\theta^{(i-1)} \gets \theta', \hat{p}^N_{\theta^{(i)}}(y_{1:T}) \gets \hat{p}^N_{\theta'}(y_{1:T})$
+	\State Otherwise $x^*_{1:T}^{(i)} \gets x^*_{1:T}^{(i-1)},\theta^{(i-1)} \gets \theta^{(i-1)}, \hat{p}^N_{\theta^{(i)}}(y_{1:T}) \gets \hat{p}^N_{\theta^{(i-1)}}(y_{1:T})$
+	
 \EndFor{end}
 \\
 \EndProcedure
-\Return $(x_k, w_k)$
+\Return $(x^*_{1:T}^{(i)}, \theta^{(i)})_{i=1}^M$}
 
 \end{algorithmic}
 \end{algorithm}
 
-\newpage
+\section{Heston}
+\subsection{Simulation of Probability Densities}
+By Ito calculus, and more precisely the Euler-Maruyama method, the Heston stochastic process can be discretized and results in:
+
+\begin{align*}
+S_t &= S_{t-1} + r S_{t-1} dt + \sqrt{V_{t-1}}S_{t-1} \sqrt{dt}Z_t^S \\
+V_t &= V_{t-1} + \kappa(\theta - V_{t-1})dt + \sigma \sqrt{V_{t-1}} \sqrt{dt} Z_t^V
+\end{align}
+where the innovations $\{Z_t^S\}_{t \geq 0}$ and $\{Z_t^V\}_{t \geq 0}$ are standard normal random variables with correlation $\rho$. The generation is made simple by considering the Cholesky decomposition,
+
+\begin{align*}
+Z_t^S &= \phi_t^S \\
+Z_t^V &= \rho \phi_t^V + \sqrt{1-\rho^2} \phi_t^V
+\end{align}
+where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent standard normal random variables.
+%%%% http://math.nyu.edu/~atm262/fall06/compmethods/a1/nimalinmoodley.pdf p36
 
 
 \section{Stochastic Volatility}
@@ -353,32 +416,6 @@ Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
 \caption{Time spent to resample 100K times 1000 weights}
 \end{table}
 The multinomial implementation is the MATLAB default version. According to Randal Douc and the performance results, the stratified resampling seems the most compelling method to use inside the particle filters. This part is critical because it can represent up to 50$\%$ of the total time spent in the filter.
-
-\section{PMMH}
-
-In a more general context, a Metropolis Hastings scheme can be used to target $p(\theta| y)$ with the ratio:
-
-\begin{align*}
-\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p({y}|\theta^\star)}{p({y}|\theta)} \right)
-\end{align*}
-
-where $q(\theta^\star|\theta)$ is the proposal density. In Hidden Markov Models, the marginal likelihood $p(y|\theta) = \int_{\mathbb{R}^T} p(y|x)p(x|\theta) dx$ is often intractable and the ratio is hard to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,x|y)$. Usually the knowledge of the kernel $K(x_t|x_{t-1})$ makes $p(x|\theta)$ tractable. For instance, in the linear Gaussian case, a path $x_{0:T}$ can be simulated when $\rho$ and $\tau$ are known. The MH is built in two stages. First, a new $\theta^*$ is proposed from $q(\theta^\star|\theta)$ and then, $x^*$ is sampled from $p(x^\star|\theta^\star)$. The pair $(\theta^\star,x^\star)$ is accepted with the ratio:
-
-\begin{align*}
-\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)} \right)
-\end{align*}
-At each step, the $x^*$ is consistent of $\theta^*$ thanks to the tractability of $p(x^\star|\theta^\star)$. The problem of this approach is that the sampled $x^*$ may not be consistent with $y$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $x^\star$ to track $p(y|x^\star,\theta)$. This is the reason why $x^*$ should be sampled from $p(x^\star|\theta^\star,y)$. The ratio becomes:
-
-\begin{align*}
- \min \left(1, \frac{p(\theta^\star)}{p(\theta)}   \frac{p({x}^\star|\theta^\star)}{p({x}|\theta)}   \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)}   \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)}  \frac{p({x}|y,\theta)}{p({x}^\star|y,\theta^\star)} \right)
-\end{align*}
-
-Using the basic marginal likelihood identity of Chib (1995), the ratio is simplified to:
-
-\begin{align*}
- \min \left(1, \frac{p(\theta^\star)}{p(\theta)}  \frac{p(y|\theta^\star)}{p(y|\theta)} \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)} \right)
-\end{align*}
-Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used.
 
 \cleardoublepage
 \phantomsection

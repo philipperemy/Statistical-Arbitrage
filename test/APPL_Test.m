@@ -31,7 +31,7 @@ sigma = 0.2243;
 beta = 0.7502;
 
 [log_p_y_given_theta_SV, estX_SV] = BootstrapParticleFilter(st.y, rho, sigma, beta, 10000, pmcmc.p_y_given_x);
-estX_SV = exp(estX_SV);
+estX_SV = exp(estX_SV/2);
 %%%%%%%%%%%% STOCHASTIC VOLATILITY STUDENT MODEL %%%%%%%%%%%%
 %assuming beta. Will relax after
 beta = 0.7502;
