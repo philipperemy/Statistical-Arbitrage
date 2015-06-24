@@ -175,6 +175,39 @@ A realization of a stochastic process $X$ on a finite discrete space $\{0,...,T\
 
 
 %\pagestyle{headings} % uncomment this if you want headers on your pages. Google fancyhdr or look into the options of scrreprt if you want different headers.
+
+
+\chapter{Cointegration}
+
+\section{Theory}
+Cointegration is a statistical property possessed by some time series based on the concepts of stationary and the order of integration of the series. A series is considered stationary if its distribution is time invariant. In other words, the series will constantly return to its time invariant mean value as fluctuations occur. In contrast, a non-stationary series will exhibit a time varying mean. A series is said to be integrated of order $d$, denoted $I(d)$ if it must be differenced at least $d$ times to produce a stationary series.
+Charles Nelson and Charles Plosser (1982) showed that most time series have stochastic trends and are $I(1)$. \\
+
+The significance of cointegration analysis is its intuitive appeal for dealing with difficulties that arise when using non-stationary series, particularly those that are asumed to have a long-tun equilibrum relationship. For instance, when non-stationary series are used in regression analysis, one as a dependent variable and the others as independent variables, statistical inference becomes problematic. Assume that $y_t$ and $x_t$ be two independent random walk for every $t$, and let's consider the regression : $y_t = a x_t + b + \epsilon_t$. It is obvious that the true value of $a$ is 0 because $cor(x_t, y_t) = 0$. But the limiting distribution of $\hat{a}$ is such that $\hat{a}$ converges to a function of Brownian motions. This is called a spurious regression, and was first noted by Monte Carlo studies by Granger and Newbold (1974). If $x_t$ and $y_t$ are both unit root processes, classical statistical applies for the regression : $\Delta y_t = b + a \Delta x_t + \epsilon_t$ since both are stationary variables. $\hat{a}$ is now a standard consistent estimator. Recall $\Delta$ is the first difference operator defined by : $\Delta x_t = x_t - x_{t-1}$. \\
+
+Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-rtun relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their correspondinng long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory.\\
+
+\section{Vector Auto Regressive Process (VAR)}
+The Vector Autoregressive (VAR) process is a generalization of the univariate AR process to the multivariate case. It is defined as:
+
+$$X_t = \nu + \sum_{j=1}^k A_j X_{t-j} + \epsilon_t \text{, } \epsilon_t \sim SWN(0, \Sigma)$$
+where $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$, each of the $A_j$ is a ($nxn$) matrix of parameters, $\nu$ is a fixed vector of intercept terms. Finally $\epsilon_t$ is a n-dimensional strict white noise process of covariance matrix $\Sigma$. The process $X_t$ is said to be stable if the roots of the determinant of the characteristic polynomial $|I_n - \sum_{j=1}^k A_j z^j| = 0$ lie outside the complex unit circle.
+
+\section{Vector Error Correction models (VECM)}
+In an error correction model, the changes in a variable depend on the deviations from some equilibrium relation. Suppose the case $n=2, X_t = (x_t, y_t)$ where $x_t$ represents the price of a Future contract on a commodity and $y_t$ is the spot price of this same commodity traded on the same market. Assume further more that the equilibrium relation between them is given by $y_t = \beta x_t$ and the increments of $y_t$, $\Delta y_t$ depend on the deviation from this equilibrium at time $t-1$. A similar relation may also hold for $x_t$. The system is defined by:
+\begin{align*}
+\Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{y_t} \\
+\Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{x_t}
+\end{align}
+where $\alpha$ represents the speed of adjustements to disequilibrium and $\beta$ is the long run coefficient of the equilibrium. In a more general error correction model, the $\Delta y_t$ and $\Delta x_t$ may in addition depend on previous changes in both variables as, for instance, in the following model with lag one:
+\begin{align*}
+\Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{11} \Delta y_{t-1} + \gamma_{12} \Delta x_{t-1} + \epsilon_{y_t} \\
+\Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{21} \Delta y_{t-1} + \gamma_{22} \Delta x_{t-1} + \epsilon_{x_t}
+\end{align}
+In matrix notation and in the general case, the VECM is written as:
+$$\Delta y_t = \prod y_{t-1} + \sum_{j=1}^{k-1} \Gamma_j \Delta_{t-j} + \epsilon_t $$
+where $\Gamma_j = - \sum_{i=j+1}^k A_i$ and $\prod = - \sum_{i=1}^k A_i$. This way of specifying the system contains information on both the short-run and long run adjustements to changes in $y_t$, via the estimates of $\hat{\Gamma_j}$ and $\hat{\prod}$ respectively. To be continued...
+
 \chapter{Particle MCMC}
 
 \section{Introduction}
@@ -416,6 +449,58 @@ Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
 \caption{Time spent to resample 100K times 1000 weights}
 \end{table}
 The multinomial implementation is the MATLAB default version. According to Randal Douc and the performance results, the stratified resampling seems the most compelling method to use inside the particle filters. This part is critical because it can represent up to 50$\%$ of the total time spent in the filter.
+
+\chapter{Trading Strategy}
+\section{Statistical Arbitrage}
+Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index.
+
+- The strategy is a mean-reverting strategy. Once the spread (define it) is far from its long-run equilibrium, enter position and unwind (timing is important)
+
+\section{Bollinger Bands}
+Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $\{Boll^+_t, Boll^-_t\}$ above and below the moving average prices $\{Ma_t\}$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by:
+
+\begin{align*}
+Ma(t) &= \frac{1}{n}\sum_{j=1}^n p_j \text{ (SMA)} \\
+Boll^\pm(t) &= Ma(t) \pm d * \sqrt{\frac{1}{n} \sum_{j=1}^n (p_j - Ma(t))}
+\end{align}
+where $n$ is the number of time periods in the moving average and $d$ is the number of standard deviations to shift the bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
+
+\section{Strategy}
+The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. This approach has the advantage of eliminating the market exposure. A typical trading strategy is made of three parts: selection of the suitable tuples satisfying some criterias like the cointegration, create trading signals based on define predefined investment decision rules and finally assess the performance of the strategy.
+
+\subsection{Tuples selection}
+Having in mind that increasing the size $n$ of the tuples leads to an combinatorial explosion, it is necessary to make some trade-offs. First, cointegration usually implies correlation but correlation doesn't always imply cointegration. Spurious regression is a very good example where the reverse is not true. However, a correlation test is usually much faster than for instance a Johansen cointegration test (cf. table 2).
+
+\begin{table}[h]
+\centering
+\label{table1}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Test     & Correlation & Johansen & Aug. Dickey Fuller & Phillips-Perron \\ \hline
+Time & 0.33 ms   & 19.08 ms      & 2.33 ms      & 3.04 ms        \\ \hline
+\end{tabular}
+\caption{Average time spent to test a bivariate time series $X_t = (x_{t1}, x_{t2})$}
+\end{table}
+
+A simple correlation test is used for pair trading. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
+
+$$R_{xx} =\begin{pmatrix}
+r_{x1x1}    & r_{x1x2} & ...  & r_{x1xn}  \\
+r_{x2x1}    & \ddots &   & \vdots  \\
+\vdots       &   & \ddots &   \\
+r_{xnx1}    & \hdots &   & r_{xnxn} \\
+\end{pmatrix} $$
+One problem arises: the value of the coefficient depends on the order of the tuple. A regression of $y$ on $x$ and $z$ will in general have a different $R$ that will a regression of $z$ on $x$ and $y$. To convince ourselves, let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R$. It means that the order inside a tuple has its importance, at least from a statistical point of view. It is much less obvious from a pure financial point of view. \\
+
+For each tuple, a $R$ is computed. A threshold $R_{th}$ is then derived according to this empirical distribution. For every selected tuple, apply a triple Johansen, Dickey Fuller and Phillips-Perron test. If the tuple is integrated, form the spread and mark it as tradable.
+
+\chapter{Performance Assessment}
+In order to reduce risk in the strategies, it is interesting to open many trades inside a portfolio, all with a very short holding time, hoping to diversify the risk of each trade.
+
+
+\section{Presentation of the dataset - Big introduction}
+The dataset is composed ...
+The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the american stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of cointegration in quantitative strategies.
 
 \cleardoublepage
 \phantomsection
