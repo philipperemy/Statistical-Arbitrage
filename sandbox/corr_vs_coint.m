@@ -34,8 +34,8 @@ toc;
 y = a;
 x1 = b;
 x2 = cumsum(normrnd(0, 1, 10000, 1));
-cor_mat = corr([y x1 x2]);
 
+cor_mat = corr([y x1 x2]);
 c = cor_mat(2:3,1);
 R = corr([x1 x2]);
 

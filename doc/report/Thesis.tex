@@ -465,11 +465,22 @@ Boll^\pm(t) &= Ma(t) \pm d * \sqrt{\frac{1}{n} \sum_{j=1}^n (p_j - Ma(t))}
 \end{align}
 where $n$ is the number of time periods in the moving average and $d$ is the number of standard deviations to shift the bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
 
+\section{Z-score}
+Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, Caldeira Moura (2013) suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasonment for the high threshold holds for short positions. Caldeira Moura (2013) suggested the basic trading strategy signals:
+
+\begin{align*}
+\text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
+\text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
+\text{Close short position if } &\leq \Phi^{-1}(q_{CS}) = 0.75\\
+\text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
+\end{align}
+
 \section{Strategy}
-The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. This approach has the advantage of eliminating the market exposure. A typical trading strategy is made of three parts: selection of the suitable tuples satisfying some criterias like the cointegration, create trading signals based on define predefined investment decision rules and finally assess the performance of the strategy.
+The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. This approach has the advantage of eliminating the market exposure (memo corr cumsum with SP500 should be around 0). A typical trading strategy is made of three parts: selection of the suitable tuples satisfying some criterias like the cointegration, create trading signals based on define predefined investment decision rules and finally assess the performance of the strategy.
 
 \subsection{Tuples selection}
-Having in mind that increasing the size $n$ of the tuples leads to an combinatorial explosion, it is necessary to make some trade-offs. First, cointegration usually implies correlation but correlation doesn't always imply cointegration. Spurious regression is a very good example where the reverse is not true. However, a correlation test is usually much faster than for instance a Johansen cointegration test (cf. table 2).
+\subsubsection{Cointegrated tuples}
+It is common in pair trading and more generally in basket trading to require that the tuples belong to the same sector, for example in Chan (2009) and Dunis et Al. (2010). Other did not adopt this restriction, for example Caldeira Moura (2013). However it is possible for pair trading but becomes impossible when the number of assets grows. Having in mind that increasing the size $n$ of the tuples leads to an combinatorial explosion, it is necessary to make some trade-offs. First, cointegration usually implies correlation but correlation doesn't always imply cointegration. Spurious regression is a very good example where the reverse is not true. However, a correlation test is usually much faster than for instance a Johansen cointegration test (cf. table 2).
 
 \begin{table}[h]
 \centering
@@ -492,15 +503,30 @@ r_{xnx1}    & \hdots &   & r_{xnxn} \\
 \end{pmatrix} $$
 One problem arises: the value of the coefficient depends on the order of the tuple. A regression of $y$ on $x$ and $z$ will in general have a different $R$ that will a regression of $z$ on $x$ and $y$. To convince ourselves, let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R$. It means that the order inside a tuple has its importance, at least from a statistical point of view. It is much less obvious from a pure financial point of view. \\
 
-For each tuple, a $R$ is computed. A threshold $R_{th}$ is then derived according to this empirical distribution. For every selected tuple, apply a triple Johansen, Dickey Fuller and Phillips-Perron test. If the tuple is integrated, form the spread and mark it as tradable.
+First, an Augmented Dickey Fuller test is performed to check that all series are integrated of the same order, $I(1)$, i.e, they contain a unit root.
+For each tuple candidate, $R^2$ is evaluated. When the empirical distribution of all $R^2$ is known, a threshold $R_{th}$ is derived and the tuples whose $R^2> R_{th}$ are chosen. For every selected tuple, apply a triple Johansen, Dickey Fuller and Phillips-Perron test to check for cointegration. If the tuple is cointegrated, form the spread and mark it as tradable.
+
+\subsubsection{Composition of the portfolio}
+The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in selection the tuples for trading based on the best in-sample sharpe ratios. Recall that Sharpe ratio is calculated as the ratio of annualized return to annualized standard deviation. We form the portfolio of 20 best trading pairs that present the greatest SR in the in-sample simulations and use them to compose a pairs trading portfolio to be employed out-of-sample. Once a trade is initiated, the portfolio is not rebalanced. Only two types of transactions are considered: move into a new position, or the total unwind of a previously opened position. Any opened position is closed at the end of the study.
 
 \chapter{Performance Assessment}
-In order to reduce risk in the strategies, it is interesting to open many trades inside a portfolio, all with a very short holding time, hoping to diversify the risk of each trade.
+In order to reduce risk in the strategies, it is interesting to open many trades inside a portfolio, all with a very short holding time, hoping to diversify the risk of each trade. The performance of the portfolios are examined in terms of cumulative return, variance of returns, Sharpe Ratio and Maximum Drawdown (MDD). The maximum drawdown (MDD) is defined as the maximum peak to trough decline and represents the worst scenario up to time $T$. Drawdowns help determine an investment's financial risk.
+
+$$MDD(T) = \smash{\displaystyle\max_{\tau \in (0,T)}} \left[\smash{\displaystyle\max_{\tau \in (0,T)}} X(t) - X(\tau) \right] $$
+
+The Sharpe Ratio (RP) is defined as:
+
+$$SR =  \sqrt{252 }  . \frac{T^{-1} \sum_{t=1}^T R_t}{\sqrt{T^{-1} \sum_{t=1}^T (R_t -T^{-1} \sum_{t=1}^T R_t)^2 }} $$
+
+One of the technique to assess the performance of a strategy is to compare it to the very simple Buy and Hold strategy where the holder buys various assets at time $0$ and keep them until time $T$. Gatel et Al (2006) also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs and assuming the fact that you cannot beat the market with a random approach in the long run. So better not trade at all in this case.
+
+\section{Estimation and out-of-sample results}
+The sample is split into several training (in-sample) and testing sets (out-of-sample). Cross validation is performed on the training sets to tune the parameters of the strategies. The performance is evaluated on the testing set. We suggest a period of one year for testing and four months for testing.
 
 
 \section{Presentation of the dataset - Big introduction}
 The dataset is composed ...
-The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the american stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of cointegration in quantitative strategies.
+The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the american stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of cointegration in quantitative strategies.
 
 \cleardoublepage
 \phantomsection
