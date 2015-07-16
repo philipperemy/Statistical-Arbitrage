@@ -40,8 +40,6 @@ classdef ParticleMarkovChainMonteCarlo < handle
             this.(fieldname)(step) = new_val;
         end
 
-        %Can be used as the base in the class
-        %make call_likelihood abstract
         function this = run(this, hmm)
            
             i = 1;

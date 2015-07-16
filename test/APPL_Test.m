@@ -17,7 +17,7 @@ log_returns = log_returns(5000:5999);
 
 st = SVLogReturns(log_returns, 0);
 
-steps_mcmc = 50000;
+steps_mcmc = 5000;
 particles = 1000;
 
 %%%%%%%%%%%% STOCHASTIC VOLATILITY SIMPLE MODEL %%%%%%%%%%%%
