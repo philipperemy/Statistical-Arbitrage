@@ -1,3 +1,5 @@
+%Extract from pp a chunk of length end-start and split it into two sets:
+%training and testing
 function [ pp_train, pp_test ] = Create_Sets( pp, dateIdx_start, dateIdx_end, percentage )
     if(percentage > 1)
         percentage = percentage/100;

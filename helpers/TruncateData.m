@@ -1,3 +1,4 @@
+%Keep only rows between start and end
 function [ pp_ret ] = TruncateData( pp, dateIdx_start, dateIdx_end )
     pp_ret          = pp; %copy ctor
     pp_ret.dt       = pp.dt(dateIdx_start:dateIdx_end);

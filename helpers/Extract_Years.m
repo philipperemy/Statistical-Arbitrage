@@ -1,3 +1,4 @@
+%Extract the technical ids of the first day of each year
 function [ techids ] = Extract_Years(pp)
     %Be careful of Leap year
     techids = [];

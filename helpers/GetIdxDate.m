@@ -1,3 +1,4 @@
+%Get the id for a given date
 function [ techid ] = GetIdxDate( pp, date_str )
     
     for dateid = pp.dt'
