@@ -185,7 +185,7 @@ Charles Nelson and Charles Plosser (1982) showed that most time series have stoc
 
 The significance of cointegration analysis is its intuitive appeal for dealing with difficulties that arise when using non-stationary series, particularly those that are asumed to have a long-tun equilibrum relationship. For instance, when non-stationary series are used in regression analysis, one as a dependent variable and the others as independent variables, statistical inference becomes problematic. Assume that $y_t$ and $x_t$ be two independent random walk for every $t$, and let's consider the regression : $y_t = a x_t + b + \epsilon_t$. It is obvious that the true value of $a$ is 0 because $cor(x_t, y_t) = 0$. But the limiting distribution of $\hat{a}$ is such that $\hat{a}$ converges to a function of Brownian motions. This is called a spurious regression, and was first noted by Monte Carlo studies by Granger and Newbold (1974). If $x_t$ and $y_t$ are both unit root processes, classical statistical applies for the regression : $\Delta y_t = b + a \Delta x_t + \epsilon_t$ since both are stationary variables. $\hat{a}$ is now a standard consistent estimator. Recall $\Delta$ is the first difference operator defined by : $\Delta x_t = x_t - x_{t-1}$. \\
 
-Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-rtun relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their correspondinng long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory.\\
+Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-run relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their correspondinng long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory.\\
 
 \section{Vector Auto Regressive Process (VAR)}
 The Vector Autoregressive (VAR) process is a generalization of the univariate AR process to the multivariate case. It is defined as:
@@ -414,7 +414,98 @@ Finally, we estimate a two factor SV model. It is defined as:
   Z_{n+1} &=  \rho_2 Z_{n} + \sigma_2 P_n, \text{ } |\rho_2| < 1, P_n \sim N(0,1) \\
   Y_n &=  \exp \left(\frac{\mu}{2} + \frac{X_n+Z_n}{2} \right) W_n, \text{ } |\rho_2| < 1, W_n \sim N(0,1)
 \end{align*}
-$\theta$ is enriched with the new parameters. Thus, we only need to modify the particle filter such that we drawa two sets of particles (one for $X_t$ and one for $Z_t$) instead of one.
+$\theta$ is enriched with the new parameters. Thus, we only need to modify the particle filter such that we draws two sets of particles (one for $X_t$ and one for $Z_t$) instead of one.
+
+\subsection{Some calculus}
+
+It turns out that the model with the highest likelihood is the Normal Leverage Stochastic Volatility model. The model is equipped with a two steps filtration $(\mathcal{F}_t)_{t \in \mathbb{N}}$. $x_t$ and $y_t$ are both measured respectively at time $t^-$ and $t$, where $t^- = t - \epsilon$. The concept of two steps is important here to understand that $x_t$ and $y_t$ are not measured at the same time but in a sequential way. Again by the Cholesky decomposition, $y_t$ can be written as:
+
+$$y_t | x_t = \rho \beta \exp(x_t / 2) \epsilon_{X,t} + \beta \exp(x_t / 2) \sqrt{1-\rho^2} \epsilon_R$$
+The only random quantity here is $\epsilon_R \sim N(0,1)$. Both factors on the right hand side are measurable at time $t^-$. Therefore, $y_t|x_t$ is normally distributed:
+
+$$y_t | x_t = \mathcal{N}\left(\mathcal{A} = \rho \beta \exp(x_t / 2) \epsilon_{X,t}, \mathcal{B} = \beta^2 \exp(x_t) (1-\rho^2)\right)$$
+
+Using the fact that any AR(1) admits an infinite MA representation,
+
+\begin{align*}
+x_t &= \phi x_{t-1} + \sigma \epsilon_{X,t} \\ 
+	&= \phi(\phi x_{t-2} +\sigma \epsilon_{X,t-1}) + \sigma \epsilon_{X,t} \\
+    &= \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j}
+\end{align*}
+
+and using this new representation into $\mathcal{A}$ gives:
+
+\begin{align*}
+\mathcal{A} &= \rho \beta \exp(x_t / 2) \epsilon_{X,t} \\
+			&= \rho \beta \exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \\
+			&= \rho \beta \exp \left( \frac{\phi}{2} x_{t-1}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t}
+\end{align*}
+
+At time $t-1$, only $\mathcal{C} = \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t}$ is random. Because $\epsilon_{X,t}$ is independent from $x_{t-1}$,
+
+%%mean(exp(2*rnorm(1000000)))
+%%exp(4^2/8)
+\begin{align*}
+E[\mathcal{A}] &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right)\right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
+			   &= \rho \beta E\left[\prod_{j=1}^\infty \exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
+			   &= \rho \beta \prod_{j=1}^\infty E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right]\prod_{j=1}^\infty E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right]
+\end{align*}
+
+\begin{align*}
+E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left(\frac{-x^2}{2} + \frac{\sigma \phi^j}{2} x \right) dx \\
+																			 &= \left[ \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) erf \left( \frac{2x- \sigma\phi^j}{2 \sqrt{2}} \right) \right]^{+\infty}_{-\infty} \\
+																			 &= \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) (1 - (-1)) \\
+																			 &= \exp \left(\frac{(\sigma\phi^j)^2}{8} \right)
+\end{align*}
+
+
+
+\begin{align*}
+E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left( \frac{-x^2}{2} + \frac{\sigma}{2} x \right) dx \\
+																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) \left[ erf \left(\frac{2x-\sigma}{2\sqrt{2}} \right) - \frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \right]^{+\infty}_{-\infty} \\
+																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) (1 - (-1)) \\
+																				  &= \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right)
+\end{align*}
+Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^{-x^2} \rightarrow 0 \text{ }(x \rightarrow \infty)$. Therefore, 
+\begin{align*}
+	E[\mathcal{A}] &= \rho \beta \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
+				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \\
+				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \sum_{j=1}^\infty \phi^{2j} \right) \\
+				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \left(\frac{1}{1-\phi^{2}} - 1\right)\right)
+\end{align*}
+
+%http://www.wolframalpha.com/input/?i=1%2Fsqrt%282*pi%29+exp%28-x%5E2%2F2%2Bs*x%29
+\begin{align*}
+	E[\mathcal{B}] &= \beta^2 \exp(x_t) (1-\rho^2)\\
+				   &= \beta^2 (1-\rho^2) E \left[ \exp \left( \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j}\right) \right]\\
+				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty E\left[\exp \left( \sigma \phi^j \epsilon_{X, t-j} \right)  \right] \\
+				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \frac{1}{\sqrt{2\pi}}\int^{+\infty}_{-\infty} \exp \left (\sigma \phi^j x - \frac{x^2}{2} \right) dx \\
+				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \left[\frac{1}{2} \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) erf \left(\frac{x - \sigma\phi^j}{\sqrt{2}}\right)\right]^{+\infty}_{-\infty} \\
+				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) \\
+				   &= \beta^2 (1-\rho^2) \exp \left( \sum_{j=0}^\infty \frac{(\sigma \phi^j)^2}{2} \right) \\
+				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \sum_{j=0}^\infty \phi^{2j} \right) \\
+				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \frac{1}{1-\phi^{2}}\right)
+\end{align*}
+
+\subsection{Models and Bollinger Bands}
+
+The Stochastic Volatility models are fitted to the prices. $y_t$ represents the daily returns of the prices. It is computed as $y_t = \frac{S_t}{S_{t-1}}-1$ where $S_t$ is the spread process.
+$x_t$ represents the volatility associated to $y_t$. The log-returns are not used here for a specific reason discussed later. Assume the standard stochastic volatility model,
+
+\begin{align*}
+y_t | x_t &= \mathcal{N}(0, \beta^2 \exp(x_t)) \\
+\frac{S_t}{S_{t-1}}-1 | x_t &= \mathcal{N}(0, \beta^2 \exp(x_t)) \\
+\frac{S_t}{S_{t-1}} | x_t &= \mathcal{N}(1, \beta^2 \exp(x_t)) \\
+S_t | x_t &= \mathcal{N}(S_{t-1}, \beta^2 \exp(x_t))
+\end{align*}
+This trick does not work for log-returns. The idea behind using these models is to catch the dynamics of the spread. A stock price is only one observation of a more general process over a time interval. Two general approaches can be derived.
+The first approach consists in working with returns and not price curves like used usually with Bollinger bands. Denote $x_t = \sigma(t)$. The idea is to use a moving average on $\sigma(t)$ to compute the bands:
+
+$$SMA_\sigma(n) = \frac{1}{n} \sum_{i=0}^{n-1}\sigma(t-i)$$
+The mid band is generated from a moving average over the returns.
+
+The second method is based on drawing many paths from the model to estimate the volatility of the spread. The volatility is associated to the prices and not to the returns. It corresponds to the usual volatility concept used in Bollinger Bands. An aggregation function must be selected to compute the volatility from the different generated paths.
+
 
 \section{Model Comparison}
 The output of the particle filter is an estimate of $p(y|\theta)$, with the unobserved states integrated out. The marginal likelihood for a model $\mathcal{M}$ is defined as:
@@ -526,7 +617,8 @@ The sample is split into several training (in-sample) and testing sets (out-of-s
 
 \section{Presentation of the dataset - Big introduction}
 The dataset is composed ...
-The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the american stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of cointegration in quantitative strategies.
+The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the american stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of cointegration in quantitative strategies. 
+
 
 \cleardoublepage
 \phantomsection
