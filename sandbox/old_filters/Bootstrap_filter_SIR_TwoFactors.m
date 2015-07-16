@@ -1,5 +1,5 @@
 %-------------------------------------------------------------------
-% Bootstrap filter Exercise 2
+% DO NOT USE IT PLEASE
 %-------------------------------------------------------------------
 
 function [estimated_states, estimated_states2, return_weights, p_y] = Bootstrap_filter_SIR_TwoFactors(y, rho, sigma, rho2, sigma2, beta, N, steps)

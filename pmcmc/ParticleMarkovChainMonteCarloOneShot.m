@@ -6,7 +6,6 @@ classdef ParticleMarkovChainMonteCarloOneShot < handle
         
         NO_UPDATE = 0;
         UPDATE = 1;
-        
     end
 	
 	methods (Abstract)
