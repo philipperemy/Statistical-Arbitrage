@@ -89,7 +89,10 @@ clear ideal_particles;
 
 %Now bruteforce it.
 %Changing the number of particles (equilibrium)
-N_seq = 100:100:300;
+%CAN BE USED FOR A FIGURE! VERY GOOD. BELOW 1. WHAT WE SHOULD HAVE
+
+%%%%%%%%%%%%%% THE INTERESTING PART STARTS HERE %%%%%%%%%%%%%%
+N_seq = 100:100:3000;
 MAX = 100;
 clc;
 rho = 0.91;       %Scale parameter for X
@@ -98,37 +101,47 @@ beta = 0.5;       %Scale parameter for Y
 steps = 1000;      %Number of steps
 nu = 3;           %Degrees of freedom of the innovation of the measurement
 st = StochasticVolatilityModelStudent(rho, sigma, beta, steps, nu);
-particles_dist_test = ParticleCountProfilingStudentSV(st, N_seq, MAX, 16);
+particles_dist_test = ParticleCountProfilingStudentSV_Unit( st, N_seq, 100, rho, sigma, beta, nu );
+hold off
+plot(100:100:3000, var(particles_dist_test, 0, 2))
+hold on
+plot([1 3000],[0.8464 0.8464])
+legend('Variance of p_N(y|\theta)', 'Optimal variance');
 
-%log p(y|theta)
-log_p_y_theta = Ex4_Compute_Log_Likelihood(st.y, rho, sigma, beta, 1000, nu);
-log_p_theta = log((1/2)*gampdf(sigma,1,1)*gampdf(nu,1,1));
-log_g = log(mvnpdf([rho sigma nu], [rho sigma nu], eye(3))); %order of parameter is not important
-%log(mvtpdf([rho sigma nu], eye(3),3))
 
-thetas = repmat([rho sigma nu], 5, 1);
-GelfandDey_LogMarginalY( st, thetas );
+N_opt = 1000;
+MAX = 5;
+rho_seq = -0.99:0.01:0.99;
+j = 1;
+log_marginal_likelihood_mat2 = zeros(length(rho_seq), MAX);
+for rho = rho_seq
+    log_marginal_likelihood_mat2(j, :) = ParticleCountProfilingStudentSV_Unit( st, N_opt, MAX, rho, sigma, beta, nu );
+    fprintf('%rho = %f\n', rho);
+    j = j + 1;
+end
+plot(rho_seq, std(log_marginal_likelihood_mat2, 0, 2));
+plot(spline(rho_seq, std(log_marginal_likelihood_mat2, 0, 2), -0.99:0.001:0.99))
 
-exp(log_p_y_theta)
+plot(rho_seq, log_marginal_likelihood_mat2); %beautiful
 
-- log_p_y_theta - log_p_theta + log_g
-%log p(y)
--(- log_p_y_theta - log_p_theta + log_g)
+plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat2, 0, 2),'s',20,1)) %variance quite stable
+legend('Smoothed Variance of p_N(y|\theta)');
 
-%2.8726e-04
+N_opt = 2000;
+MAX = 5;
+rho_seq = -0.99:0.01:0.99;
+j = 1;
+log_marginal_likelihood_mat3 = zeros(length(rho_seq), MAX);
+for rho = rho_seq
+    log_marginal_likelihood_mat3(j, :) = ParticleCountProfilingStudentSV_Unit( st, N_opt, MAX, rho, sigma, beta, nu );
+    fprintf('%rho = %f\n', rho);
+    j = j + 1;
+end
 
-%Quick idea about quantiles.
-%find(STD(:,2) < quantile(STD(:,2), 0.05) == 1)
+hold on;
+plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat3, 0, 2),'s',20,1)) %variance quite stable
 
-% plot(N_seq(2:end), diff(var(abs(log_marginal_likelihood_mat4 - true_val),0,2)));
-% b = diff(var(abs(log_marginal_likelihood_mat3 - true_val),0,2));
-% plot(N_seq(2:end), b);
-%Bollinger lol
-% [mid, uppr, lowr] = bollinger(b, 5);
-% plot(N_seq(2:end), [mid, uppr, lowr, b]);
-% plot(N_seq(2:end), uppr-lowr);
-% 
-% b = diff(var(abs(log_marginal_likelihood_mat4 - true_val),0,2));
-% [mid, uppr, lowr] = bollinger(b, 5);
-% plot(N_seq(2:end), [mid, uppr, lowr, b]);
-% plot(N_seq(2:end), uppr-lowr);
+%Smooth spline doesnt work
+pts = var(log_marginal_likelihood_mat2, 0, 2)';
+xp = linspace(-0.99, 0.99, 200);
+yp = interp1(rho_seq, pts, xp, 'spline');
