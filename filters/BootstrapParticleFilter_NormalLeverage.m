@@ -1,7 +1,7 @@
 
 function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_NormalLeverage(y, rho, sigma, beta, cor, mu, N, p_y_given_x)
     
-    fprintf('[PF] rho = %f, sigma = %f, beta = %f, cor = %f, mu = %f\n', rho, sigma, beta, cor, mu);
+    %fprintf('[PF] rho = %f, sigma = %f, beta = %f, cor = %f, mu = %f\n', rho, sigma, beta, cor, mu);
     T = length(y);
     p = zeros(N, T);
     w = zeros(N, T);

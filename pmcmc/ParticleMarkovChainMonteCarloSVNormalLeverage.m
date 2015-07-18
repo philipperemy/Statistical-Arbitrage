@@ -37,11 +37,17 @@ classdef ParticleMarkovChainMonteCarloSVNormalLeverage < ParticleMarkovChainMont
             switch fieldname
                 case 'rho_prop'
                     val = rand; %unif
+                    if(val > 0.996)  %it's because it crashes when -> 1
+                        val = 0.996;
+                    end
                 case 'sigma_prop'
                     val = 1/gamrnd(1, 1/1); %inverse gamma
+                    if(val > 1.5)
+                       val = 1.5; 
+                    end
                 case 'cor_prop'
-                    %val = -1 + 2*rand; %unif
-                    val = rand;
+                    val = -1 + 2*rand; %unif
+                    %val = rand;
             end
         end 
     end
