@@ -1,6 +1,6 @@
-A %non stat
-Y %stat
-%http://fr.mathworks.com/help/econ/unit-root-nonstationarity.html
+A %non stationary
+Y %stationary
+%http://fr.mathworks.com/help/econ/unit-root-nonstationarity.html Schwert
 
 series = A;
 lag_max = round(12*(length(series)/100)^0.25);

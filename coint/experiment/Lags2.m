@@ -6,7 +6,15 @@ load spx.mat;
 [h,pValue,stat,cValue,reg] = adftest(spr, 'model','TS','lags', 1:6);
 h
 
-%https://tel.archives-ouvertes.fr/hal-01020405/document
+%https://tel.archives-ouvertes.fr/hal-01020405/document p5
+
+% very simple
+% determine pmin=0 and pmax=12*(N/100)^0.25
+% MonteCarloSteps = N. Calculate N adftest t-stats for each p.
+% Average them to have pmax+1 (pmin=0) values.
+% Select the lag with the most negative: it indicates the value of lag length that produces the most stationary residuals
+% The assumption is that the selected lag length is the optimal value, leading to the best results.
+
 max_lag = 12*(length(Convert(pp, 236))/100)^0.25;
 for p = 0:max_lag
     [h,pValue,stat,cValue,reg] = adftest(spr, 'model','TS','lags', p);
@@ -40,6 +48,7 @@ subplot(3,2,5);
 plot(stats);
 title('stats');
 
+%%%SHOULD WRAP THAT INTO A FUNCTION!
 %%%% Other spread %%%%
 [ pValue, lm_formula, beta, spr2 ] = AugmentedDickeyFullerTest( pp, 713, 949, 1187 );
 max_lag = 12*(length(Convert(pp, 236))/100)^0.25;
