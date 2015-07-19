@@ -141,6 +141,13 @@ end
 hold on;
 plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat3, 0, 2),'s',20,1)) %variance quite stable
 
+log_marginal_likelihood_mat4 = Sensibility_with_rho( 500, st, sigma, beta, nu );
+
+hold on;
+plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat4, 0, 2),'s',20,1)) %variance quite stable
+
+legend('N = 1000', 'N = 2000', 'N = 500');
+
 %Smooth spline doesnt work
 pts = var(log_marginal_likelihood_mat2, 0, 2)';
 xp = linspace(-0.99, 0.99, 200);
