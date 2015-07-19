@@ -60,8 +60,8 @@ function [ Y ] = PerformanceAssessment( pl_strat_cum, spx )
     percentages2 = percentages2 + 1;
 %     percentages2
 
-%     Y = [percentages'-1, percentages2-1, repmat(risk_free_rate-1, length(percentages), 1)]
-%     barh(Y);
+     Y = [percentages'-1, percentages2-1, repmat(risk_free_rate-1, length(percentages), 1)];
+     barh(Y);
 
 end
 

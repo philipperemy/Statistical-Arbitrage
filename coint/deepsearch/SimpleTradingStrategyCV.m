@@ -70,5 +70,3 @@ portfolio = y*w';
 pl = diff(portfolio);
 real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 real_sharpe
-
-%http://katrinaeg.com/simulated-annealing.html

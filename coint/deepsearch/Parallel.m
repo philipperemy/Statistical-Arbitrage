@@ -1,4 +1,4 @@
-run('Init.m');
+run('../Init.m');
 stock_ids = [713 949 1187];
 stocks_prices = [GetPrice( pp, stock_ids(1) ), GetPrice( pp, stock_ids(2) ), GetPrice( pp, stock_ids(3)) ];
 [ h, Spread, ~ ] = SpreadConstructor(stock_ids, [GetPrice( pp, stock_ids(1) ), GetPrice( pp, stock_ids(2) ), GetPrice( pp, stock_ids(3)) ]);

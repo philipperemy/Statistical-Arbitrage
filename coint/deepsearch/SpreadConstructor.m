@@ -1,19 +1,18 @@
 
 %Works for lag = 0 ONLY now
 %Maybe use diff(ret) instead of prices only
-function [ h, spread, res ] = SpreadConstructor( stock_ids, stock_prices )
+function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices )
 
-    res         = struct();
-    spread      = struct();
-    h           = 0;
-    P_VAL_THRES = 0.05;
-            
-    s1_px       = stock_prices(:,1); id1 = stock_ids(1);
-    s2_px       = stock_prices(:,2); id2 = stock_ids(2);
-    s3_px       = stock_prices(:,3); id3 = stock_ids(3);
+    pvals_jci         = struct;
+    spread            = struct;
+    res               = 0; % if res = 0, spread not formed
+    P_VAL_THRES       = 0.05;
 
-    %first test for a unit root. Specificity of JCI test is that order is not
-    %important.
+    s1_px             = stock_prices(:,1); id1 = stock_ids(1);
+    s2_px             = stock_prices(:,2); id2 = stock_ids(2);
+    s3_px             = stock_prices(:,3); id3 = stock_ids(3);
+
+    %first test for a unit root. Specificity of JCI test is that order is not important.
     [~,p_val_jci,~,~,~] = jcitest([s1_px, s2_px, s3_px], 'lags', 0);
 
     pval_r0 = p_val_jci.r0(1);
@@ -22,8 +21,7 @@ function [ h, spread, res ] = SpreadConstructor( stock_ids, stock_prices )
     if(pval_r0 > P_VAL_THRES)
         return;
     end
-    res = struct('pval_r0_jci', pval_r0, 'pval_r1_jci', pval_r1, 'pval_r2_jci', pval_r2);
-
+    
     tbl = table(s1_px, s2_px, s3_px);
     tbl.Properties.VariableNames = { 'stock1', 'stock2', 'stock3'};
     
@@ -62,8 +60,9 @@ function [ h, spread, res ] = SpreadConstructor( stock_ids, stock_prices )
     end
     
     %spread formed correctly
-    h = 1;
+    res = 1;
     dimCol = 1;
     beta = cat(dimCol, 1, -beta); %put 1 at the beginning. -beta for the other
-    spread = struct('px', spr, 'tuple', triple_output, 'beta', beta);
+    spread = struct('px', spr, 'tuple', triple_output, 'beta', beta); 
+    pvals_jci = struct('pval_r0_jci', pval_r0, 'pval_r1_jci', pval_r1, 'pval_r2_jci', pval_r2);
 end

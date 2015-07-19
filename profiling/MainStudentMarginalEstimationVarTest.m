@@ -109,35 +109,13 @@ plot([1 3000],[0.8464 0.8464])
 legend('Variance of p_N(y|\theta)', 'Optimal variance');
 
 
-N_opt = 1000;
-MAX = 5;
-rho_seq = -0.99:0.01:0.99;
-j = 1;
-log_marginal_likelihood_mat2 = zeros(length(rho_seq), MAX);
-for rho = rho_seq
-    log_marginal_likelihood_mat2(j, :) = ParticleCountProfilingStudentSV_Unit( st, N_opt, MAX, rho, sigma, beta, nu );
-    fprintf('%rho = %f\n', rho);
-    j = j + 1;
-end
-plot(rho_seq, std(log_marginal_likelihood_mat2, 0, 2));
-plot(spline(rho_seq, std(log_marginal_likelihood_mat2, 0, 2), -0.99:0.001:0.99))
-
+log_marginal_likelihood_mat2 = Sensibility_with_rho( 1000, st, sigma, beta, nu );
 plot(rho_seq, log_marginal_likelihood_mat2); %beautiful
 
 plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat2, 0, 2),'s',20,1)) %variance quite stable
 legend('Smoothed Variance of p_N(y|\theta)');
 
-N_opt = 2000;
-MAX = 5;
-rho_seq = -0.99:0.01:0.99;
-j = 1;
-log_marginal_likelihood_mat3 = zeros(length(rho_seq), MAX);
-for rho = rho_seq
-    log_marginal_likelihood_mat3(j, :) = ParticleCountProfilingStudentSV_Unit( st, N_opt, MAX, rho, sigma, beta, nu );
-    fprintf('%rho = %f\n', rho);
-    j = j + 1;
-end
-
+log_marginal_likelihood_mat3 = Sensibility_with_rho( 2000, st, sigma, beta, nu );
 hold on;
 plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat3, 0, 2),'s',20,1)) %variance quite stable
 
@@ -147,8 +125,3 @@ hold on;
 plot(rho_seq, tsmovavg(var(log_marginal_likelihood_mat4, 0, 2),'s',20,1)) %variance quite stable
 
 legend('N = 1000', 'N = 2000', 'N = 500');
-
-%Smooth spline doesnt work
-pts = var(log_marginal_likelihood_mat2, 0, 2)';
-xp = linspace(-0.99, 0.99, 200);
-yp = interp1(rho_seq, pts, xp, 'spline');

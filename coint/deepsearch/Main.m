@@ -1,5 +1,5 @@
-run('Init.m');
-spreads = SpreadFinder(pp, 'hello.txt', 0.8);
+run('../Init.m');
+spreads = SpreadFinder(pp, 0.8, 236:240);
 %range 236:240 is enough
 tic;
 nstd_range = 1.0:0.1:3.0;
