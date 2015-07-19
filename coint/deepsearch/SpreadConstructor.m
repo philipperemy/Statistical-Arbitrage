@@ -22,7 +22,11 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
         return;
     end
     
-    tbl = table(s1_px, s2_px, s3_px);
+    s1_px_ret = diff(log(s1_px));
+    s2_px_ret = diff(log(s2_px));
+    s3_px_ret = diff(log(s3_px));
+    
+    tbl = table(s1_px_ret, s2_px_ret, s3_px_ret);
     tbl.Properties.VariableNames = { 'stock1', 'stock2', 'stock3'};
     
     %second test to determine the order of the triple. Order matters.
