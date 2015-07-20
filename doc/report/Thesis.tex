@@ -612,8 +612,9 @@ p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
 When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
 
 \section{Resampling}
-Resampling is a key component of the Particle Filter. Different methods exist: stratified, systematic and residuals resampling. In practical applications, they are generally found to provide comparable results. Despite the lack of complete theoretical analysis of its behavior, systematic resampling is often preferred because it is the simplest method to implement. Randal Douc proved that residual and stratified resampling methods dominate the basic multinomial approach, in the sense of having lower conditional variance for all configurations of the weights.
+Resampling is a key component of the particle filter. It is also time-critical because it can represent up to half of the time spent in the filter. Different methods exist: stratified, systematic and residuals resampling. In practical applications, they are generally found to provide comparable results. Despite the lack of complete theoretical analysis of its behavior, systematic resampling is often preferred because it is the simplest method to implement. Randal Douc (2005) proved that residual and stratified resampling methods dominate the basic multinomial approach, in the sense of having lower conditional variance for all configurations of the weights. A benchmark was performed to evaluate the average time of each resampling method.
 
+%put an histogram. It looks more professional!
 \begin{table}[h]
 \centering
 \label{table1}
@@ -624,7 +625,9 @@ Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
 \end{tabular}
 \caption{Time spent to resample 100K times 1000 weights}
 \end{table}
-The multinomial implementation is the MATLAB default version. According to Randal Douc and the performance results, the stratified resampling seems the most compelling method to use inside the particle filters. This part is critical because it can represent up to 50$\%$ of the total time spent in the filter.
+\noindent
+The multinomial implementation is the Octave default version. Considering Randal Douc (2005) results and the benchmark, the stratified resampling seems the most compelling method to use inside the particle filters.
+Stratified resampling is based on ideas used in survey sampling and consists in pre-partitioning the $(0,1]$ interval into $n$ disjoint sets, $(0,1] = (0, 1/n] \cup \cdots \cup (1-1/n, 1]$. The uniform random variables $U^i$ are then drawn independently in each of these sub-intervals: $U^i \sim \mathcal{U}\left( \frac{i-1}{n}, \frac{i}{n} \right)$. Then, the inversion method is used as in multinomial resampling, heavily based on the bootstrap method.
 
 \chapter{Trading Strategy}
 \section{Statistical Arbitrage}
@@ -690,7 +693,7 @@ In order to reduce risk in the strategies, it is interesting to open many trades
 
 $$MDD(T) = \smash{\displaystyle\max_{\tau \in (0,T)}} \left[\smash{\displaystyle\max_{\tau \in (0,T)}} X(t) - X(\tau) \right] $$
 
-The Sharpe Ratio (RP) is defined as:
+The Sharpe Ratio (RP) based on daily returns is defined as
 
 $$SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t})^2 }} \text{, where } \bar{R_T} = T^{-1} \sum_{t=1}^T R_t $$
 
