@@ -700,6 +700,37 @@ A critical issue in practice is the choice of the number of particles $N$. A lar
 the efficiency can deteriorate exponentially when $N$ is below the optimal. Pitt and Silva (2011) showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant as it is a function of the parameters as well ass a decreasing function of $N$. A reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{0:T}]$ from an initial short run of the PMCMC scheme with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance
 of the log-likelihood $Var(\log p_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from Pitt (2011), their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well.
 
+\section{Testing for Unit Roots}
+
+% PP TEST doc very interesting
+Before testing for a unit root, the time series must be transformed to its linear form. Usually, assets prices have an exponential growth and logarithm must be applied accordingly to satisfy this prerequisite. However, it is expected not to be the case for a spread instrument. \\
+Once the data is transformed, we must choose the most pertinent model to use in the Augmented Dickey Fuller and Philipps-Perron tests. There are two basic models for economic data $y_t$ with linear growth characteristics: 
+\begin{itemize}
+\item Trend Stationary (TS) : $y_t = \gamma y_{t-1} + c + \delta t + \phi_1 \Delta y_{t-1} + \cdots + \phi_p \Delta y_{t-p} + \epsilon_t $
+\item Auto Regressive with Drift (ARD) : same as TS with $\delta = 0$, and mean $\frac{c}{1-\gamma}$.
+\end{itemize}
+where the persistent parameter $\gamma = 1$ is tested against its alternative $\gamma < 1$. $\epsilon_t$ is an independent innovation process.
+\noindent
+Which model to choose? The trend-stationary is characterized by its ability to revert quickly to its trend unlike the difference-stationary, which can
+drift away during a long time before reverting. In general, if a series is growing, the TS model provides a reasonable trend-stationary alternative to a unit-root process with drift. If a series is not growing, ARD model provide reasonable stationary alternatives to a unit-root process without drift. As we don't expect any drift component in the structure of a spread, the ARD model seems the most suitable model to use. \\
+
+\noindent
+%https://tel.archives-ouvertes.fr/hal-01020405/document
+The next step is to determine the number of lags to include in the model. Different criteria used for lag length often lead to different decisions regarding the optimal lag order that should be used in the model. Dao and Staszewski (2014) suggested a general procedure for the ADF test:
+\begin{itemize}
+\item Determine the optimal max lag value denoted $L_{max}$. It is clear that $L_{min} = 0$ is the minimum value of lag length that could be used. Schwert suggested to use $L_{max} = 12 \left(\frac{T}{100} \right)^{\frac{1}{4}}$ where $T$ is the length of the time series. It guarantees that $L_{max}$ grows with $T$.
+\item When $L_{min}$ and $L_{max}$ are established, ADF t-statistics are calculated for all lag length values between the range $(L_{min}, L_{max})$. The most negative value from all averaged ADF t-statistics indicates the value of lag length that produces the most stationary residuals.
+\end{itemize}
+The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less pertinent for economic data because it is well known that the returns $\Delta y_t$ show no autocorrelation.\\
+Finally when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width = 1\textwidth]{img/optimal_lag.pdf}
+\caption{Spread ALCOA INC, AVERY DENNISON CORP, BANK OF NEW YORK MELLON CORP 23-Jun-1995 - 27-Apr-2002}
+\label{fig:1}
+\end{figure}
+
 \begin{figure}[!htb]
 \centering
 \includegraphics[width = 1\textwidth]{img/profiling_n.pdf}
