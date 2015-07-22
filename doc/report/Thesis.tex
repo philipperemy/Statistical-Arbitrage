@@ -10,6 +10,8 @@ $\newcommand{\Var}{\mathrm{Var}}$
 \usepackage{amsfonts,amssymb,amsmath,amsthm}
 \usepackage{amsbsy}
 
+%VERY USEFUL
+\allowdisplaybreaks
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -138,16 +140,16 @@ copied or distributed except with permission from the author.}
 
 \begin{document}
 
-
 \maketitle
+\tableofcontents
+\listoffigures
+\listoftables
 
 \declaration
 
 \begin{abstract}
-This project is aimed to investigate the practical benefit of using more complex modelling than what is currently standard practice in applications related to statistical arbitrage. The underlying assets will be modelled using appropriate mean-reverting time series or state space models. In order to fit these models to real data the project will involve using advanced particle methods such as Particle Markov Chain Monte Carlo. The primary aim of the project is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practise. This will be illustrated in numerical examples, where the computed portfolio is used for a realistic scenario obtained by popular trading platforms. Simulations will be mainly run in Matlab, but embedding C/C++ routines may be required to speed up computations. The project is a challenging computational Statistics application to finance and is this suitable for a student with an interest in finance, very good aptitute to computing and understanding of the material in the course related to Monte Carlo methods and Time Series. \\
+Statistical Arbitrage is a computationally-intensive approach which involves the simultaneous buying and selling of security portfolios according to predefined or adaptive statistical models. Statistical Arbitrage strategies are heavily based on the construction of stationary mean-reverting spreads and sophisticated models to identify opportunities. This thesis enriches the classic cointegration-based pairs trading by considering two cases: triples of assets, and quadruples where one is an index. It is common,in pairs trading strategies to impose that the pairs belong to the same sector, for example in Chan (2009) and Dunis et al. (2010). Similar to Caldeira Moura (2013) for pairs trading, we do not adopt this restriction for triple trading as the computational cost is still acceptable. It becomes much harder with quadruple trading with a dataset composed of the most liquid stocks from the US exchanges. Two strategies are discussed in this thesis: Bollinger Bands and Z-score. The volatility of the traded assets is estimated using several stochastic volatility models where the parameters are estimated via Particle Markov Chain Monte Carlo. The profitability of the strategy is assessed with data from the S\&P500 on 1232 stocks between 01-Jan-1990 and 19-Mar-2014. Empirical analysis shows that the proposed strategy accounts for excess returns of 17\% per year, Sharpe Ratio above 2 and low correlation with the market.
 
-Throughout, $p(\cdot)$ and $p(\cdot| \cdot)$ are used to denote general marginal and conditional probability density functions, with the arguments making it clear which distributions these relate to. \\
-A realization of a stochastic process $X$ on a finite discrete space $\{0,...,T\}$ is denoted $x_{0:T} = (x_1,...,x_T)$.
 \end{abstract}
 \newpage
 %\chapter*{Acknowledgements}
@@ -176,19 +178,78 @@ A realization of a stochastic process $X$ on a finite discrete space $\{0,...,T\
 
 %\pagestyle{headings} % uncomment this if you want headers on your pages. Google fancyhdr or look into the options of scrreprt if you want different headers.
 
+\chapter*{Notation}
+
+The following notation is used throughout this thesis.
+\begin{table}[htb]
+\centering
+\begin{tabular}{ll}
+\hline
+\multicolumn{1}{|l|}{Notation} 		& \multicolumn{1}{l|}{Definition} \\ \hline
+T									& Sample size \\
+1:T									& State space \\
+t \in \mathbb{N} 					& Time index $t = {1,2...} \\
+X_t	\in \mathbb{R}					& A random time-indexed state vector with $n$ components \\
+x_t	\in \mathbb{R}					& A realisation of the random vector $X_t$, namely \{x_1,...,x_T \} \\
+Y_{1:T} \in \mathbb{R}^T  			& A set of random vectors (observations), each with $n$ components \\
+y_{1:T} \in \mathbb{R}^T  			& A set of observations, namely \{y_1,...,y_T \} \\
+A^T									& Transpose of the matrix A \\
+A^{-1}								& Inverse of the matrix A \\
+\cup								& Union of a collection of sets \\
+\sim								& Distributed as \\
+\propto								& Proportional to \\
+\sum								& Summation sign \\
+\int								& Integral symbol \\
+\prod								& Product sign \\
+\rightarrow							& Converges to ($p$ probability, $d$ distribution, $as$ almost surely) \\
+i.i.d								& Independent, identically distributed \\
+$L$									& Lag Operator. Defined as $L X_t = X_{t-1}$ \\
+$\Delta$							& Difference operator. Defined as $\Delta X_t = (1-L) X_t = X_t - X_{t-1} \\
+E									& Expectation \\
+$E[X_t | \mathcal{F}_t}]$			& Conditional expectation \\
+Var									& Variance \\
+$Var[X_t | \mathcal{F}_t}]$			& Conditional variance \\
+Cor									& Correlation function \\
+\circ								& Composition function operator \\
+$p(\cdot)$							& General marginal probability density function \\
+$p(\cdot| \cdot)$					& Conditional probability density function \\
+$\mathcal{N}(\mu, \sigma^2)$		& Normal distribution with mean $\mu$ and variance $\sigma^2$ \\
+$t(\nu)$							& $t$-student distribution with $\nu$ degrees of freedom \\
+erf									& Error function defined as $erf(x) = \frac{2}{\sqrt{\pi}} \int_0^x e^{-t^2}\text{ }dt$ \\
+AR									& Auto Regressive process
+\end{tabular}
+\end{table}
+\noindent
+\begin{definition}
+In the following, we will assume that a process $(X_t)_{t \in \mathbb{N}}$ is adapted to a filtration $(\mathcal{F}_t)_{t \in \mathbb{N}}$ which presents the accrual of information over time. We denote by $\mathcal{F}_t = \sigma \{X_s : s \leq t \}$ the $\sigma$-algebra generated by the history of $X$ up to time $t$. The corresponding filtration is then called the natural filtration.
+\end{definition}
+
+\chapter{Introduction}
+
+For many years, the finance industry has used the concept of correlation in Statistical Arbitrage to detect opportunities. This widely use of short-term correlation on de-trended non-stationary time series data turned out to be risky because a large amount of valuable information contained in the common trends of the prices was lost. Engle (1987) introduced a new concept, known as Cointegration to address this problem. Cointegration is a concept that has been widely used in the field of financial econometrics in the areas of multivariate time series analysis. This concept provides a way to identify the influence of common and stable long-term stochastic trends between assets. The variables are allowed to deviate from their inherent relationships in the short term but they are likely to revert to their long term equilibrium. Spot and futures prices for a particular asset is an example of a bivariate cointegrated system. \\
+
+%Introduction of JonathanCox
+\noindent
+Markov Chain Monte Carlo (MCMC) methods are well known techniques for sampling from a probability distribution. It is based on constructing a Markov chain targeting this distribution. Andrieu and Doucet (2010) introduced a new method which embed SMC filters within MCMC samplers for the joint estimation of static parameters and latent states in complex non-linear systems. These advanced particle methodologies belong to the class of Feynman-Kac particle models and are called \textit{Particle Markov Chain Monte Carlo}. Many aspects of their behaviour in complex practical applications remain open research questions. \\
+
+%SV-With-R
+\noindent
+The GARCH model and the Stochastic Volatility model are competing but non-nested models to describe unobserved volatility in asset returns. The former models the evolution of volatility deterministically. After the publications of Engle (1982) and Bollerslev (1986), these models have been generalized in numerous ways and applied to a vast amount of real-world problems. As an alternative, Taylor (1982) proposes in his seminal work to model the volatility probabilistically, i.e., through a state space model where the logarithm of the squared volatilities - the latent states - follow an autoregressive process of order one. This specification became known as the stochastic volatility (SV) model. Even though several papers such as Kim, Shephard and Chib (1998) provide early evidence in favour of using SV, these have found comparably little use in applied work. The main discrepancy relied in the incapability of estimating the parameters of the SV models. It becomes now possible with techniques such as Particle Markov Chain Monte Carlo. Gregor Kastner (2014) analysed exchanges rates from EUR to USD and showed that a standard SV performs better than a vanilla GARCH(1,1) in terms of predictive accuracy. Chan and Grant (2015) compare a number of GARCH and SV models on commodity markets. SV models generally compare favourably to their GARCH counterparts. The SV models have been retained as the default models for all the reasons specified above. \\
+
+\noindent
+This thesis focuses on the development and the estimation of stochastic volatility models to output an accurate estimate of the volatility of the co-integrated prices. This volatility is later used as part of a trading strategy based on the Bollinger bands, a widely known technical trading indicator created in 1980. In a nutshell, it consists of a set of three curves drawn in relation to securities prices. The middle band represents the trend, that serves as the base for the upper and the lower bands. The interval between the upper and lower bands is determined by the recent volatility of the security prices. The purpose is to give systematic trading decisions by gauging if the price is either high, low or in the range. This strategy is suitable for cointegration since it is based on the mean-reverting pattern of the security.
 
 \chapter{Cointegration}
-
-\section{Filtration}
-In the following, we will assume that a process $(X_t)_{t \in \mathbb{N}}$ is adapted to a filtration $(\mathcal{F}_t)_{t \in \mathbb{N}}$ which presents the accrual of information over time. We denote by $\mathcal{F}_t = \sigma \{X_s : s \leq t \}$ the $\sigma$-algebra generated by the history of $X$ up to time $t$. The corresponding filtration is then called the natural filtration.
 
 \section{Theory}
 Cointegration is a statistical property possessed by some time series based on the concepts of stationary and the order of integration of the series. A series is considered stationary if its distribution is time invariant. In other words, the series will constantly return to its time invariant mean value as fluctuations occur. In contrast, a non-stationary series will exhibit a time varying mean. A series is said to be integrated of order $d$, denoted $I(d)$ if it must be differenced at least $d$ times to produce a stationary series.
 Charles Nelson and Charles Plosser (1982) showed that most time series have stochastic trends and are $I(1)$. \\
 
-The significance of cointegration analysis is its intuitive appeal for dealing with difficulties that arise when using non-stationary series, particularly those that are asumed to have a long-tun equilibrum relationship. For instance, when non-stationary series are used in regression analysis, one as a dependent variable and the others as independent variables, statistical inference becomes problematic. Assume that $y_t$ and $x_t$ be two independent random walk for every $t$, and let's consider the regression : $y_t = a x_t + b + \epsilon_t$. It is obvious that the true value of $a$ is 0 because $cor(x_t, y_t) = 0$. But the limiting distribution of $\hat{a}$ is such that $\hat{a}$ converges to a function of Brownian motions. This is called a spurious regression, and was first noted by Monte Carlo studies by Granger and Newbold (1974). If $x_t$ and $y_t$ are both unit root processes, classical statistical applies for the regression : $\Delta y_t = b + a \Delta x_t + \epsilon_t$ since both are stationary variables. $\hat{a}$ is now a standard consistent estimator. Recall $\Delta$ is the first difference operator defined by : $\Delta x_t = x_t - x_{t-1}$. \\
+\noindent
+The significance of cointegration analysis is its intuitive appeal for dealing with difficulties that arise when using non-stationary series, particularly those that are assumed to have a long-tun equilibrium relationship. For instance, when non-stationary series are used in regression analysis, one as a dependent variable and the others as independent variables, statistical inference becomes problematic. Assume that $y_t$ and $x_t$ be two independent random walk for every $t$, and let's consider the regression : $y_t = a x_t + b + \epsilon_t$. It is obvious that the true value of $a$ is 0 because $cor(x_t, y_t) = 0$. But the limiting distribution of $\hat{a}$ is such that $\hat{a}$ converges to a function of Brownian motions. This is called a spurious regression, and was first noted by Monte Carlo studies by Granger and Newbold (1974). If $x_t$ and $y_t$ are both unit root processes, classical statistical applies for the regression : $\Delta y_t = b + a \Delta x_t + \epsilon_t$ since both are stationary variables. $\hat{a}$ is now a standard consistent estimator. \\
 
-Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-run relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their correspondinng long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory.\\
+\noindent
+Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-run relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their corresponding long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory.
 
 \section{Vector Auto Regressive Process (VAR)}
 The Vector Autoregressive (VAR) process is a generalization of the univariate AR process to the multivariate case. It is defined as:
@@ -202,14 +263,14 @@ In an error correction model, the changes in a variable depend on the deviations
 \Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{y_t} \\
 \Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{x_t}
 \end{align}
-where $\alpha$ represents the speed of adjustements to disequilibrium and $\beta$ is the long run coefficient of the equilibrium. In a more general error correction model, the $\Delta y_t$ and $\Delta x_t$ may in addition depend on previous changes in both variables as, for instance, in the following model with lag one:
+where $\alpha$ represents the speed of adjustments to disequilibrium and $\beta$ is the long run coefficient of the equilibrium. In a more general error correction model, the $\Delta y_t$ and $\Delta x_t$ may in addition depend on previous changes in both variables as, for instance, in the following model with lag one:
 \begin{align*}
 \Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{11} \Delta y_{t-1} + \gamma_{12} \Delta x_{t-1} + \epsilon_{y_t} \\
 \Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{21} \Delta y_{t-1} + \gamma_{22} \Delta x_{t-1} + \epsilon_{x_t}
 \end{align}
 In matrix notation and in the general case, the VECM is written as:
 $$\Delta y_t = \prod y_{t-1} + \sum_{j=1}^{k-1} \Gamma_j \Delta_{t-j} + \epsilon_t $$
-where $\Gamma_j = - \sum_{i=j+1}^k A_i$ and $\prod = - \sum_{i=1}^k A_i$. This way of specifying the system contains information on both the short-run and long run adjustements to changes in $y_t$, via the estimates of $\hat{\Gamma_j}$ and $\hat{\prod}$ respectively. To be continued...
+where $\Gamma_j = - \sum_{i=j+1}^k A_i$ and $\prod = - \sum_{i=1}^k A_i$. This way of specifying the system contains information on both the short-run and long run adjustments to changes in $y_t$, via the estimates of $\hat{\Gamma_j}$ and $\hat{\prod}$ respectively. To be continued...
 
 \chapter{Particle MCMC}
 
@@ -217,7 +278,7 @@ where $\Gamma_j = - \sum_{i=j+1}^k A_i$ and $\prod = - \sum_{i=1}^k A_i$. This w
 Particle MCMC embeds a particle filter within an MCMC scheme. The standard version uses a particle filter to propose new values for the stochastic process (basically $x_{0:T}$), and MCMC moves to propose new values for the parameters (usually named $\theta$). One of the most challenging task in designing a PMCMC sampler is considering the trade-off between the Monte Carlo error of the particle filter and the mixing of the MCMC moves. Intuitively, when $N$, the number of particles grows to infinity, the variance of the error becomes very small and the mixing of the chain becomes very poor.
 
 \section{State-Space Models}
-The state-space models are parameterised by $\theta = (\theta_1,...,\theta_n)$ and all components are considered to be independent one another. $\theta$ is associated a prior distribution $p(\theta) = \prod_i p(\theta_i)$ State-space models are usually defined in continuous time because physical laws are most often described in terms of differential equations. However, most of the time, a discrete-time representation exists. It is often written in the innovation form that describes noise. An example of such a process is describe in the Stochastic Volatility section. The model is composed of an unobserved process $X_{0:T}$ and $Y_{1:T}$, known as the observations. $X_{0:T}$ is assumed to be first order markovian, governed by a transition kernel $K(x_{t+1}|x_t)$. The probability density of a realization $x_{0:T}$ is written as:
+The state-space models are parametrised by $\theta = (\theta_1,...,\theta_n)$ and all components are considered to be independent one another. $\theta$ is associated a prior distribution $p(\theta) = \prod_i p(\theta_i)$ State-space models are usually defined in continuous time because physical laws are most often described in terms of differential equations. However, most of the time, a discrete-time representation exists. It is often written in the innovation form that describes noise. An example of such a process is describe in the Stochastic Volatility section. The model is composed of an unobserved process $X_{0:T}$ and $Y_{1:T}$, known as the observations. $X_{0:T}$ is assumed to be first order markovian, governed by a transition kernel $K(x_{t+1}|x_t)$. The probability density of a realization $x_{0:T}$ is written as:
 
 $$p(X_{0:T} = x_{0:T} | \theta) = p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) $$
 
@@ -236,7 +297,7 @@ Usually, this probability density function is intractable since it becomes incre
 
 \section{Particle Filter}
 
-The particle filter is an iterative Monte Carlo method for carrying out bayesian inference on state-space models. The main idea is to assume that, at each time $t$, an approximation of $p(x_t|y_{1:t}$) can help generating approximate samples of $p(x_{t+1}|y_{1:t+1}$), using importance resampling.
+The particle filter is an iterative Monte Carlo method for carrying out Bayesian inference on state-space models. The main idea is to assume that, at each time $t$, an approximation of $p(x_t|y_{1:t}$) can help generating approximate samples of $p(x_{t+1}|y_{1:t+1}$), using importance resampling.
 
 More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_0),\ k=1,\ldots,M$ with uniform normalised weights ${w'}_0^k=1/M$. Then suppose that we have a weighted sample $\{x_t^k,{w'}_t^k|k=1,\ldots,M\}$ from $p(x_t|y_{1:t}$). First generate an equally weighted sample by resampling with replacement M times to obtain $\{\tilde{x}_t^k|k=1,\ldots,M\}$ (giving an approximate random sample from $p(x_t|y_{1:t}$)). Note that each sample is independently drawn from $\sum_{i=1}^M {w'}_t^i\delta(x-x_t^i)$. Next propagate each particle forward according to the Markov process model by sampling $x_{t+1}^k\sim p(x_{t+1}|\tilde{x}_t^k),\ k=1,\ldots,M$ (giving an approximate random sample from $p(x_{t+1}|y_{1:t}$)). Then for each of the new particles, compute a weight $w_{t+1}^k=p(y_{t+1}|x_{t+1}^k$), and then a normalised weight ${w'}_{t+1}^k=w_{t+1}^k/\sum_i w_{t+1}^i$. \\
 
@@ -287,7 +348,93 @@ As $T$ is usually large, it is preferred to work with the log likelihoods:
 \end{algorithmic}
 \end{algorithm}
 
-Again, from the importance resampling scheme, it should be reasonably clear that $p^N_{\theta}(y_{1:T})$ is a consistent estimator of $p_{\theta}(y_{1:T})$. It is much less obvious, but nevertheless true that this estimator is also unbiased. This result is the cornerstone of Particle MCMC models, especially for the particle marginal Metropolis-Hastings Algorithm  explained in the next section.
+Again, from the importance resampling scheme, it should be reasonably clear that $p^N_{\theta}(y_{1:T})$ is a consistent estimator of $p_{\theta}(y_{1:T})$. It is much less obvious, but nevertheless true that this estimator is also unbiased. This result is the cornerstone of Particle MCMC models, especially for the particle marginal Metropolis-Hastings Algorithm.
+
+\section{Resampling phase}
+Sequential Monte Carlo (Particle filtering) can be decomposed in two main steps: sequential importance sampling (SIS) and resampling. The main drawback of SIS is that it becomes very unstable as $T$ increases due to the discrepancy between the weights, a phenomenon known as weight degeneracy. To stabilize the algorithm and gain some accuracy, it is necessary to perform resampling sufficiently often. This step is also time-critical as it is on the critical path of the Component-Wise PMCMC algorithm. Benchmarks highlighted that it can represent up to half of the time spent in the filter with the Bootstrap scheme. Many different methods exist in the literature: multinomial, stratified, systematic and residuals resampling are such examples. In practical applications, they are generally found to provide comparable results. Despite the lack of complete theoretical analysis of its behaviour, multinomial resampling is probably the most used algorithm because almost all the softwares offer a default implementation of this method as default. We will focus on multinomial and stratified resampling in this section. The proposed mathematical framework is taken from Randal and Douc (2005). \\
+
+\noindent
+Denote by $\left( \xi_i, \omega_i \right)_{1 \leq i \leq n, t > 0}$ the set of particle positions and associated weights at time $t$. The filtration $(\mathcal{F}_t)_{t > 0}$ is used to model the information known of the particles and the weights up to time $t$. The weights are assumed to be normalized, i.e. $\forall t > 0, \sum_{i=1}^n \omega_i = 1$. Otherwise, consider $\omega_i \leftarrow \left( \sum_{j=1}^n \omega_j\right)^{-1} \omega_i$. The resampling phase consists in selecting new particle positions and weights $\left( \xi_i^\sim, \omega_i^\sim \right)_{1 \leq i \leq n}$ at time $t+1$ such that the discrepancy between the resampled weights $\omega_i^\sim$ is reduced. There are many possible ways to resample. Two methods are discussed in this section: multinomial and stratified resampling. \\
+
+\noindent
+Multinomial resampling is at the core of the bootstrap method that consists in drawing, conditionally upon $\mathcal{F}_t$, the new positions $\left( \xi_i \right)_{1 \leq i \leq n}$ independently. In practice, this is achieved by repeated uses of the inversion method:
+\begin{itemize}
+\item Draw $n$ independent uniforms $(U^i)_{1 \leq i \leq n}$ on the interval $(0, 1]$.
+\item Set $I^i = D_\omega^{inv}(U^i)$ and $\xi_i^\sim = \xi_{I^i}$ where $D_\omega^{inv}$ is the inverse of the cumulative distribution associated with the normalized weights $\left( \omega_i \right)_{1 \leq i \leq n}$, that is $D_\omega^{inv}(u) = i$ for $u \in \left( \sum_{j=1}^{i-1} \omega_j, \sum_{j=1}^i \omega_j \right)$. For better clarity, the function $\xi(i) = \xi_i$ is written as $\xi \circ D_\omega^{inv}(U^i)$.
+\end{itemize}
+This form of resampling is known as multinomial since the duplication counts are by definition distributed according to the multinomial distribution. \\
+
+\noindent
+Stratified resampling is based on concepts used in survey sampling and consists in pre-partitioning the $(0,1]$ interval into $n$ disjoint sets, $(0,1] = (0, 1/n] \cup \cdots \cup (1-1/n, 1]$. The uniform random variables $U^i$ are then drawn independently in each of these sub-intervals: $U^i \sim \mathcal{U}\left( \frac{i-1}{n}, \frac{i}{n} \right)$. Then, the inversion method is used as in multinomial resampling.
+
+\begin{theorem}
+\textit{
+Stratified resampling has a lower variance, conditionally upon $\mathcal{F}_t$, than multinomial resampling.
+}
+\end{definition}
+
+\begin{proof}
+Randal Douc (2005) \\
+For multinomial resampling, the selection indices $I^1,\cdots,I^n$ are conditionally iid given $\mathcal{F}_t$ and thus the conditional variance is given by:
+
+%TODO ask Kantas
+\begin{align*}
+\text{Var}_M \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] &= \frac{1}{n^2} \text{Var} \left[ \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
+																					  &= \frac{1}{n^2} \sum_{i=1}^n \text{Var} \left[ f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
+																					  &= \frac{1}{n} \left\{\sum_{i=1}^n \omega_i f^2(\xi_i) - n \left(\sum_{i=1}^n \omega_i f(\xi_i)\right)^2\right\}
+\end{align*}
+
+An important result for Stratified resampling is
+\begin{align*}
+E \left[ \sum_{i=1}^n f(\xi_i^\sim)  \bigg| \mathcal{F}_t \right] &= E \left[ \sum_{i=1}^n f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right] \\
+																  &= \sum_{i=1}^n E \left[ f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right] \\
+																  &= n \sum_{i=1}^n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du \\
+																  &= n \sum_{i=1}^n \omega_i f(\xi_i)
+\end{align*}
+$U^1,\cdots,U^n$ are still conditionally independent given $\mathcal{F}_t$ for the stratified resampling
+%\begin{align*}
+%\text{Var} \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] &= \frac{1}{n^2} \text{Var} \left[ \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
+%																					  &= \frac{1}{n^2} \sum_{i=1}^n \text{Var} \left[ f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
+%																					  &= \frac{1}{n} \left\{\sum_{i=1}^n \omega_i f^2(\xi_i) - n \sum_{i=1}^n \left[ \int_{(i-1)/n}^{i/n} f \circ %\xi \circ D_\omega^{inv}(u)\text{ }du\right]^2\right\}
+%\end{align*}
+
+
+\begin{align*}
+\text{Var}_S \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] &= \frac{1}{n^2} \text{Var} \left[ \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
+																					  &= \frac{1}{n^2} \sum_{i=1}^n \left\{ E \left[ f \circ \xi \circ D_\omega^{inv}(U^i)^2 \bigg| \mathcal{F}_t \right] - E \left[ f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right]^2 \right\}\\
+																					  &= \frac{1}{n^2} E \left[ \sum_{i=1}^n f \circ \xi \circ D_\omega^{inv}(U^i)^2 \bigg| \mathcal{F}_t \right] - \frac{1}{n^2} E \left[ f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right]^2 \\
+																					  &= \frac{1}{n} \sum_{i=1}^n \omega_i f^2(\xi_i) - \frac{1}{n^2} \sum_{i=1}^n \left[ n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 \\
+																					  &= \frac{1}{n} \sum_{i=1}^n \omega_i f^2(\xi_i) - \sum_{i=1}^n \left[ \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2
+\end{align*}
+
+By Jensen's inequality,
+
+\begin{align*}
+\sum_{i=1}^n \left[ \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 &\geq \left[\sum_{i=1}^n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 \\
+																									&= \left[ \sum_{i=1}^n w_i f(\xi_i)\right]^2
+\end{align*}
+Finally,
+$$\text{Var}_M \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \geq \text{Var}_S \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right]$$
+which ends the proof.
+\end{proof}
+
+\noindent
+From a mathematical point of view, the stratified resampling seems the perfect match. A benchmark study consisting in resampling 1000 weights a large number of times was performed and the results are promising. The stratified is among the algorithms which performs the best in terms of speed. Coupled with a lower variance when resampling, it is the most compelling method to use inside the particle filters. 
+
+%TODO put an histogram. It looks more professional
+\begin{table}[h]
+\centering
+\label{table1}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Resampling method     & Residual & Stratified & Systematic & Multinomial \\ \hline
+Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
+\end{tabular}
+\caption{Time spent to resample 100K times 1000 weights}
+\end{table}
+\noindent
+The multinomial implementation is the Octave default version.
+
 
 \section{Particle marginal Metropolis-Hastings Algorithm}
 
@@ -314,7 +461,7 @@ Using the basic marginal likelihood identity of Chib (1995), the ratio is simpli
  \min \left(1, \frac{p(\theta^\star)}{p(\theta)}  \frac{p(y|\theta^\star)}{p(y|\theta)} \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)} \right)
 \end{align*}
 
-It is now clear that a pseudo-marginal MCMC scheme for state space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in Andreiu et al (2010).
+It is now clear that a pseudo-marginal MCMC scheme for state space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in Andrieu et al (2010).
 
 Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used.
 
@@ -344,24 +491,6 @@ The PMMH algorithm is depicted below.
 
 \end{algorithmic}
 \end{algorithm}
-
-\section{Heston}
-\subsection{Simulation of Probability Densities}
-By Ito calculus, and more precisely the Euler-Maruyama method, the Heston stochastic process can be discretized and results in:
-
-\begin{align*}
-S_t &= S_{t-1} + r S_{t-1} dt + \sqrt{V_{t-1}}S_{t-1} \sqrt{dt}Z_t^S \\
-V_t &= V_{t-1} + \kappa(\theta - V_{t-1})dt + \sigma \sqrt{V_{t-1}} \sqrt{dt} Z_t^V
-\end{align}
-where the innovations $\{Z_t^S\}_{t \geq 0}$ and $\{Z_t^V\}_{t \geq 0}$ are standard normal random variables with correlation $\rho$. The generation is made simple by considering the Cholesky decomposition,
-
-\begin{align*}
-Z_t^S &= \phi_t^S \\
-Z_t^V &= \rho \phi_t^V + \sqrt{1-\rho^2} \phi_t^V
-\end{align}
-where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent standard normal random variables.
-%%%% http://math.nyu.edu/~atm262/fall06/compmethods/a1/nimalinmoodley.pdf p36
-
 
 \section{Stochastic Volatility}
 In this section, we introduce the standard stochastic volatility with Gaussian errors. Next, we consider different well-known extensions of the SV model. The first extension is a SV model with Student-t errors. In the second extension, we incorporate a leverage effect by modelling a correlation parameter between measurement and state errors. In the third extension, we implement a model that has both stochastic volatility and moving average errors. In the fourth extension, the conditional mean is supposed to be proportional to the conditional volatility. Finally, the fifth extension incorporates two stochastic processes to model the volatility of the returns.
@@ -611,24 +740,6 @@ p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
 \noindent
 When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
 
-\section{Resampling}
-Resampling is a key component of the particle filter. It is also time-critical because it can represent up to half of the time spent in the filter. Different methods exist: stratified, systematic and residuals resampling. In practical applications, they are generally found to provide comparable results. Despite the lack of complete theoretical analysis of its behavior, systematic resampling is often preferred because it is the simplest method to implement. Randal Douc (2005) proved that residual and stratified resampling methods dominate the basic multinomial approach, in the sense of having lower conditional variance for all configurations of the weights. A benchmark was performed to evaluate the average time of each resampling method.
-
-%put an histogram. It looks more professional!
-\begin{table}[h]
-\centering
-\label{table1}
-\begin{tabular}{|l|l|l|l|l|}
-\hline
-Resampling method     & Residual & Stratified & Systematic & Multinomial \\ \hline
-Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
-\end{tabular}
-\caption{Time spent to resample 100K times 1000 weights}
-\end{table}
-\noindent
-The multinomial implementation is the Octave default version. Considering Randal Douc (2005) results and the benchmark, the stratified resampling seems the most compelling method to use inside the particle filters.
-Stratified resampling is based on ideas used in survey sampling and consists in pre-partitioning the $(0,1]$ interval into $n$ disjoint sets, $(0,1] = (0, 1/n] \cup \cdots \cup (1-1/n, 1]$. The uniform random variables $U^i$ are then drawn independently in each of these sub-intervals: $U^i \sim \mathcal{U}\left( \frac{i-1}{n}, \frac{i}{n} \right)$. Then, the inversion method is used as in multinomial resampling, heavily based on the bootstrap method.
-
 \chapter{Trading Strategy}
 \section{Statistical Arbitrage}
 Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index.
@@ -642,10 +753,10 @@ Bollinger Bands is a widely used technical volatility indicator which consists i
 Ma(t) &= \frac{1}{n}\sum_{j=1}^n p_j \text{ (SMA)} \\
 Boll^\pm(t) &= Ma(t) \pm d * \sqrt{\frac{1}{n} \sum_{j=1}^n (p_j - Ma(t))}
 \end{align}
-where $n$ is the number of time periods in the moving average and $d$ is the number of standard deviations to shift the bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
+where $n$ is the number of time periods in the moving average and $d$ is the number of standard deviations to shift the Bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
 
 \section{Z-score}
-Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, Caldeira Moura (2013) suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasonment for the high threshold holds for short positions. Caldeira Moura (2013) suggested the basic trading strategy signals:
+Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, Caldeira Moura (2013) suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasoning for the high threshold holds for short positions. Caldeira Moura (2013) suggested the basic trading strategy signals:
 
 \begin{align*}
 \text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
@@ -705,11 +816,11 @@ The sample is split into several training (in-sample) and testing sets (out-of-s
 
 \section{Presentation of the dataset - Big introduction}
 The dataset is composed ...
-The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the american stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of co-integration in quantitative strategies. 
+The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the American stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of co-integration in quantitative strategies. 
 
 \section{Model selection}
 Figure 1 displays the SPX500 index for the period 1/1/2010-1/1/2014 followed by the returns and the filtered estimates of $(X_t)_{t>0}$. We set $M$, the number of particles to 1000 and run the different samplers for $N = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. We find that the Gaussian Stochastic Volatility Leverage model performs best in terms of the marginal likelihood criterion. An advantage of using Bayes Factors and AIC is that they automatically penalize highly parametrized models that do not deliver improved content.
-We find that the Gaussian SVL model performs best in terms of the marginal likelihood and AIC criterions. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering.
+We find that the Gaussian SVL model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering.
 
 \section{Tuning the number of particles}
 %http://arxiv.org/pdf/1309.3339v3.pdf p2
@@ -740,6 +851,25 @@ The next step is to determine the number of lags to include in the model. Differ
 \end{itemize}
 The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less suitable for economic data because it is widely known that the returns $\Delta y_t$ show no autocorrelation.\\
 Finally when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
+
+\section{Heston}
+\subsection{Simulation of Probability Densities}
+By Ito calculus, and more precisely the Euler-Maruyama method, the Heston stochastic process can be discretized and results in:
+
+\begin{align*}
+S_t &= S_{t-1} + r S_{t-1} dt + \sqrt{V_{t-1}}S_{t-1} \sqrt{dt}Z_t^S \\
+V_t &= V_{t-1} + \kappa(\theta - V_{t-1})dt + \sigma \sqrt{V_{t-1}} \sqrt{dt} Z_t^V
+\end{align}
+where the innovations $\{Z_t^S\}_{t \geq 0}$ and $\{Z_t^V\}_{t \geq 0}$ are standard normal random variables with correlation $\rho$. The generation is made simple by considering the Cholesky decomposition,
+
+\begin{align*}
+Z_t^S &= \phi_t^S \\
+Z_t^V &= \rho \phi_t^V + \sqrt{1-\rho^2} \phi_t^V
+\end{align}
+where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent standard normal random variables.
+%%%% http://math.nyu.edu/~atm262/fall06/compmethods/a1/nimalinmoodley.pdf p36
+
+
 
 \begin{figure}[!htb]
 \centering
