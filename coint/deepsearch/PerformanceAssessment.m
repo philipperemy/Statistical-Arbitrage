@@ -1,4 +1,4 @@
-function [sharpe_spx, sharpe_free, sharpe_absolute, percentages ] = PerformanceAssessment( pl_strat_cum, spx, initial_bet )
+function [ s ] = PerformanceAssessment( pl_strat_cum, spx, initial_bet )
 
     if(~exist('initial_bet', 'var'))
         initial_bet = 10000;
@@ -8,8 +8,7 @@ function [sharpe_spx, sharpe_free, sharpe_absolute, percentages ] = PerformanceA
     pl_spx_cum = initial_bet*cumprod(percent_diff_spx+1);
     pl_spx = diff(pl_spx_cum);
 
-    norm_pl = diff(pl_strat_cum) - mean(pl_spx); %and SPX is not a risk free!
-    sharpe_spx = (mean(norm_pl) / std(norm_pl))*sqrt(252);
+    diff_pl_strat_cum = diff(pl_strat_cum);
 
     %if the risk free rate is 2% = *1.02 per year
     risk_free_rate = 1.02;
@@ -17,11 +16,11 @@ function [sharpe_spx, sharpe_free, sharpe_absolute, percentages ] = PerformanceA
     daily_risk_free_rate = repmat(daily_percentage, 1, length(pl_strat_cum));
     pl_risk_free_cum = initial_bet*cumprod(daily_risk_free_rate)';
     pl_risk_free = diff(pl_risk_free_cum);
-
-    norm_pl_rf = diff(pl_strat_cum) - mean(pl_risk_free);
+   
+    norm_pl_rf = diff_pl_strat_cum - mean(pl_risk_free);
     sharpe_free = (mean(norm_pl_rf) / std(norm_pl_rf))*sqrt(252);
 
-    sharpe_absolute = mean(diff(pl_strat_cum)) / std(diff(pl_strat_cum)) * sqrt(252);
+    sharpe_absolute = mean(diff_pl_strat_cum) / std(diff_pl_strat_cum) * sqrt(252);
     
     len = length(pl_spx_cum);
     flat_init_bet_cum = repmat(initial_bet, len, 1);
@@ -38,9 +37,32 @@ function [sharpe_spx, sharpe_free, sharpe_absolute, percentages ] = PerformanceA
     percentages2 = diff(tmp)./tmp(1:end-1);
     percentages2 = percentages2 + 1;
 
+    correlation_with_market = corr(diff_pl_strat_cum, pl_spx);
+    
     Y = [percentages-1, percentages2-1, repmat(risk_free_rate-1, length(percentages), 1)];
     barh(Y);
     legend('strat', 'spx', 'risk free rate');
+    
+    MDD_strat = maxdrawdown(pl_strat_cum);
+    MDD_spx = maxdrawdown(spx);
+    
+    annualized_vol = std(percentages);
+    annualized_ret = mean(percentages)-1;
+    
+    strat_returns = Compute_Returns(pl_strat_cum);
+    strat_returns(strat_returns==0) = [];
+    
+    max_daily_ret = max(strat_returns);
+    min_daily_ret = min(strat_returns);
+    
+    skew = skewness(strat_returns);
+    kurt = kurtosis(strat_returns);
+    
+    cumulative_profit = (pl_strat_cum / initial_bet - 1)*100;
+    
+    
+    s = struct('skew', skew, 'kurt', kurt, 'sharpe_free', sharpe_free, 'sharpe_absolute', sharpe_absolute, 'percentages', percentages, 'correlation_with_market', correlation_with_market, 'MDD_strat', MDD_strat, 'MDD_spx', MDD_spx, 'annualized_vol', annualized_vol, 'annualized_ret', annualized_ret, 'max_daily_ret', max_daily_ret, 'min_daily_ret', min_daily_ret, 'cumulative_profit', cumulative_profit, 'strat_returns', strat_returns);
+    
 end
 
 

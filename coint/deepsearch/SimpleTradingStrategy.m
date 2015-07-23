@@ -35,6 +35,8 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
 	
 	max_ss_per			= 0.5; %max short selling percentage of outstanding capital
     
+    %BUG: if two positions are open at the same time, the balance is like
+    %20000, more than the 10000 initial.
 	for i = beg:T
         
         balance = balance + pl(i-1);

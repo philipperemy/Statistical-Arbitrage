@@ -237,9 +237,17 @@ Markov Chain Monte Carlo (MCMC) methods are well known techniques for sampling f
 The GARCH model and the Stochastic Volatility model are competing but non-nested models to describe unobserved volatility in asset returns. The former models the evolution of volatility deterministically. After the publications of Engle (1982) and Bollerslev (1986), these models have been generalized in numerous ways and applied to a vast amount of real-world problems. As an alternative, Taylor (1982) proposes in his seminal work to model the volatility probabilistically, i.e., through a state space model where the logarithm of the squared volatilities - the latent states - follow an autoregressive process of order one. This specification became known as the stochastic volatility (SV) model. Even though several papers such as Kim, Shephard and Chib (1998) provide early evidence in favour of using SV, these have found comparably little use in applied work. The main discrepancy relied in the incapability of estimating the parameters of the SV models. It becomes now possible with techniques such as Particle Markov Chain Monte Carlo. Gregor Kastner (2014) analysed exchanges rates from EUR to USD and showed that a standard SV performs better than a vanilla GARCH(1,1) in terms of predictive accuracy. Chan and Grant (2015) compare a number of GARCH and SV models on commodity markets. SV models generally compare favourably to their GARCH counterparts. The SV models have been retained as the default models for all the reasons specified above. \\
 
 \noindent
-This thesis focuses on the development and the estimation of stochastic volatility models to output an accurate estimate of the volatility of the co-integrated prices. This volatility is later used as part of a trading strategy based on the Bollinger bands, a widely known technical trading indicator created in 1980. In a nutshell, it consists of a set of three curves drawn in relation to securities prices. The middle band represents the trend, that serves as the base for the upper and the lower bands. The interval between the upper and lower bands is determined by the recent volatility of the security prices. The purpose is to give systematic trading decisions by gauging if the price is either high, low or in the range. This strategy is suitable for cointegration since it is based on the mean-reverting pattern of the security.
+This thesis focuses on the development and the estimation of stochastic volatility models to output an accurate estimate of the volatility of the co-integrated prices. This volatility is later used as part of a trading strategy based on the Bollinger bands, a widely known technical trading indicator created in 1980. In a nutshell, it consists of a set of three curves drawn in relation to securities prices. The middle band represents the trend, that serves as the base for the upper and the lower bands. The interval between the upper and lower bands is determined by the recent volatility of the security prices. The purpose is to give systematic trading decisions by gauging if the price is either high, low or in the range. This strategy is suitable for cointegration since it is based on the mean-reverting pattern of the security. Also, we investigate the risk and return of a portfolio consisting of many tuple trades all selected based on criteria such as co-integration. For further discussions based on mean-reverting stationary spreads and illustrative numerical examples, the reader is referred to Pole (2007) and Vidyamurthy (2004).  It is well known that those common strategies are popular among many hedge funds. However, there is not a significant amount of academic literature devoted to it due to its proprietary nature. For a review of some of the existing academic models, see Gatev et al. (2006), Perlin (2009) and Broussard \& Vaihekoski (2012). \\
+
+\noindent
+The sample period starts in January 1990 and ends in March 2014, summing up to 8844 observations. The 1220 most liquid stocks of the US exchanges are used for the study. Daily equity closing prices are obtained from Bloomberg. The proposed statistical arbitrage strategy generated average excess returns of 17\% per year in out-of-sample simulations, Sharpe Ratio of 2, low exposure to the equity markets and relatively low volatility. \\
+
+\noindent
+The remainder of this thesis is organized as follows. In Section 2, co-integration is presented in greater details. Section 3 introduces the Particle Markov Chain Monte Carlo framework and the stochastic volatility models. In section 4, the trading strategies are described. In section 5, the data and the results obtained are discussed. In section 6, a conclusion based on the empirical results is presents, along with suggestions of future research.
 
 \chapter{Cointegration}
+
+Statistical arbitrage is based on the assumption that the patterns observed in the past are going to be repeated in the future. This is in opposition to the fundamental investment strategy that explores and tries to predict the behaviour of economic forces that influence the share prices. Thus statistical arbitrage is a purely statistical approach designed to exploit equity market inefficiencies defined as the deviation from then long-term equilibrium across the stock prices in the past. Cointegration theory is the cornerstone of this approach. 
 
 \section{Theory}
 Cointegration is a statistical property possessed by some time series based on the concepts of stationary and the order of integration of the series. A series is considered stationary if its distribution is time invariant. In other words, the series will constantly return to its time invariant mean value as fluctuations occur. In contrast, a non-stationary series will exhibit a time varying mean. A series is said to be integrated of order $d$, denoted $I(d)$ if it must be differenced at least $d$ times to produce a stationary series.
@@ -249,7 +257,7 @@ Charles Nelson and Charles Plosser (1982) showed that most time series have stoc
 The significance of cointegration analysis is its intuitive appeal for dealing with difficulties that arise when using non-stationary series, particularly those that are assumed to have a long-tun equilibrium relationship. For instance, when non-stationary series are used in regression analysis, one as a dependent variable and the others as independent variables, statistical inference becomes problematic. Assume that $y_t$ and $x_t$ be two independent random walk for every $t$, and let's consider the regression : $y_t = a x_t + b + \epsilon_t$. It is obvious that the true value of $a$ is 0 because $cor(x_t, y_t) = 0$. But the limiting distribution of $\hat{a}$ is such that $\hat{a}$ converges to a function of Brownian motions. This is called a spurious regression, and was first noted by Monte Carlo studies by Granger and Newbold (1974). If $x_t$ and $y_t$ are both unit root processes, classical statistical applies for the regression : $\Delta y_t = b + a \Delta x_t + \epsilon_t$ since both are stationary variables. $\hat{a}$ is now a standard consistent estimator. \\
 
 \noindent
-Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-run relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their corresponding long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory.
+Cointegration is said to exist between two or more non-stationary time series if they possess the same order of integration and a linear combination of these series is stationary. Let $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$ be $n$ $I(1)$ processes. The vector $(X_t)_{t \geq 0}$ is said to be cointegrated if there exists at least one non trivial vector $\beta = (\beta_1,...,\beta_n)$ such that $\epsilon_t = \beta^T X_t$ is a stationary process $I(0)$. $\beta$ is called a cointegration vector, then so is $k \beta$ for any $k \neq 0$ since $k\beta^TX_t \sim I(0)$. There can be $r$ different cointegrating vector, where $0 \leq r \textless n$, i.e. $r$ must be less than the number of variables $n$. In such a case, we can distinguish between a long-run relationship between the variables contained in $X_t$, that is, the manner in which the variables drift upward together, and the short-run dynamics, that is the relationship between deviations of each variable from their corresponding long-run trend. The implication that non-stationary variables can lead to spurious regressions unless at least one cointegration vector is present means that some form of testing for cointegration is almost mandatory. In practical applications, the cointegrating vector $\beta$ must be well balanced. If a coefficient of $\beta$ is very large compared to the others, it means that the investor is exposed to a high risk upon this asset, if the vector came to lose its cointegrated property. Conversely, a coefficient close to zero requires almost no funds to invest in this asset.
 
 \section{Vector Auto Regressive Process (VAR)}
 The Vector Autoregressive (VAR) process is a generalization of the univariate AR process to the multivariate case. It is defined as:
@@ -435,6 +443,11 @@ Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
 \noindent
 The multinomial implementation is the Octave default version.
 
+\section{Tuning the number of particles}
+%http://arxiv.org/pdf/1309.3339v3.pdf p2
+A critical issue in practice is the choice of the number of particles $N$. A large $N$ gives a more accurate estimate of the log likelihood at greater computational cost, while a small $N$ would lead to a very large estimator variance. Minh Ngoc (2014) showed that the efficiency of estimating an intractable likelihood using Bayesian inference and importance sampling is weakly sensitive to $N$ around its optimal value. Furthermore, the loss of efficiency decreases at worse linearly when we choose $N$ higher than the optimal value, whereas
+the efficiency can deteriorate exponentially when $N$ is below the optimal. Pitt and Silva (2011) showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant as it is a function of the parameters as well ass a decreasing function of $N$. A reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{0:T}]$ from an initial short run of the PMCMC scheme with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance
+of the log-likelihood $Var(\log p_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from Pitt (2011), their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well.
 
 \section{Particle marginal Metropolis-Hastings Algorithm}
 
@@ -575,39 +588,6 @@ S_t | X_t = x_t 					&\sim \mathcal{N}\left( S_{t-1} + S_{t-1} \rho \beta \exp \
 \end{align*}
 The differences between the normal leverage model and the standard model where $\rho = 0$, are the correcting drift term $S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}$ and the factor $(1-\rho^2) \leq 1$ reducing the volatility.
 
-%http://people.anu.edu.au/joshua.chan/Chan-Hsiao-2013.pdf
-\subsection{SV-MA(1) - Moving Average}
-The plain stochastic volatility model assumes that the errors in the measurement equation are serially independent. This is often an appropriate assumption for modelling financial data. To test this assumption, the plain model can be extended by allowing the errors in the measurement equation to follow a moving average (MA) process of order $m$. Here, we choose a more simple specification and set $m = 1$. Hence, our model becomes:
-\begin{align*}
-X_t									&= \phi X_{t-1} + \sigma \epsilon_{X,t} \\
-Y_t									&= \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t} + \psi \beta \exp \left( \frac{X_{t-1}}{2} \right) \epsilon_{Y,t-1} \\
-Y_t	| X_t = x_t						&\sim \mathcal{N} \left(0, \beta^2 \exp \left( x_t \right) + \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right) \\
-S_t | X_t = x_t						&\sim \mathcal{N} \left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left( x_t \right) +  S_{t-1}^2 \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right)
-\end{align*}
-As before, we ensure that the root of the characteristic polynomial associated with the MA coefficient $\psi$ is outside the unit circle, $|\psi| < 1$. When $\psi = 0$, the SV-MA(1) model is reduced to the standard stochastic volatility model. The conditional
-variance of $Y_t$ is given by:
-$$Var \left(y_t | \mathcal{F}_{t^-} \right, \theta) = e^{x_t} + \psi^2 e^{x_{t-1}}$$
-That is, the conditional variance is time-varying through two channels. First, it is a moving average of the two most recent variances $e^{x_t}$ and $e^{x_{t-1}$ and second, the volatility also evolve according to the stationary AR(1) ruling the process $(X_t)_{t>0}$.
-
-\subsection{Stochastic Volatility model with stochastic mean (SV-M))}
-Koopman and Hol Uspensky (2002) suggested an extension where the stochastic volatility also enters the conditional mean equation. This model is known as the Stochastic Volatility in Mean (SVM). It is defined as
-
-\begin{align*}
-y_t 			 &= \beta \exp\left(\frac{X_t}{2}\right) + \exp\left(\frac{X_t}{2}\right) \epsilon_{Y,t} \\
-Y_t | X_t = x_t  &\sim \mathcal{N} \left(\beta \exp\left(\frac{x_t}{2}\right) , \exp\left(x_t\right) \right) \\
-S_t | X_t = x_t  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac{x_t}{2}\right), S_{t-1}^2 \exp\left(x_t\right) \right)
-\end{align*}
-where $(X_t)_{t>0}$ corresponds to the process of a standard stochastic volatility model. This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
-
-\subsection{Two Factors Stochastic Volatility}
-Harvey and Ruiz (1994) showed, with the principal component analysis, that two factors might be enough to account for the movements in volatility. The study was performed on daily observations on exchange rate. This model, known as the two factor stochastic volatility model can be useful if more than one process statistically impacts the volatility of the returns. It is defined as:
-\begin{align*}
-  X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right)\\
-  Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right)\\
-  Y_t 						&=  \exp \left(\frac{\mu}{2} + \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1) \\
-\end{align*}
-$S_t | \theta, X_t = x_t   &\sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \exp \left(\mu + x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\mu, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. $\mu$ is a term to adjust the mean of the volatility. Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
-\subsection{Some calculus}
 It turns out that the model with the highest likelihood is the Normal Leverage Stochastic Volatility model. The model is equipped with a two steps filtration $(\mathcal{F}_t)_{t \in \mathbb{N}}$. $x_t$ and $y_t$ are both measured respectively at time $t^-$ and $t$, where $t^- = t - \epsilon$. The concept of two steps is important here to understand that $x_t$ and $y_t$ are not measured at the same time but in a sequential way. Again by the Cholesky decomposition, $y_t$ can be written as:
 
 $$y_t | x_t = \rho \beta \exp(x_t / 2) \epsilon_{X,t} + \beta \exp(x_t / 2) \sqrt{1-\rho^2} \epsilon_R$$
@@ -671,14 +651,85 @@ Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^
 				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \frac{1}{1-\phi^{2}}\right)
 \end{align*}
 
-\subsection{Models and Bollinger Bands}
+%http://people.anu.edu.au/joshua.chan/Chan-Hsiao-2013.pdf
+\subsection{SV-MA(1) - Moving Average}
+The plain stochastic volatility model assumes that the errors in the measurement equation are serially independent. This is often an appropriate assumption for modelling financial data. To test this assumption, the plain model can be extended by allowing the errors in the measurement equation to follow a moving average (MA) process of order $m$. Here, we choose a more simple specification and set $m = 1$. Hence, our model becomes:
+\begin{align*}
+X_t									&= \phi X_{t-1} + \sigma \epsilon_{X,t} \\
+Y_t									&= \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t} + \psi \beta \exp \left( \frac{X_{t-1}}{2} \right) \epsilon_{Y,t-1} \\
+Y_t	| X_t = x_t						&\sim \mathcal{N} \left(0, \beta^2 \exp \left( x_t \right) + \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right) \\
+S_t | X_t = x_t						&\sim \mathcal{N} \left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left( x_t \right) +  S_{t-1}^2 \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right)
+\end{align*}
+As before, we ensure that the root of the characteristic polynomial associated with the MA coefficient $\psi$ is outside the unit circle, $|\psi| < 1$. When $\psi = 0$, the SV-MA(1) model is reduced to the standard stochastic volatility model. The conditional
+variance of $Y_t$ is given by:
+$$Var \left(y_t | \mathcal{F}_{t^-} \right, \theta) = e^{x_t} + \psi^2 e^{x_{t-1}}$$
+That is, the conditional variance is time-varying through two channels. First, it is a moving average of the two most recent variances $e^{x_t}$ and $e^{x_{t-1}$ and second, the volatility also evolve according to the stationary AR(1) ruling the process $(X_t)_{t>0}$.
 
-The Stochastic Volatility models are fitted to the prices. $y_t$ represents the daily returns of the prices. It is computed as $y_t = \frac{S_t}{S_{t-1}}-1$ where $S_t$ is the spread process.
+\subsection{Stochastic Volatility model with stochastic mean (SV-M))}
+Koopman and Hol Uspensky (2002) suggested an extension where the stochastic volatility also enters the conditional mean equation. This model is known as the Stochastic Volatility in Mean (SVM). It is defined as
+
+\begin{align*}
+y_t 			 &= \beta \exp\left(\frac{X_t}{2}\right) + \exp\left(\frac{X_t}{2}\right) \epsilon_{Y,t} \\
+Y_t | X_t = x_t  &\sim \mathcal{N} \left(\beta \exp\left(\frac{x_t}{2}\right) , \exp\left(x_t\right) \right) \\
+S_t | X_t = x_t  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac{x_t}{2}\right), S_{t-1}^2 \exp\left(x_t\right) \right)
+\end{align*}
+where $(X_t)_{t>0}$ corresponds to the process of a standard stochastic volatility model. This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
+
+\subsection{Two Factors Stochastic Volatility}
+Harvey and Ruiz (1994) showed, with the principal component analysis, that two factors might be enough to account for the movements in volatility. The study was performed on daily observations on exchange rate. This model, known as the two factor stochastic volatility model can be useful if more than one process statistically impacts the volatility of the returns. It is defined as:
+\begin{align*}
+  X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right)\\
+  Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right)\\
+  Y_t 						&=  \exp \left(\frac{\mu}{2} + \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1) \\
+\end{align*}
+$S_t | \theta, X_t = x_t   &\sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \exp \left(\mu + x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\mu, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. $\mu$ is a term to adjust the mean of the volatility. Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
+
+\section{Model Comparison}
+The output of the particle filter is an unbiased estimate of $p(y|\theta)$, with the unobserved states integrated out. However this estimation is not sufficient to compare two models. It is always preferred to use the true marginal likelihood $p(y_{1:T})$. According to Bayesian theory, the marginal likelihood for a model $\mathcal{M}$ is defined as
+
+$$p(Y_{1:T} | \mathcal{M}) = \int_{\theta} p(Y_{1:T} | \theta, \mathcal{M}) p(\theta | \mathcal{M}) d\theta$$
+
+\noindent
+Gelfand and Dey (1994) proposed a very general estimate for this marginal likelihood
+
+%TODO:check it N = IT_mcmc?
+%$$\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as It}_{mcmc} \rightarrow +\infty$$
+$$\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as } N \rightarrow \infty$$
+For this estimator to be consistent, $g(\theta_i)}$ must be thin-tailed relative to the denominator. For most cases, a multivariate normal distribution $N(\theta^*, \Sigma^*)$ can be used, where $\theta^* = \frac{1}{N} \sum_{i=1}^N \theta^i$ and $\Sigma^* = \frac{1}{N-1} \sum_{i=1}^N \left(\theta^i - \theta^*\right)\left(\theta^i - \theta^*\right)^T$. The difficulty of this approach resides in the implementation. As a matter of fact, $p(Y_T | \theta)$ is usually very small as $T$ grows. The trick here is to consider the sum of the exponential of the logarithms and factorize by the maximum logarithm to avoid rounding errors. For example, when N = 3 and let assume that the log-terms on the LHS are equal to $-120$, $-121$ and $-122$ :
+\begin{align*}
+p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
+- \log p(Y_T) &= \log (e^{-120} ( 1 + e^{-1} + e^{-2})) \\
+ \log p(Y_T) &= 120 - \log ( 1 + e^{-1} + e^{-2})) \simeq 119.6
+\end{align*}
+
+\noindent
+When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
+
+\chapter{Empirical Analysis}
+\section{Statistical Arbitrage}
+Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. The difference between this long and short position is known as the spread. Once the spread deviates far from its long-run equilibrium, a position is opened and is unwind when the spread reverts. This approach has the advantage of eliminating the market exposure (memo corr cumsum with SP500 should be around 0).
+
+\section{Composition of the portfolio}
+The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in selection the tuples for trading based on the best in-sample Sharpe Ratios. We form the portfolio of 20 best trading pairs that present the greatest SR in the in-sample simulations and use them to compose a pairs trading portfolio to be employed out-of-sample. Once a trade is initiated, the portfolio is not rebalanced. Only two types of transactions are considered: move into a new position, or the total unwind of a previously opened position. Any opened position is closed at the end of the study.
+
+\section{Bollinger Bands}
+\subsection{Framework}
+Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $\{Boll^+_t, Boll^-_t\}$ above and below the moving average prices $\{m_t\}$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by:
+
+\begin{align*}
+m(t) &= \frac{1}{n}\sum_{j=1}^n p_j \text{ (SMA)} \\
+Boll^\pm(t) &= m(t) \pm \alpha * \sqrt{\frac{1}{n} \sum_{j=1}^n (p_j - m(t))}
+\end{align}
+where $n$ is the number of time periods in the moving average and $\alpha$ is the number of standard deviations to shift the Bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
+
+\subsection{Interaction with the SV model}
+
+The SV model is firstly calibrated on the returns $y_t$ of the spread. It is computed as $y_t = \frac{S_t}{S_{t-1}}-1$ where $S_t$ is the spread process.
 $x_t$ represents the volatility associated to $y_t$. The log-returns are not used here for a specific reason discussed later. Let's consider the general case where $S_t$ is of the form
 \begin{align*}
 S_t | \mathcal{F}_{t^-} \sim \mathcal{D}\left( \mu(t), \sigma^2(t) \right)
 \end{align*}
-where $\mathcal{F}_t$ contains all the information up to time $t^-$, i.e. the volatility $\sigma(t)$ and the mean $\mu(t)$ are known because the process $x_t$ and $S_{t-1}$ were measured. $\mathcal{D}$ can represent any suitable distribution such as the normal distribution or the $t$-student distribution.
+where $\mathcal{F}_{t^-}$ contains all the information up to time $t^-$, i.e. the volatility $\sigma(t)$ and the mean $\mu(t)$ are known because the process $x_t$ and $S_{t-1}$ were measured. $\mathcal{D}$ can represent any suitable distribution such as the normal distribution or the $t$-student distribution.
 The main idea behind using these stochastic volatility models is to catch the dynamics of the spread through a better estimation of its hidden volatility. A spread is a linear combination of assets where each asset price is one observation of a more general process, over a time interval. From this idea, two main approaches are discussed. \\
 
 \noindent
@@ -719,58 +770,17 @@ If $f_a$ is simply the sample mean estimator, the equation is simplified to
 $\sigma(t,p) = \frac{1}{N}\sum_{i=1}^N SMA_\sigma(t, p)_i$. It is a well known fact that this estimator is also unbiased and consistent. Depending on the context and on the cross validation phase, $f_a$ can be any measurable function satisfying the conditions above, such as the median or the quantile function.
 Note that a rolling volatility is similar to a moving average on the volatility process. When $p \rightarrow 1$, $r\sigma(t,p)$ converges to $\sigma(t)$, the instant volatility associated to $S_t | \mathcal{F}_{t^-}$.
 
-\section{Model Comparison}
-The output of the particle filter is an unbiased estimate of $p(y|\theta)$, with the unobserved states integrated out. However this estimation is not sufficient to compare two models. It is always preferred to use the true marginal likelihood $p(y_{1:T})$. According to Bayesian theory, the marginal likelihood for a model $\mathcal{M}$ is defined as
+\section{Data}
+The data used in this study consists of daily closing prices of the 1232 stocks from the US markets. All the stocks used are listed in stock exchanges such as Dow Jones or NASDAQ, which means they are among the most liquid stocks traded within the US markets. This characteristic is important for the strategies, since it greatly diminishes the slippage effect, reduces the transaction costs and permits to unwind any position without impacting the market too much. The data were obtained from Bloomberg, taken from the period of January 1990 to March 2014. The data are adjusted for dividends and splits, avoiding false trading signals generated by these events, as pointed out by Broussard and Vaihekoski (2012).
 
-$$p(Y_{1:T} | \mathcal{M}) = \int_{\theta} p(Y_{1:T} | \theta, \mathcal{M}) p(\theta | \mathcal{M}) d\theta$$
+\section{Cross Validation}
+The whole sample period is divided into sets of length a year. Each set is split into training (in-sample) and testing (out-sample) periods with a ratio of 2:1 (8 and 4 months). The training period is used to select the tradable tuples and to tune the parameters of the strategy. The testing period follows and its purpose is to assess the strategy by running the experiments with the parameters computed in the first period. Cointegration tests are performed for all possible combinations. Of the 1220 stocks, it is possible to form 1.8 billion spreads per period. The resulting cointegrated tuples are then ranked based on the in-sample Sharpe Ratio, similarly to Gatev et al. (2006) and Andrade et al. (2005). After selecting 20 pairs with the highest SR, four months of trading are carried out on the out-sample period. At the end of each trading period, all open positions are closed. The procedure continues in a rolling window fashion until the end of the sample.
 
-\noindent
-Gelfand and Dey (1994) proposed a very general estimate for this marginal likelihood
-
-%TODO:check it N = IT_mcmc?
-%$$\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as It}_{mcmc} \rightarrow +\infty$$
-$$\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as } N \rightarrow \infty$$
-For this estimator to be consistent, $g(\theta_i)}$ must be thin-tailed relative to the denominator. For most cases, a multivariate normal distribution $N(\theta^*, \Sigma^*)$ can be used, where $\theta^* = \frac{1}{N} \sum_{i=1}^N \theta^i$ and $\Sigma^* = \frac{1}{N-1} \sum_{i=1}^N \left(\theta^i - \theta^*\right)\left(\theta^i - \theta^*\right)^T$. The difficulty of this approach resides in the implementation. As a matter of fact, $p(Y_T | \theta)$ is usually very small as $T$ grows. The trick here is to consider the sum of the exponential of the logarithms and factorize by the maximum logarithm to avoid rounding errors. For example, when N = 3 and let assume that the log-terms on the LHS are equal to $-120$, $-121$ and $-122$ :
-\begin{align*}
-p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
-- \log p(Y_T) &= \log (e^{-120} ( 1 + e^{-1} + e^{-2})) \\
- \log p(Y_T) &= 120 - \log ( 1 + e^{-1} + e^{-2})) \simeq 119.6
-\end{align*}
-
-\noindent
-When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
-
-\chapter{Trading Strategy}
-\section{Statistical Arbitrage}
-Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index.
-
-- The strategy is a mean-reverting strategy. Once the spread (define it) is far from its long-run equilibrium, enter position and unwind (timing is important)
-
-\section{Bollinger Bands}
-Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $\{Boll^+_t, Boll^-_t\}$ above and below the moving average prices $\{Ma_t\}$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by:
-
-\begin{align*}
-Ma(t) &= \frac{1}{n}\sum_{j=1}^n p_j \text{ (SMA)} \\
-Boll^\pm(t) &= Ma(t) \pm d * \sqrt{\frac{1}{n} \sum_{j=1}^n (p_j - Ma(t))}
-\end{align}
-where $n$ is the number of time periods in the moving average and $d$ is the number of standard deviations to shift the Bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
-
-\section{Z-score}
-Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, Caldeira Moura (2013) suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasoning for the high threshold holds for short positions. Caldeira Moura (2013) suggested the basic trading strategy signals:
-
-\begin{align*}
-\text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
-\text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
-\text{Close short position if } &\leq \Phi^{-1}(q_{CS}) = 0.75\\
-\text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
-\end{align}
-
-\section{Strategy}
-The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. This approach has the advantage of eliminating the market exposure (memo corr cumsum with SP500 should be around 0). A typical trading strategy is made of three parts: selection of the suitable tuples satisfying some criterias like the cointegration, create trading signals based on define predefined investment decision rules and finally assess the performance of the strategy.
+\section{Procedure}
+A typical trading strategy is made of three parts: selection of the suitable tuples satisfying some criteria like cointegration, create trading signals based on define predefined investment decision rules and finally assess the performance of the strategy.
 
 \subsection{Tuples selection}
-\subsubsection{Cointegrated tuples}
-It is common in pair trading and more generally in basket trading to require that the tuples belong to the same sector, for example in Chan (2009) and Dunis et Al. (2010). Other did not adopt this restriction, for example Caldeira Moura (2013). However it is possible for pair trading but becomes impossible when the number of assets grows. Having in mind that increasing the size $n$ of the tuples leads to an combinatorial explosion, it is necessary to make some trade-offs. First, cointegration usually implies correlation but correlation doesn't always imply cointegration. Spurious regression is a very good example where the reverse is not true. However, a correlation test is usually much faster than for instance a Johansen cointegration test (cf. table 2).
+It is common in pair trading and more generally in tuple trading to require that the tuples belong to the same sector, for example in Chan (2009) and Dunis et Al. (2010). Other did not adopt this restriction, for example Caldeira Moura (2013). It is harder but nevertheless possible to bypass this restriction at a greater computational cost when the number of assets grows. Several tricks are performed to diminish this combinatorial explosion; one is based on correlation. In the general case, cointegration usually implies correlation but correlation doesn't always imply cointegration. Spurious regression is a very good example where the reverse is not true. The idea is to filter the uncorrelated tuples to limit the number of candidates for cointegration. This assertion holds because a correlation test can be performed much faster than a cointegration test (cf. table 2).
 
 \begin{table}[h]
 \centering
@@ -783,7 +793,8 @@ Time & 0.33 ms   & 19.08 ms      & 2.33 ms      & 3.04 ms        \\ \hline
 \caption{Average time spent to test a bivariate time series $X_t = (x_{t1}, x_{t2})$}
 \end{table}
 
-A simple correlation test is used for pair trading. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
+\noindent
+When it comes to pairs trading, a simple correlation test is enough to conclude. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
 
 $$R_{xx} =\begin{pmatrix}
 r_{x1x1}    & r_{x1x2} & ...  & r_{x1xn}  \\
@@ -791,16 +802,31 @@ r_{x2x1}    & \ddots &   & \vdots  \\
 \vdots       &   & \ddots &   \\
 r_{xnx1}    & \hdots &   & r_{xnxn} \\
 \end{pmatrix} $$
-One problem arises: the value of the coefficient depends on the order of the tuple. A regression of $y$ on $x$ and $z$ will in general have a different $R$ that will a regression of $z$ on $x$ and $y$. To convince ourselves, let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R$. It means that the order inside a tuple has its importance, at least from a statistical point of view. It is much less obvious from a pure financial point of view. \\
+One problem arises: the value of the coefficient depends on the ordering of the tuple. To provide convincing evidence of this fact, let's consider a simple example. A regression of $y$ on $x$ and $z$ will in general have a different $R$ that will a regression of $z$ on $x$ and $y$. Let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R$. It means that the ordering inside a tuple has its importance, at least from a statistical point of view. This assertion is also true for all cointegrations tests, except for the Johansen test where the ordering does not matter. This notion of ordering is much less obvious from a pure financial point of view. \\
 
-First, an Augmented Dickey Fuller test is performed to check that all series are integrated of the same order, $I(1)$, i.e, they contain a unit root.
-For each tuple candidate, $R^2$ is evaluated. When the empirical distribution of all $R^2$ is known, a threshold $R_{th}$ is derived and the tuples whose $R^2> R_{th}$ are chosen. For every selected tuple, apply a triple Johansen, Dickey Fuller and Phillips-Perron test to check for cointegration. If the tuple is cointegrated, form the spread and mark it as tradable.
+\noindent
+A rigorous testing of cointegration is performed to select the candidates. First, all the time series are tested for a unit root with an Augmented Dickey Fuller test. For a fixed $n$, all possible tuples are formed and $R^2$ is evaluated for each of them. A threshold $R_{th}$ is arbitrary picked up (default is 0.80) and the tuples whose $R^2> R_{th}$ are selected. For every selected tuple, form the spread $\S_t = \beta_0 P_{t0} - \sum_{i=1}^{n-1} \beta_i P_{ti}$ and apply a triple Johansen, Dickey Fuller and Phillips-Perron test to check for cointegration. If the tuple is cointegrated i.e. all the three tests have positive outcome, form the spread and mark it as cointegrated.
 
-\subsubsection{Composition of the portfolio}
-The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in selection the tuples for trading based on the best in-sample sharpe ratios. Recall that Sharpe ratio is calculated as the ratio of annualized return to annualized standard deviation. We form the portfolio of 20 best trading pairs that present the greatest SR in the in-sample simulations and use them to compose a pairs trading portfolio to be employed out-of-sample. Once a trade is initiated, the portfolio is not rebalanced. Only two types of transactions are considered: move into a new position, or the total unwind of a previously opened position. Any opened position is closed at the end of the study.
+\subsection{Creation of the Trading Signals}
+For cointegrated marked spreads, the second part of the algorithm creates trading signals based on predefined investment decision rules. A trading rule determines when to open and close a position. With Bollinger bands strategy, the basic rule is:
 
-\chapter{Performance Assessment}
-In order to reduce risk in the strategies, it is interesting to open many trades inside a portfolio, all with a very short holding time, hoping to diversify the risk of each trade. The performance of the portfolios are examined in terms of cumulative return, variance of returns, Sharpe Ratio and Maximum Drawdown (MDD). The maximum drawdown (MDD) is defined as the maximum peak to trough decline and represents the worst scenario up to time $T$. Drawdowns help determine an investment's financial risk.
+\begin{itemize}
+\item Open a long position when there is an upward crossing between the spread and the lower band;
+\item Unwind (close) this position when there is an upward crossing between the spread and the upper band;
+\item Open a short position when there is a downward crossing between the spread and the upper band;
+\item Unwind this position when there is a downward crossing between the spread and the lower band.
+\end{itemize}
+Empirical studies showed that this strategy is one of the most profitable with the use of Bollinger Bands. When a long position is initiated, the first asset is bought with quantity 1 and the remaining assets of the tuple are sold with the respective quantities indicated by the cointegrated vector $\beta$. It is assumed that the trader can buy a portion of an asset. This same position is closed by selling one unit of the first asset and buying the remaining assets, still in the same proportions.
+
+\subsection{General parameters of the strategy}
+Throughout the strategies, we consider 0.5\% of the total nominal as transaction costs for tuple trading. This choice was discussed for pairs trading in Dunis et al. (2010), Dunis & Ho (2005) and Alexander & Dimitriu (2002). For simplicity, no rental costs are considered for short positions but the capital invested in short selling cannot exceed 50\% of the total capital, invested or in cash. The asset allocation in the portfolio follows a invested weighting scheme with no dynamic rebalancing. Each tuple is given the same weight throughout the study. If there are no open positions, the money is not invested and remain as cash in the portfolio. For a particular tuple, the number of open positions is limited to only one on the spread. The strategy is self-financing, i.e. profits are reinvested and no deposits or withdrawals are permitted.
+
+\subsection{Optimization of the strategy}
+
+Bollinger bands strategy requires to estimate three parameters: the number of periods $p$ to compute the bands, the type of moving average used in the mid band and $\alpha$ which controls the interval between the volatility bands. John Bollinger suggests $p = 20, \alpha = 2$ and simple moving average by default. To optimize those parameters, a cross-validation scheme is performed. The criterion of optimization is the in-sample Sharpe Ratio.
+
+\subsection{Performance Assessment}
+The performance of the portfolios are examined in terms of cumulative return, variance of returns $(\sigma^2)$, Sharpe Ratio (SR) and Maximum Drawdown (MDD). The maximum drawdown (MDD) is defined as the maximum percentage drop incurred from a peak to a bottom up to time $T$. Drawdowns help determine an investment's financial risk.
 
 $$MDD(T) = \smash{\displaystyle\max_{\tau \in (0,T)}} \left[\smash{\displaystyle\max_{\tau \in (0,T)}} X(t) - X(\tau) \right] $$
 
@@ -808,25 +834,18 @@ The Sharpe Ratio (RP) based on daily returns is defined as
 
 $$SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t})^2 }} \text{, where } \bar{R_T} = T^{-1} \sum_{t=1}^T R_t $$
 
-One of the technique to assess the performance of a strategy is to compare it to the very simple Buy and Hold strategy where the holder buys various assets at time $0$ and keep them until time $T$. Gatel et Al (2006) also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs and assuming the fact that you cannot beat the market with a random approach in the long run. So better not trade at all in this case.
+One of the techniques to assess the performance of a strategy is to compare it to the very simple Buy and Hold strategy where the holder buys various assets at time $0$ and keep them until time $T$. Gatel et Al (2006) also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs and assuming the fact that you cannot beat the market with a random approach in the long run. So better not trade at all in this case.
 
 \section{Estimation and out-of-sample results}
 The sample is split into several training (in-sample) and testing sets (out-of-sample). Cross validation is performed on the training sets to tune the parameters of the strategies. The performance is evaluated on the testing set. We suggest a period of one year for testing and four months for testing.
 
-
-\section{Presentation of the dataset - Big introduction}
+\section{Presentation of the dataset}
 The dataset is composed ...
 The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the American stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of co-integration in quantitative strategies. 
 
 \section{Model selection}
 Figure 1 displays the SPX500 index for the period 1/1/2010-1/1/2014 followed by the returns and the filtered estimates of $(X_t)_{t>0}$. We set $M$, the number of particles to 1000 and run the different samplers for $N = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. We find that the Gaussian Stochastic Volatility Leverage model performs best in terms of the marginal likelihood criterion. An advantage of using Bayes Factors and AIC is that they automatically penalize highly parametrized models that do not deliver improved content.
 We find that the Gaussian SVL model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering.
-
-\section{Tuning the number of particles}
-%http://arxiv.org/pdf/1309.3339v3.pdf p2
-A critical issue in practice is the choice of the number of particles $N$. A large $N$ gives a more accurate estimate of the log likelihood at greater computational cost, while a small $N$ would lead to a very large estimator variance. Minh Ngoc (2014) showed that the efficiency of estimating an intractable likelihood using Bayesian inference and importance sampling is weakly sensitive to $N$ around its optimal value. Furthermore, the loss of efficiency decreases at worse linearly when we choose $N$ higher than the optimal value, whereas
-the efficiency can deteriorate exponentially when $N$ is below the optimal. Pitt and Silva (2011) showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant as it is a function of the parameters as well ass a decreasing function of $N$. A reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{0:T}]$ from an initial short run of the PMCMC scheme with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance
-of the log-likelihood $Var(\log p_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from Pitt (2011), their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well.
 
 \section{Testing for Unit Roots}
 
@@ -869,6 +888,15 @@ Z_t^V &= \rho \phi_t^V + \sqrt{1-\rho^2} \phi_t^V
 where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent standard normal random variables.
 %%%% http://math.nyu.edu/~atm262/fall06/compmethods/a1/nimalinmoodley.pdf p36
 
+\section{Z-score}
+Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, Caldeira Moura (2013) suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasoning for the high threshold holds for short positions. Caldeira Moura (2013) suggested the basic trading strategy signals:
+
+\begin{align*}
+\text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
+\text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
+\text{Close short position if } &\leq \Phi^{-1}(q_{CS}) = 0.75\\
+\text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
+\end{align}
 
 
 \begin{figure}[!htb]

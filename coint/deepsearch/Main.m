@@ -1,6 +1,6 @@
 run('../Init.m');
 run('Headers.m');
-spreads = SpreadFinder(pp, 0.8, 236:240); %Why there is only 7 spreads?
+spreads = SpreadFinder(pp, 0.8, 236:245); %Why there is only 7 spreads?
 %range 236:240 is enough
 tic;
 nstd_range = 1.0:0.1:3.0;
@@ -8,7 +8,7 @@ wts_range = 0:1;
 wsize_range = 5:1:100;
 
 c = 1;
-spread_length = 3;
+spread_length = 24;
 for spread = spreads(1:spread_length)
     [ profits, vols, sharpes, I ] = CrossValidationParallel( pp, spread, @SimpleTradingStrategy, nstd_range, wts_range, wsize_range );
     I(:,4)          = sharpes;
@@ -35,4 +35,4 @@ sharpe = (mean(pl)/std(pl))*sqrt(252);
 sharpe
 toc;
 
-[sharpe_spx, sharpe_free, sharpe_absolute, percentages ] = PerformanceAssessment( portfolio, spx );
+[ s ] = PerformanceAssessment( portfolio, spx );

@@ -1,0 +1,7 @@
+\select@language {UKenglish}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Time spent to resample 100K times 1000 weights}}{20}{table.3.1}
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Average time spent to test a bivariate time series $X_t = (x_{t1}, x_{t2})$}}{34}{table.4.1}
