@@ -10,6 +10,56 @@
 \usepackage{amsfonts,amssymb,amsmath,amsthm}
 \usepackage{amsbsy}
 
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.5,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\lstset{
+  frame=tblr,           
+  language=R,
+  otherkeywords={!,!=,~,$,\&,\%/\%,\%\%,<<-,_,/,*},
+  deletekeywords={c, D, data, mean, cbind, hat, class, length, log, sum,
+  col},
+  aboveskip=5mm,
+  belowskip=5mm,
+  showstringspaces=false,
+  columns=flexible,
+  keepspaces=true,
+  basicstyle={\small\ttfamily},
+  backgroundcolor=\color{white}, 
+  numbers=none,                      
+  numberstyle=\tiny\color{gray},   
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,              
+  breakatwhitespace=true,
+  tabsize=3,
+}
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
 %VERY USEFUL
 \allowdisplaybreaks
 
@@ -20,7 +70,7 @@
 
 %%% Graphics packages
 \usepackage{graphicx}
-%\graphicspath{{figures/}} % Useful if you have lots of images and want to keep thinks tidy by having a subfolder for images
+\graphicspath{{img/}} % Useful if you have lots of images and want to keep thinks tidy by having a subfolder for images
 %\usepackage{epstopdf} % If you produce your graphs as .eps files but then want to compile straight to PDF (e.g. because you are using TeXworks.) you may want to use this option. A better alternative of course would be to save all your graphs as *.pdf files from the start. Note that if you are compiling to pdf through PS/DVI then all your figures should be *.eps files and the epstopdf package should not be used.
 %\usepackage{tikz} %For creating vector-graphics diagrams, flowcharts etc directly in LaTeX (takes some time to learn)
 \usepackage[absolute]{textpos} % Used to position the Imperial College logo. You can comment this line and the next line out if you don't use the logo.
@@ -208,9 +258,7 @@ $\rightarrow$						& Converges to ($p$ probability, $d$ distribution, $as$ almos
 i.i.d								& Independent, identically distributed \\
 $L$									& Lag Operator. Defined as $L X_t = X_{t-1}$ \\
 $\Delta$							& Difference operator. Defined as $\Delta X_t = (1-L) X_t = X_t - X_{t-1}$ \\
-E									& Expectation \\
 $E[X_t | \mathcal{F}_t]$			& Conditional expectation \\
-Var									& Variance \\
 $Var[X_t | \mathcal{F}_t]$			& Conditional variance \\
 Cor									& Correlation function \\
 $\circ$								& Composition function operator \\
@@ -267,10 +315,10 @@ Cointegration is said to exist between two or more non-stationary time series if
 The Vector Autoregressive (VAR) process is a generalization of the univariate AR process to the multivariate case. It is defined as:
 
 $$X_t = \nu + \sum_{j=1}^k A_j X_{t-j} + \epsilon_t \text{, } \epsilon_t \sim SWN(0, \Sigma)$$
-where $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$, each of the $A_j$ is a ($nxn$) matrix of parameters, $\nu$ is a fixed vector of intercept terms. Finally $\epsilon_t$ is a n-dimensional strict white noise process of covariance matrix $\Sigma$. The process $X_t$ is said to be stable if the roots of the determinant of the characteristic polynomial $|I_n - \sum_{j=1}^k A_j z^j| = 0$ lie outside the complex unit circle.
+where $X_t = (x_{1t},...,x_{nt})_{t \geq 0}$, each of the $A_j$ is a ($nxn$) matrix of parameters, $\nu$ is a fixed vector of intercept terms. Finally $\epsilon_t$ is a n-dimensional strict white noise process of covariance matrix $\Sigma$. The process $X_t$ is said to be stable if the roots of the determinant of the characteristic polynomial $|I_n - \sum_{j=1}^k A_j z^j| = 0$ lie outside the complex unit circle. If there are roots on the unit circle then some or all the variables in $X_t$ are $I(1)$ and they mat also be cointegrated. If $Y_t$ is cointegrated, then the VAR representation is not the most suitable representation because the cointegrating relations are not explicitly apparent. In this case, the VECM model is more adapted.
 
 \section{Vector Error Correction models (VECM)}
-In an error correction model, the changes in a variable depend on the deviations from some equilibrium relation. Suppose the case $n=2, X_t = (x_t, y_t)$ where $x_t$ represents the price of a Future contract on a commodity and $y_t$ is the spot price of this same commodity traded on the same market. Assume further more that the equilibrium relation between them is given by $y_t = \beta x_t$ and the increments of $y_t$, $\Delta y_t$ depend on the deviation from this equilibrium at time $t-1$. A similar relation may also hold for $x_t$. The system is defined by:
+In an error correction model (ECM), the changes in a variable depend on the deviations from some equilibrium relation. Suppose the case $n=2, X_t = (x_t, y_t)$ where $x_t$ represents the price of a Future contract on a commodity and $y_t$ is the spot price of this same commodity traded on the same market. Assume further more that the equilibrium relation between them is given by $y_t = \beta x_t$ and the increments of $y_t$, $\Delta y_t$ depend on the deviation from this equilibrium at time $t-1$. A similar relation may also hold for $x_t$. The system is defined by:
 \begin{align*}
 \Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{y_t} \\
 \Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{x_t}
@@ -281,8 +329,22 @@ where $\alpha$ represents the speed of adjustments to disequilibrium and $\beta$
 \Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{21} \Delta y_{t-1} + \gamma_{22} \Delta x_{t-1} + \epsilon_{x_t}
 \end{align*}
 In matrix notation and in the general case, the VECM is written as:
-$$\Delta y_t = \prod y_{t-1} + \sum_{j=1}^{k-1} \Gamma_j \Delta_{t-j} + \epsilon_t $$
-where $\Gamma_j = - \sum_{i=j+1}^k A_i$ and $\prod = - \sum_{i=1}^k A_i$. This way of specifying the system contains information on both the short-run and long run adjustments to changes in $y_t$, via the estimates of $\hat{\Gamma_j}$ and $\hat{\prod}$ respectively. To be continued...
+$$\Delta Y_t = \prod Y_{t-1} + \sum_{j=1}^{k-1} \Gamma_j \Delta Y_{t-j} + \epsilon_t $$
+where $\Gamma_j = - \sum_{i=j+1}^k A_i$ and $\prod = \left(\sum_{i=1}^k A_i \right) - I_n$. This way of specifying the system contains information on both the short-run and long run adjustments to changes in $y_t$, via the estimates of $\hat{\Gamma_j}$ and $\hat{\prod}$ respectively. In the VECM, $\Delta Y_t$ and its lags are $I(0)$. The term $\prod Y_{t-1}$ is the only one which includes potential $I(1)$ variables and for $\Delta Y_t$ to be $I(0)$, it must be the case that $\prod Y_{t-1}$ is also $I(0)$. Therefore, $\prod Y_{t-1}$ must contain the cointegrating relations provided that they exist. If the VAR(k) has unit roots then 
+\begin{align*}
+det |I_n - \sum_{j=1}^k A_j z^j| = 0 \\
+det \left(\prod \right) = 0
+\end{align*}
+which means that $\prod$ is singular. A singular matrix has a reduced rank and $rank(\prod) = r < n$. Two cases are to consider. If the rank is 0, it implies that $\prod = 0$. In this case, $Y_t \sim I(1)$ and is not cointegrated. The VECM reduces to a VAR(k-1) in first differences
+$$\Delta Y_t = \sum_{j=1}^{k-1} \Gamma_j \Delta Y_{t-j} + \epsilon_t $$
+If $0 < rank(\prod) = r < n$. This implies that $Y_t$ is $I(1)$ with $r$ linearly independent cointegrating vectors and $n-r$ common stochastic trends (unit roots). Since $\prod$ has rank $r$, it can be written as the product $\prod = \alpha \beta'$ where $\alpha$ and $\beta$ are of dimension $n \times r$ and rank $r$.  The rows of $\beta'$ form a basis for the $r$ cointegrating vectors and the lements of $\alpha$ distribute the impact of the cointegrating vectors to the evolution of $\Delta Y_t$. The VECM becomes
+$$\Delta Y_t = \alpha \beta' Y_{t-1} + \sum_{j=1}^{k-1} \Gamma_j \Delta Y_{t-j} + \epsilon_t $$
+where $\beta' Y_{t-1} \sim I(0)$ since $\beta'$ is a matrix of cointegrating vectors. It is also important to notice that the factorization of $\prod = \alpha \beta'$ is not unique since for any $r \times r$ nonsingular matrix $H$ we have
+
+$$\alpha \beta' = \alpha H H^{-1} \beta' = (aH)(\beta H^{-1'})' = a^* \beta^{*'}, a^* = aH, \beta^* = \beta H^{-1'}$$
+Hence the factorization only identifies the space spanned by the cointegrating relations. To obtain unique values of $\alpha$ and $\beta'$ requires further restrictions on the model.
+
+
 
 \chapter{Particle MCMC}
 
@@ -298,37 +360,40 @@ The process $X$ is not observed directly, but through $y_{1:T}$. The state-space
 
 $$p(y_{1:T} | x_{1:T}, \theta) = \prod_{t=1}^T p(y_t | x_t, \theta) $$
 
-The general idea is to find $\theta$ which maximize the marginal likelihood $p(y_{1:T}|\theta)$, $x$ integrated out. It is interesting to begin by the approximation of $p(x_{1:T}, \theta | y_{1:T})$. By Bayes theorem:
-
+The general idea is to find $\theta$ which maximize the marginal likelihood $p(y_{1:T}|\theta)$, $x$ integrated out. It is interesting to begin by the approximation of $p(x_{1:T}, \theta | y_{1:T})$. By Bayes theorem
 \begin{align*}
 p(x_{1:T}, \theta | y_{1:T}) &\propto p(\theta)p(x_{1:T}|\theta)p(y_{1:T}|x_{1:T}, \theta) \\
  &= p(\theta) p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) \prod_{t=1}^T p(y_t | x_t, \theta)
 \end{align*}
 
+\noindent
 Usually, this probability density function is intractable since it becomes incredibly demanding in resources when $T$ grows. That is where the particle filter comes in.
 
 \section{Particle Filter}
 
 The particle filter is an iterative Monte Carlo method for carrying out Bayesian inference on state-space models. The main idea is to assume that, at each time $t$, an approximation of $p(x_t|y_{1:t}$) can help generating approximate samples of $p(x_{t+1}|y_{1:t+1}$), using importance resampling.
 
+\noindent
 More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_0),\ k=1,\ldots,M$ with uniform normalised weights ${w'}_0^k=1/M$. Then suppose that we have a weighted sample $\{x_t^k,{w'}_t^k|k=1,\ldots,M\}$ from $p(x_t|y_{1:t}$). First generate an equally weighted sample by resampling with replacement M times to obtain $\{\tilde{x}_t^k|k=1,\ldots,M\}$ (giving an approximate random sample from $p(x_t|y_{1:t}$)). Note that each sample is independently drawn from $\sum_{i=1}^M {w'}_t^i\delta(x-x_t^i)$. Next propagate each particle forward according to the Markov process model by sampling $x_{t+1}^k\sim p(x_{t+1}|\tilde{x}_t^k),\ k=1,\ldots,M$ (giving an approximate random sample from $p(x_{t+1}|y_{1:t}$)). Then for each of the new particles, compute a weight $w_{t+1}^k=p(y_{t+1}|x_{t+1}^k$), and then a normalised weight ${w'}_{t+1}^k=w_{t+1}^k/\sum_i w_{t+1}^i$. \\
 
-Sequential Importance Resampling (SIR) filters with transition prior probability distribution as importance function are commonly known as bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(x_k| x_{0:k-1}, y_{0:k}) = p(x_k|x_{k-1})$ and the weights formula is now:
+\noindent
+Sequential Importance Resampling (SIR) filters with transition prior probability distribution as importance function are commonly known as bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(x_k| x_{0:k-1}, y_{0:k}) = p(x_k|x_{k-1})$ and the weights formula is now
 
 $$
 w_k^{(i)} = w_{k-1}^{(i)} \frac{p(y_k|x_k^{(i)})p(x_k^{(i)}|x^{(i)}_{k-1})}{\pi(x_k^{(i)}|x^{(i)}_{0:k-1},y_{0:k})}= w_{k-1}^{(i)} p(y_k|x_k^{(i)})
 $$ 
 
-
-It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(x_{t+1}|y_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $y_t$:
+\noindent
+It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(x_{t+1}|y_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $y_t$
 
 $$ p^N_{\theta}(y_t | y_{1:t-1}) = \frac{1}{N} \sum_{k=1}^N w_t^k$$
 
-and the conditional marginal $y_{1:T}$ over all the state space is:
+\noindent
+and the conditional marginal $y_{1:T}$ over all the state space is
 
 $$ p^N_{\theta}(y_{0:T}) = p(y_1)\prod_{t=2}^T p(y_t | y_{1:t-1})$$
 
-As $T$ is usually large, it is preferred to work with the log likelihoods:
+As $T$ is usually large, it is preferred to work with the log likelihoods
 \begin{align*}
 \log p_{\theta}(y_{1:t}) &= \log(p_\theta(y_1)) + \sum_{t=2}^t \log p_\theta(y_t | y_{1:t-1}) \\
 \log \hat{p}^N_{\theta}(y_{1:t}) &= \sum_{t=2}^t \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{(t)} \right)
@@ -427,7 +492,7 @@ By Jensen's inequality,
 \end{align*}
 Finally,
 $$\text{Var}_M \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \geq \text{Var}_S \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right]$$
-which ends the proof.
+which closes the proof.
 \end{proof}
 
 \noindent
@@ -480,12 +545,10 @@ Using the basic marginal likelihood identity of Chib (1995), the ratio is simpli
 
 It is now clear that a pseudo-marginal MCMC scheme for state space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in Andrieu et al (2010).
 
-Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used.
-
-The PMMH algorithm is depicted below.
+Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used. The PMMH algorithm is depicted in Algorithm \ref{algo_pmcmc}.
 
 \begin{algorithm}
-\caption{Particle pseudo marginal Metropolis-Hastings Algorithm}\label{euclid}
+\caption{Particle pseudo marginal Metropolis-Hastings Algorithm}\label{algo_pmcmc}
 \begin{algorithmic}[1]
 \Procedure{Input}{$y_{1:T}$, a proposal distribution $q(\cdot|\cdot)$, the number of particles $N$, the number of MCMC steps $M$}
 
@@ -581,6 +644,7 @@ In the second extension, a leverage effect is added. Let $\rho$ denote the corre
 }
 \end{theorem}
 
+\noindent
 Applying the Cholesky Decomposition on the innovations gives $\epsilon_{Y,t} = \rho \epsilon_{X,t} + \sqrt{1-\rho^2} \epsilon_R$.
 \begin{align*}
 Y_t 								&= \beta \exp \left(\frac{x_t}{2}\right) \cdot \left( \rho \epsilon_{X,t} + \sqrt{1-\rho^2} \epsilon_R \right) \\
@@ -684,7 +748,7 @@ Harvey and Ruiz (1994) showed, with the principal component analysis, that two f
 \begin{align*}
   X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right)\\
   Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right)\\
-  Y_t 						&=  \exp \left(\frac{\mu}{2} + \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1) \\
+  Y_t 						&=  \exp \left(\frac{\mu}{2} + \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1)
 \end{align*}
 $S_t | \theta, X_t = x_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \exp \left(\mu + x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\mu, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. $\mu$ is a term to adjust the mean of the volatility. Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
 
@@ -721,11 +785,17 @@ The first motivation of considering a portfolio approach is to lower the volatil
 Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $\{Boll^+_t, Boll^-_t\}$ above and below the moving average prices $\{m_t\}$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by:
 
 \begin{align*}
-m(t) &= \frac{1}{n}\sum_{j=1}^n p_j \text{ (SMA)} \\
-Boll^\pm(t) &= m(t) \pm \alpha * \sqrt{\frac{1}{n} \sum_{j=1}^n (p_j - m(t))}
+m(t) &= \frac{1}{n}\sum_{j=1}^n S_j \text{ (SMA)} \\
+Boll^\pm(t) &= m(t) \pm \alpha \sqrt{\frac{1}{n} \sum_{j=1}^n \left(S_j - m(t) \right)}
 \end{align*}
-where $n$ is the number of time periods in the moving average and $\alpha$ is the number of standard deviations to shift the Bollinger bands. The default values are $n = 20$ and $d = 2$. The moving average can be replaced by an exponential moving average that gives more weights to new values and increase the accuracy eventually.
+where $(S_t)_{t \geq 0}$ is the price of the asset, $n$ is the number of time periods in the moving average and $\alpha$ is the number of standard deviations to shift the Bollinger bands. The default values are $n = 20$ and $\alpha = 2$. $m(t)$ is called the mid band and is used as a relative mean value. $Boll^+(t)$ and $Boll^-(t)$ are respectively the upper and lower bands. Their purpose is to measure how far the price deviates from its mean. Under the assumption that the returns are normally distributed, 95\% of the prices should appear within the bands when $\alpha = 2$. The simple moving averages used in the computation of the bands can be replaced by exponential moving averages which gives more weights to new values and may increase the accuracy.
 
+\begin{figure}[htb]
+\centering
+\includegraphics[width = 0.75\textwidth]{bollinger_bands_intro}
+\caption{Example of Bollinger bands strategy applied to Walt Disney Co NYSE (2002). The default values are $n = 20$ and $\alpha = 2$.}
+\label{bollinger_bands_intro}
+\end{figure}
 \subsection{Interaction with the SV model}
 
 The SV model is firstly calibrated on the returns $y_t$ of the spread. It is computed as $y_t = \frac{S_t}{S_{t-1}}-1$ where $S_t$ is the spread process.
@@ -932,7 +1002,7 @@ Maximum Drawdown  												& 3.80\% \\
 \end{table}
 
 \noindent
-Figure xx compares the cumulative excess returns and volatility of the strategy with the ones of the SPX index. The portfolio composed of the tuples shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. The second panel presents the implied volatility of the returns for both strategies computed with a standard stochastic volatility model. The strategy accounts for a low and stable volatility for the whole period. A very low correlation with the market returns attests the market neutral property of the strategy. Table 3 shows the performance year by year of the strategy and it is worth noticing that the excess returns is very high during the crisis where the volatility was very high. As highlighted by Khandani \& Lo (2007) and Avellaneda \& Lee (2010), the second semester of 2007 and first semester of 2008 were quite complicated for quantitative in vestment funds. Particularly for statistical arbitrage strategies that experienced significant losses during the period, with subsequent recovery in some cases. Many managers suffered losses and had to deleverage their portfolios, not benefiting from the subsequent recovery. We obtain results which are consistent with Khandani \& Lo (2007) and Avellaneda \& Lee (2010) and validate their unwinding theory for the quant fund drawdown. Note that in Figure 3, the proposed pairs trading strategy presented significant losses in the first semester of 2008, starting its recovery in the second semester. Khandani \& Lo (2007) and Avellaneda \& Lee (2010) suggest that the events of 2007-2008 may be a consequence of a lack of liquidity, caused by funds that had to undo their positions.
+Figure xx compares the cumulative excess returns and volatility of the strategy with the ones of the SPX index. The portfolio composed of the tuples shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. The second panel presents the implied volatility of the returns for both strategies computed with a standard stochastic volatility model. The strategy accounts for a low and stable volatility for the whole period. A very low correlation with the market returns attests the market neutral property of the strategy. Table 3 shows the performance year by year of the strategy and it is worth noticing that the excess returns is very high during the crisis where the volatility was very high. As highlighted by Khandani \& Lo (2007) and Avellaneda \& Lee (2010), the second semester of 2007 and first semester of 2008 were quite complicated for quantitative in vestment funds. Particularly for statistical arbitrage strategies that experienced significant losses during the period, with subsequent recovery in some cases. Many managers suffered losses and had to deleverage their portfolios, not benefiting from the subsequent recovery. We obtain results which are consistent with Khandani \& Lo (2007) and Avellaneda \& Lee (2010) and validate their unwinding theory for the quant fund drawdown. Note that in Figure 3, the proposed pairs trading strategy presented significant losses in the first semester of 2008, starting its recovery in the second semester. Khandani \& Lo (2007) and Avellaneda \& Lee (2010) suggest that the events of 2007-2008 may be a consequence of a lack of liquidity, caused by funds that had to undo their positions. \cite{delmoral2004}
 
 %\begin{figure}[!htb]
 %\centering
@@ -977,10 +1047,71 @@ It converges to the standard normal probability density function as $\sigma \rig
 
 
 %\cleardoublepage \fancyhead[L]{APPENDIX}
-\appendix % This line declares that you are starting the appendix.
+ % This line declares that you are starting the appendix.
 % If you want a single Appendix and want it to be called Appendix instead of Appendix A, the following should work:
 %\setcounter{secnumdepth}{-1} %This turns off automatic chapter numbering
 %\chapter{Appendix}
 
+\chapter{Appendix}
+
+\section{Stratified Resampling}
+\lstinputlisting{../../filters/resampleStratified.m}
+
+\section{Bootstrap Particle Filter for Standard SV}
+\lstinputlisting{../../filters/BootstrapParticleFilter.m}
+
+\section{Bootstrap Particle Filter for Student SV}
+\lstinputlisting{../../filters/BootstrapParticleFilter_Student.m}
+
+\section{Bootstrap Particle Filter for Normal Leverage SV}
+\lstinputlisting{../../filters/BootstrapParticleFilter_NormalLeverage.m}
+
+\section{Bootstrap Particle Filter for Two Factors SV}
+\lstinputlisting{../../filters/BootstrapParticleFilter_TwoFactors.m}
+
+\section{Particle Markov Chain Monte Carlo (Abstract Class)}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarlo.m}
+
+\section{Particle Markov Chain Monte Carlo Standard Stochastic Volatility Model}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSV.m}
+
+\section{Particle Markov Chain Monte Carlo SV Normal Leverage Model}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVNormalLeverage.m}
+
+\section{Particle Markov Chain Monte Carlo SV Student Model}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloStudentBetaSV.m}
+
+\section{Particle Markov Chain Monte Carlo SV Two Factors}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVTwoFactors.m}
+
+\section{Bayes Factor - Kass and Raftery}
+\lstinputlisting{../../likelihoods/BayesFactor.m}
+
+\section{Marginal Likelihood $p(y_{1:T})$ - Gelf and Dey}
+\lstinputlisting{../../likelihoods/GelfandDey_LogMarginalY.m}
+
+\section{Spread Finder}
+\lstinputlisting{../../coint/deepsearch/SpreadFinder.m}
+
+\section{Spread Constructor}
+\lstinputlisting{../../coint/deepsearch/SpreadConstructor.m}
+
+\section{Build Order}
+\lstinputlisting{../../coint/deepsearch/SpreadBuildOrder.m}
+
+\section{Trading Strategy}
+\lstinputlisting{../../coint/deepsearch/SimpleTradingStrategy.m}
+
+\section{Trading Strategy Cross Validation}
+\lstinputlisting{../../coint/deepsearch/SimpleTradingStrategyCV.m}
+
+\section{Reversion Frequency Calculator}
+\lstinputlisting{../../coint/deepsearch/ReversionFrequencyCalculator.m}
+
+\section{Crossing Points Calculator}
+\lstinputlisting{../../coint/deepsearch/CrossingPointsCalculator.m}
+
+\section{Main}
+\lstinputlisting{../../coint/deepsearch/Main2.m}
 
 \end{document}

@@ -11,7 +11,8 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
     
 	[mid, uppr, lowr] = bollinger(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd);
     
-    beg = 100;
+    %beg = 100;
+    beg = 20;
     [ spr_uppr_trends ] = CrossingPointsCalculator(spr - uppr, beg, T);
     [ spr_mid_trends  ] = CrossingPointsCalculator(spr - mid , beg, T);
     [ spr_lowr_trends ] = CrossingPointsCalculator(spr - lowr, beg, T);

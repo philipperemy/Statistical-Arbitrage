@@ -1,6 +1,6 @@
 
 %Works ONLY for lags = 0
-function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, filename )
+function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
 
     tic;
     stocks       = pp.px;
@@ -12,7 +12,7 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, filename )
     s = 'Name 1, Id 1, Sector 1, Name 2, Id 2, Sector 2, Name 3, Id 3, Sector3, P Value No Cointegration, p val r1, pval r2, Corr 12, Corr 23, Corr 13, Corr Ret 12, Corr Ret 23, Corr ret 13, sum h\n';
     
 	if(write_file) fprintf(f, s); end;
-    fprintf(s);
+    if(disp) fprintf(s); end;
 
     %init for performance
     m_support = zeros(days_count, stocks_count);
@@ -58,7 +58,7 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, filename )
                                 corr(ret_1, ret_2), corr(ret_2, ret_3), corr(ret_1, ret_3));
                             
                                 if(write_file) fprintf(f, s); end;
-                                fprintf(s);
+                                if(disp) fprintf(s); end;
                             
                             end
                         end
