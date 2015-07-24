@@ -58,7 +58,7 @@ function [ s ] = PerformanceAssessment( pl_strat_cum, spx, initial_bet )
     skew = skewness(strat_returns);
     kurt = kurtosis(strat_returns);
     
-    cumulative_profit = (pl_strat_cum / initial_bet - 1)*100;
+    cumulative_profit = (pl_strat_cum(end) / initial_bet - 1)*100;
     
     
     s = struct('skew', skew, 'kurt', kurt, 'sharpe_free', sharpe_free, 'sharpe_absolute', sharpe_absolute, 'percentages', percentages, 'correlation_with_market', correlation_with_market, 'MDD_strat', MDD_strat, 'MDD_spx', MDD_spx, 'annualized_vol', annualized_vol, 'annualized_ret', annualized_ret, 'max_daily_ret', max_daily_ret, 'min_daily_ret', min_daily_ret, 'cumulative_profit', cumulative_profit, 'strat_returns', strat_returns);

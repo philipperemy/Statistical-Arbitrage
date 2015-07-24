@@ -138,9 +138,8 @@ copied or distributed except with permission from the author.}
 \date{\today}
 \logoimg{Imperial__4_colour_process.jpg}
 
-\usepackage{Sweave}
 \begin{document}
-\input{Thesis-concordance}
+\SweaveOpts{concordance=TRUE}
 
 \maketitle
 
