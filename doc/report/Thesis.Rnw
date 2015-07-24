@@ -343,6 +343,30 @@ where $\beta' Y_{t-1} \sim I(0)$ since $\beta'$ is a matrix of cointegrating vec
 $$\alpha \beta' = \alpha H H^{-1} \beta' = (aH)(\beta H^{-1'})' = a^* \beta^{*'}, a^* = aH, \beta^* = \beta H^{-1'}$$
 Hence the factorization only identifies the space spanned by the cointegrating relations. To obtain unique values of $\alpha$ and $\beta'$ requires further restrictions on the model.
 
+\section{Testing for Unit Roots}
+
+% PP TEST doc very interesting
+Before testing for a unit root, the time series must be transformed to its linear form. Usually, assets prices have an exponential growth and logarithm must be applied accordingly to satisfy this prerequisite. However, it is expected not to be the case for a spread instrument. \\
+Once the data is transformed, we must choose the most pertinent model to use in the Augmented Dickey Fuller and Philipps-Perron tests. There are two basic models for economic data $y_t$ with linear growth characteristics: 
+\begin{itemize}
+\item Trend Stationary (TS) : $y_t = \gamma y_{t-1} + c + \delta t + \phi_1 \Delta y_{t-1} + \cdots + \phi_p \Delta y_{t-p} + \epsilon_t $
+\item Auto Regressive with Drift (ARD) : same as TS with $\delta = 0$, and mean $\frac{c}{1-\gamma}$.
+\end{itemize}
+where the persistent parameter $\gamma = 1$ is tested against its alternative $\gamma < 1$. $\epsilon_t$ is an independent innovation process.
+\noindent
+Which model to choose? The trend-stationary is characterized by its ability to revert quickly to its trend unlike the difference-stationary, which can
+drift away during a long time before reverting. In general, if a series is growing, the TS model provides a reasonable trend-stationary alternative to a unit-root process with drift. If a series is not growing, ARD model provide reasonable stationary alternatives to a unit-root process without drift. As we don't expect any drift component in the structure of a spread, the ARD model seems the most suitable model to use. \\
+
+\noindent
+%https://tel.archives-ouvertes.fr/hal-01020405/document
+The next step is to determine the number of lags to include in the model. Different criteria used for lag length often lead to different decisions regarding the optimal lag order that should be used in the model. Dao and Staszewski (2014) suggested a general procedure for the ADF test:
+\begin{itemize}
+\item Determine the optimal max lag value denoted $L_{max}$. It is clear that $L_{min} = 0$ is the minimum value of lag length that could be used. Schwert suggested to use $L_{max} = 12 \left(\frac{T}{100} \right)^{\frac{1}{4}}$ where $T$ is the length of the time series. It guarantees that $L_{max}$ grows with $T$.
+\item When $L_{min}$ and $L_{max}$ are established, ADF t-statistics are calculated for all lag length values between the range $(L_{min}, L_{max})$. The most negative value from all averaged ADF t-statistics indicates the value of lag length that produces the most stationary residuals.
+\end{itemize}
+The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less suitable for economic data because it is widely known that the returns $\Delta y_t$ show no autocorrelation.\\
+Finally when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
+
 
 
 \chapter{Particle MCMC}
@@ -571,10 +595,10 @@ Remarkably $x$ is no more present and the ratio is exactly the same as the margi
 \end{algorithmic}
 \end{algorithm}
 
-\section{Stochastic Volatility}
+\chapter{Stochastic Volatility}
 In this section, we introduce the standard stochastic volatility with Gaussian errors. Next, we consider different well-known extensions of the SV model. The first extension is a SV model with Student-t errors. In the second extension, we incorporate a leverage effect by modelling a correlation parameter between measurement and state errors. In the third extension, we implement a model that has both stochastic volatility and moving average errors. In the fourth extension, the conditional mean is supposed to be proportional to the conditional volatility. Finally, the fifth extension incorporates two stochastic processes to model the volatility of the returns.
 
-\subsection{Standard Stochastic Volatility Model}
+\section{Model $\mathcal{M}_1$ Standard Stochastic Volatility Model}
 The standard discrete-time stochastic volatility model for the asset prices returns $(Y_t)_{t>0}$ is defined as:
 \begin{align*}
   X_t &=  \phi X_{t-1} + \sigma \epsilon_{X,t} \\
@@ -610,8 +634,8 @@ S_t | X_t = x_t 					&\sim \mathcal{N}(S_{t-1}, S_{t-1}^2 \beta^2 \exp(x_t))
 \noindent
 Let $\sigma(t) = \sqrt{\beta^2 \exp(x_t)}$. This quantity always exists because a product of squared and exponential terms is always positive. Finally, $S_t = S_{t-1} + \sigma(t) S_{t-1} \epsilon_R$ corresponds to the discretized Geometric Brownian Motion equation if and only if $\sigma(t) = \sigma \text{, } \forall t > 0$. The interest of using a Stochastic Volatility model essentially relies on the capability of modelling this volatility.
 
-\subsection{SVt - Student-t innovations}
-The first extension is a stochastic volatility model with heavier tails. with $\epsilon_{Y,t} \sim t(\nu)$ where $t(\cdot)$ is the Student-t distribution. $\theta$ is enriched with the new parameter $\nu$, supposed to be unknown.
+\section{Model $\mathcal{M}_2$ SVt - Student-t innovations}
+The first extension is a stochastic volatility model with heavier tails with $\epsilon_{Y,t} \sim t(\nu)$ where $t(\cdot)$ is the Student-t distribution. $\theta$ is enriched with the new parameter $\nu$, supposed to be unknown.
 
 \begin{theorem}
 \textit{
@@ -634,7 +658,7 @@ S_t | x_t &= \mu(t) + \sigma(t) \epsilon_{Y,t}
 \end{align*}
 It turns out that $(S_t | x_t)_{t>0}$ follows a $t$ location-scale distribution of parameters $(\mu(t), \sigma(t), \nu)$.
 
-\subsection{SVL - Stochastic Volatility Leverage}
+\section{Model $\mathcal{M}_3$ SVL - Stochastic Volatility Leverage}
 In the second extension, a leverage effect is added. Let $\rho$ denote the correlation between the innovation processes $(\epsilon_{X,t})_{t>0}$ and $(\epsilon_{Y,t})_{t>0}$. $\theta$ is enriched with this new parameter $\rho$.
 
 \begin{theorem}
@@ -719,7 +743,7 @@ Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^
 \end{align*}
 
 %http://people.anu.edu.au/joshua.chan/Chan-Hsiao-2013.pdf
-\subsection{SV-MA(1) - Moving Average}
+\section{Model $\mathcal{M}_4$ SV-MA(1) - Moving Average}
 The plain stochastic volatility model assumes that the errors in the measurement equation are serially independent. This is often an appropriate assumption for modelling financial data. To test this assumption, the plain model can be extended by allowing the errors in the measurement equation to follow a moving average (MA) process of order $m$. Here, we choose a more simple specification and set $m = 1$. Hence, our model becomes:
 \begin{align*}
 X_t									&= \phi X_{t-1} + \sigma \epsilon_{X,t} \\
@@ -732,7 +756,7 @@ variance of $Y_t$ is given by:
 $$Var \left(y_t | \mathcal{F}_{t^-}, \theta \right) = e^{x_t} + \psi^2 e^{x_{t-1}}$$
 That is, the conditional variance is time-varying through two channels. First, it is a moving average of the two most recent variances $e^{x_t}$ and $e^{x_{t-1}}$ and second, the volatility also evolve according to the stationary AR(1) ruling the process $(X_t)_{t>0}$.
 
-\subsection{Stochastic Volatility model with stochastic mean (SV-M))}
+\section{Model $\mathcal{M}_5$ Stochastic Volatility model with stochastic mean (SV-M))}
 Koopman and Hol Uspensky (2002) suggested an extension where the stochastic volatility also enters the conditional mean equation. This model is known as the Stochastic Volatility in Mean (SVM). It is defined as
 
 \begin{align*}
@@ -742,7 +766,7 @@ S_t | X_t = x_t  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac
 \end{align*}
 where $(X_t)_{t>0}$ corresponds to the process of a standard stochastic volatility model. This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
 
-\subsection{Two Factors Stochastic Volatility}
+\section{Model $\mathcal{M}_6$ Two Factors Stochastic Volatility}
 Harvey and Ruiz (1994) showed, with the principal component analysis, that two factors might be enough to account for the movements in volatility. The study was performed on daily observations on exchange rate. This model, known as the two factor stochastic volatility model can be useful if more than one process statistically impacts the volatility of the returns. It is defined as:
 \begin{align*}
   X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right)\\
@@ -771,6 +795,76 @@ p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
 
 \noindent
 When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
+
+\chapter{Model estimation and selection}
+
+\section{Calibration of the models and tests}
+
+\noindent
+In practical applications, the true value of $\theta_{tr}$ is usually unknown and it makes the validation harder. The validation is an important pre-task because it tests the implementation, the choice of the prior and proposal distributions, and measures the dispersion of the latent variables and the estimator $\hat{\theta}$ to the true value $\theta_{tr}$. The first step involves the sample generation of both the process and the observations $(X_t, Y_t)_{t > 0}$. We choose an arbitrary value for $\theta_{tr}$. From this point, $x^*_{1:T}$ and $y^*_{1:T}$ are sampled. Each model takes $(y_t^*)_{1:T}$ as argument and outputs an estimator $(\hat{x_{1:T}}, \hat{\theta})$. The estimated values are then compared to the true values using some measures such as the MSE defined by $MSE(\hat{\theta}) = E[ ( \hat{\theta} - \theta_{tr} )^2 ]$. It is also interesting to cross validate the models. In this example, $x^*_{1:T}$ and $y^*_{1:T}$ have been sampled from the model $\mathcal{M}_x$. The marginal likelihood of the data $p(y_{1:T})$ should be maximal for $\mathcal{M}_x$. If the parameters are estimated by another model $\mathcal{M}_y$ say, we should have $p(y_{1:T} | \mathcal{M}_x) > p(y_{1:T} | \mathcal{M}_y)$.
+
+
+\section{Estimation of the parameters}
+
+\subsection{Case study with a stock}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{lllllll}
+Parameter    		& $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
+\hline
+$\phi$								                  & 0.9985  & 0.9989 & 0.9960 & & & \\
+$\sigma$                                & 0.2506  & 0.1983 & 0.2728 & & & \\
+$\beta$                                 &  1.2037 & 0.3705 & 0.1    & & & \\
+$\nu$                                   &         & 7.6850 &        & & &\\
+$\rho$                                  &         &        & -0.4397 & & & \\
+$\psi$                                  &         &        &        & & & \\
+$\phi_X$                                &         &        &        & & & 0.9978\\
+$\phi_Z$                                &         &        &        & & & 0.1443\\
+$\sigma_X$                              &         &        &        & & & 0.1162\\
+$\sigma_Z$                              &         &        &        & & & 0.6398\\
+$\mu$                                   &         &        &        & & & \\
+$\log(L)$                               & 2646.3  & 2659.7 & 2660.9 & & & 2663.6\\
+$2 \log \mathcal{BF}(\cdot, \mathcal{M}6)$ & 33.6 & 6.9    & 4.5 & & & 1.0\\
+$N$                                     & 1000    & 1000   & 1000 & & & 1000\\
+$T$                                     & 1000    & 1000   & 1000 & & & 1000\\
+Steps                                   & 10000   & 10000  & 10000 & & & 10000\\
+Burn-in                                 & 1000    & 1000   & 1000 & & & 1000\\
+\hline
+\end{tabular}
+\end{table}
+
+%put a plot with the stock and all the volatilities of the returns. Can be really interesting.
+
+\subsection{Case study with a spread}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{lllllll}
+Parameter      	& $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
+\hline
+$\phi$								                  & 0.9985  & 0.9989 & 0.9960  \\
+$\sigma$                                & 0.2506  & 0.1983 & 0.2728  \\
+$\beta$                                 &  1.2037 & 0.3705 & 0.1   \\
+$\nu$                                   &         & 7.6850 &       \\
+$\rho$                                  &         &        & -0.4397 \\
+$\psi$                                  &         &        &        \\
+$\phi_X$                                &         &        &        \\
+$\phi_Z$                                &         &        &        \\
+$\sigma_X$                              &         &        &        \\
+$\sigma_Z$                              &         &        &        \\
+$\log(L)$                               & 2646.3  & 2659.7 & 2660.9 \\
+$2 \log \mathcal{BF}(\cdot, \mathcal{M}3)$ & 29.0     & 2.3    & 1.0 \\
+$N$                                     & 1000    & 1000   & 1000 \\
+$T$                                     & 1000    & 1000   & 1000 \\
+Steps                                   & 10000   & 10000  & 10000 \\
+Burn-in                                 & 1000    & 1000   & 1000 \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\section{Model selection}
 
 \chapter{Empirical Analysis}
 \section{Statistical Arbitrage}
@@ -918,30 +1012,6 @@ The sample period used starts in January 1990 and ends in March 2014 summing up 
 \section{Model selection}
 For each training period, the spread is computed and all the stochastic volatility models presented are applied to its returns. The model with the highest marginal likelihood is taken as reference and the Bayes factors are computed relatively to this model. AIC is also used to reinforce our decisions. We set $N$, the number of particles to 1000 and run the different samplers for $M = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. We find that the Gaussian Stochastic Volatility Leverage model performs best in terms of the marginal likelihood criterion. An advantage of using Bayes Factors and AIC is that they automatically penalize highly parametrized models that do not deliver improved content. Figure 1 displays the SPX500 index for the period 1/1/2010-1/1/2014 followed by the returns and the filtered estimates of $(X_t)_{t>0}$.
 We find that the Gaussian SVL model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering.
-
-\section{Testing for Unit Roots}
-
-% PP TEST doc very interesting
-Before testing for a unit root, the time series must be transformed to its linear form. Usually, assets prices have an exponential growth and logarithm must be applied accordingly to satisfy this prerequisite. However, it is expected not to be the case for a spread instrument. \\
-Once the data is transformed, we must choose the most pertinent model to use in the Augmented Dickey Fuller and Philipps-Perron tests. There are two basic models for economic data $y_t$ with linear growth characteristics: 
-\begin{itemize}
-\item Trend Stationary (TS) : $y_t = \gamma y_{t-1} + c + \delta t + \phi_1 \Delta y_{t-1} + \cdots + \phi_p \Delta y_{t-p} + \epsilon_t $
-\item Auto Regressive with Drift (ARD) : same as TS with $\delta = 0$, and mean $\frac{c}{1-\gamma}$.
-\end{itemize}
-where the persistent parameter $\gamma = 1$ is tested against its alternative $\gamma < 1$. $\epsilon_t$ is an independent innovation process.
-\noindent
-Which model to choose? The trend-stationary is characterized by its ability to revert quickly to its trend unlike the difference-stationary, which can
-drift away during a long time before reverting. In general, if a series is growing, the TS model provides a reasonable trend-stationary alternative to a unit-root process with drift. If a series is not growing, ARD model provide reasonable stationary alternatives to a unit-root process without drift. As we don't expect any drift component in the structure of a spread, the ARD model seems the most suitable model to use. \\
-
-\noindent
-%https://tel.archives-ouvertes.fr/hal-01020405/document
-The next step is to determine the number of lags to include in the model. Different criteria used for lag length often lead to different decisions regarding the optimal lag order that should be used in the model. Dao and Staszewski (2014) suggested a general procedure for the ADF test:
-\begin{itemize}
-\item Determine the optimal max lag value denoted $L_{max}$. It is clear that $L_{min} = 0$ is the minimum value of lag length that could be used. Schwert suggested to use $L_{max} = 12 \left(\frac{T}{100} \right)^{\frac{1}{4}}$ where $T$ is the length of the time series. It guarantees that $L_{max}$ grows with $T$.
-\item When $L_{min}$ and $L_{max}$ are established, ADF t-statistics are calculated for all lag length values between the range $(L_{min}, L_{max})$. The most negative value from all averaged ADF t-statistics indicates the value of lag length that produces the most stationary residuals.
-\end{itemize}
-The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less suitable for economic data because it is widely known that the returns $\Delta y_t$ show no autocorrelation.\\
-Finally when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
 
 \section{Heston}
 \subsection{Simulation of Probability Densities}

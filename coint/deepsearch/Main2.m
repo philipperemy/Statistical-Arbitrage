@@ -9,9 +9,9 @@ nstd_range = 1.0:0.1:3.0;
 wts_range = 0:1;
 wsize_range = 5:1:20;
 
-for i = 1:length(year_start_ids)-1
+for i = 1:length(year_start_ids)-2
     fprintf('year %i\n', i);
-    [pp_train, pp_test] = Create_Sets( pp, year_start_ids(i), year_start_ids(i+1), percentage );
+    [pp_train, pp_test] = Create_Sets( pp, year_start_ids(i), year_start_ids(i+2), percentage );
     spreads = SpreadFinder(pp_train, 0.8, 236:240, 0);
     
     %Cross validation of the spread
@@ -46,7 +46,8 @@ for i = 1:length(year_start_ids)-1
         end
     end
     
-    w = repmat(1/spread_length, spread_length, 1);
+    len = size(balances,1);
+    w = repmat(1/len, len, 1);
     portfolio = balances'*w;
     plot(portfolio);
     pl = diff(portfolio);

@@ -13,6 +13,7 @@ function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_Norma
     log_p_y_given_theta(1)  =   log(mean(w(:,1)));
     estimated_states(1)     =   (w(:,1) / sum(w(:,1)))'*p(:,1); %correct it in other filters.
     last_innov_y            =   y(1) / ( beta * exp(estimated_states(1)/2) );
+    %maybe there is a bug here. the cor should be present.
     
     for t = 2:T
 

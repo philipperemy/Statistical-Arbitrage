@@ -24,7 +24,6 @@ function [log_p_y_given_theta, estimated_states, estimated_states2] = BootstrapP
             nIdx = randsample(N, N, 'true', w(:,t-1));
         catch
             nIdx = 1:N;
-            fprintf('randsample failed\n');
         end
         
         p1(:,t)                 = rho1 * p1(nIdx,t-1) + sigma1 * randn(N,1);

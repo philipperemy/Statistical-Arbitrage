@@ -72,16 +72,37 @@ beta = 0.1; %add a model to estimate it as well
 st = SVLogReturns(returns, beta);
 particles = 3000;
 pmcmc = ParticleMarkovChainMonteCarloSVNormalLeverage(steps_mcmc, particles);
-pmcmc.run(st);
+%pmcmc.run(st);
 
-[log_p_y_given_theta_SVL, estimated_states] = BootstrapParticleFilter_NormalLeverage(st.y, 0.99586, 0.256, 0.1, -0.435, 0, 1000, pmcmc.p_y_given_x);
+[log_p_y_given_theta_SVL, estimated_states_SVL] = BootstrapParticleFilter_NormalLeverage(st.y, 0.99586, 0.256, 0.1, -0.435, 0, 10000, pmcmc.p_y_given_x);
 
-MCMC_Checks(pmcmc.rho_prop(1000:5000));
-MCMC_Checks(pmcmc.sigma_prop(1000:5000));
-MCMC_Checks(pmcmc.cor_prop(1000:5000));
+ret_svl_vol = 0.1^2*exp(estimated_states_SVL)*(1-0.435^2);
+
+%MCMC_Checks(pmcmc.rho_prop(1000:5000));
+%MCMC_Checks(pmcmc.sigma_prop(1000:5000));
+%MCMC_Checks(pmcmc.cor_prop(1000:5000));
 
 %Mean : 0.995290, Median : 0.996000, Min : 0.992173, Max : 0.996000, Acceptance rate ratio : 0.004750 
 %Mean : 0.274332, Median : 0.272876, Min : 0.175229, Max : 0.398414, Acceptance rate ratio : 0.099500 
 %Mean : -0.433117, Median : -0.439797, Min : -0.622221, Max : -0.123169, Acceptance rate ratio : 0.110000 
-[log_p_y_given_theta_SVL, estimated_states] = BootstrapParticleFilter_NormalLeverage(st.y, 0.995290, 0.27433, 0.1, -0.4331175, 0, 10000, pmcmc.p_y_given_x);
+%[log_p_y_given_theta_SVL, estimated_states_SVL] = BootstrapParticleFilter_NormalLeverage(st.y, 0.995290, 0.27433, 0.1, -0.4331175, 0, 10000, pmcmc.p_y_given_x);
 %Bayes factor is 2.20
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% STOCHASTIC VOLATILITY TWO FACTORS     %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+pmcmc = ParticleMarkovChainMonteCarloSVTwoFactors(steps_mcmc, particles);
+pmcmc.run(st);
+
+%MCMC step: 807 ,rho_prop = 0.997832 ,sigma_prop = 0.116205 ,rho2_prop = 0.144376 ,sigma2_prop = 0.639814 , likelihood = 2663.636953
+%stuck infinite loop. M=50
+rho1 = 0.9978;
+sigma1 = 0.1162;
+rho2 = 0.14437;
+sigma2 = 0.6398;
+
+[log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, st.beta, 10000, pmcmc.p_y_given_x);
+
+plot([exp(estimated_states+estimated_states2)' returns_volatility' exp(estimated_states_SVL)'])
+legend('TwoF', 'SV', 'SVL');
