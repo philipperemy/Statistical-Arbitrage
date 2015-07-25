@@ -799,13 +799,20 @@ When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass a
 
 \chapter{Model estimation and selection}
 
-\section{Calibration of the models and tests}
+\section{Validation of the models}
 
 \noindent
 In practical applications, the true value of $\theta_{tr}$ is usually unknown and it makes the validation harder. The validation is an important pre-task because it tests the implementation, the choice of the prior and proposal distributions, and measures the dispersion of the latent variables and the estimator $\hat{\theta}$ to the true value $\theta_{tr}$. The first step involves the sample generation of both the process and the observations $(X_t, Y_t)_{t > 0}$. We choose an arbitrary value for $\theta_{tr}$. From this point, $x^*_{1:T}$ and $y^*_{1:T}$ are sampled. Each model takes $(y_t^*)_{1:T}$ as argument and outputs an estimator $(\hat{x_{1:T}}, \hat{\theta})$. The estimated values are then compared to the true values using some measures such as the MSE defined by $MSE(\hat{\theta}) = E[ ( \hat{\theta} - \theta_{tr} )^2 ]$. It is also interesting to cross validate the models. In this example, $x^*_{1:T}$ and $y^*_{1:T}$ have been sampled from the model $\mathcal{M}_x$. The marginal likelihood of the data $p(y_{1:T})$ should be maximal for $\mathcal{M}_x$. If the parameters are estimated by another model $\mathcal{M}_y$ say, we should have $p(y_{1:T} | \mathcal{M}_x) > p(y_{1:T} | \mathcal{M}_y)$.
 
 
 \section{Estimation of the parameters}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width = 0.75\textwidth]{toy_pic}
+\caption{Estimation of $\beta$ with the standard SV model}
+\label{bollinger_bands_intro}
+\end{figure}
 
 \subsection{Case study with a stock}
 

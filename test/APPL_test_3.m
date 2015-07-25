@@ -89,6 +89,14 @@ ret_svl_vol = 0.1^2*exp(estimated_states_SVL)*(1-0.435^2);
 %Bayes factor is 2.20
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% STOCHASTIC VOLATILITY LEVERAGE BETA %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+particles = 3000;
+pmcmc = ParticleMarkovChainMonteCarloSVNormalLeverageBeta(steps_mcmc, particles);
+pmcmc.run(st);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% STOCHASTIC VOLATILITY TWO FACTORS     %%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
