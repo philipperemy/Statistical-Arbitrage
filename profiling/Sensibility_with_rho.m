@@ -1,6 +1,6 @@
-function [ log_marginal_likelihood_mat ] = Sensibility_with_rho( N_opt, st, sigma, beta, nu )
-    MAX = 5;
-    rho_seq = -0.99:0.01:0.99;
+function [ log_marginal_likelihood_mat ] = Sensibility_with_rho( N_opt, rho_seq, rho, sigma, beta, nu, steps )
+    st = StochasticVolatilityModelStudent(rho, sigma, beta, steps, nu);
+    MAX = 100;
     j = 1;
     log_marginal_likelihood_mat = zeros(length(rho_seq), MAX);
     for rho = rho_seq

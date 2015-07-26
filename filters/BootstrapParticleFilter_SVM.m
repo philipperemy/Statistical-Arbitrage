@@ -1,5 +1,5 @@
 
-function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter(y, rho, sigma, beta, N, p_y_given_x)
+function [log_p_y_given_theta, estimated_states] = BootstrapParticleFilter_SVM(y, rho, sigma, beta, N, p_y_given_x)
     
     %fprintf('[PF] rho = %f, sigma = %f\n', rho, sigma);
     T = length(y);

@@ -25,17 +25,17 @@ pmcmc = ParticleMarkovChainMonteCarloSV(steps_mcmc, particles);
 %pmcmc.run(st);
 toc;
 
-%MCMC_Checks(pmcmc.rho_prop(1:1000));
-%MCMC_Checks(pmcmc.sigma_prop(1:1000));
-%MCMC_Checks(pmcmc.beta_prop(1:1000));
+%MCMC_Checks(pmcmc.rho_prop(1500:2500));
+%MCMC_Checks(pmcmc.sigma_prop(1500:2500));
+%MCMC_Checks(pmcmc.beta_prop(1500:2500));
 
 %Mean : 0.998508, Median : 0.999657, Min : 0.424933, Max : 0.999657, Acceptance rate ratio : 0.001001 
 %Mean : 0.248592, Median : 0.250599, Min : 0.149552, Max : 5.000000, Acceptance rate ratio : 0.029029 
 %Mean : 1.903714, Median : 1.203703, Min : 0.139485, Max : 5.000000, Acceptance rate ratio : 0.690691 
 %values at the convergence
-rho = 0.9985;
-sigma = 0.2505;
-beta = 1.203;
+rho = 0.9991;
+sigma = 0.2353;
+beta = 0.8783;
 
 [log_p_y_given_theta_SV, estX_SV] = BootstrapParticleFilter(st.y, rho, sigma, beta, 10000, pmcmc.p_y_given_x);
 
@@ -73,10 +73,9 @@ st = SVLogReturns(returns, beta);
 particles = 3000;
 pmcmc = ParticleMarkovChainMonteCarloSVNormalLeverage(steps_mcmc, particles);
 %pmcmc.run(st);
-
 [log_p_y_given_theta_SVL, estimated_states_SVL] = BootstrapParticleFilter_NormalLeverage(st.y, 0.99586, 0.256, 0.1, -0.435, 0, 10000, pmcmc.p_y_given_x);
 
-ret_svl_vol = 0.1^2*exp(estimated_states_SVL)*(1-0.435^2);
+ret_svl_vol = beta^2*exp(estimated_states_SVL)*(1-0.435^2);
 
 %MCMC_Checks(pmcmc.rho_prop(1000:5000));
 %MCMC_Checks(pmcmc.sigma_prop(1000:5000));
@@ -109,8 +108,69 @@ rho1 = 0.9978;
 sigma1 = 0.1162;
 rho2 = 0.14437;
 sigma2 = 0.6398;
+beta = 0.1;
+[log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, beta, 10000, pmcmc.p_y_given_x);
 
-[log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, st.beta, 10000, pmcmc.p_y_given_x);
+vol_two_factors = beta^2*exp(estimated_states_TwoF+estimated_states_TwoF2);
 
-plot([exp(estimated_states+estimated_states2)' returns_volatility' exp(estimated_states_SVL)'])
-legend('TwoF', 'SV', 'SVL');
+Y = sqrt([vol_two_factors' returns_volatility' ret_svl_vol']);
+plot(Y(10:end,:));
+legend('Two Factors SV ', 'Standard SV', 'Normal Leverage SV');
+
+subplot(2,1,1);
+plot(estimated_states_TwoF(10:end)');
+legend('Latent Process X');
+subplot(2,1,2);
+plot(estimated_states_TwoF2(10:end)', 'r');
+legend('Latent Process Z');
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% STOCHASTIC VOLATILITY MA1             %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+pmcmc = ParticleMarkovChainMonteCarloSVMA1(steps_mcmc, particles);
+pmcmc.run(st);
+
+%MCMC step: 2749 ,rho_prop = 0.998095 ,sigma_prop = 0.169641 ,beta_prop = 0.235396 ,psi_prop = 0.006020 , likelihood = 2649.250849
+
+rho = 0.998095;
+sigma = 0.169641;
+beta = 0.235396;
+psi = 0.006020;
+[log_p_y_given_theta_MA1, estimated_states_MA1] = BootstrapParticleFilter_SVMA1(st.y, rho, sigma, beta, psi, 10000, pmcmc.p_y_given_x);
+
+%stuck in an infinite loop... to check
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% STOCHASTIC VOLATILITY SVM             %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%seems to be very stable. And sigma Acceptance Rate of 15 percent is good.
+pmcmc = ParticleMarkovChainMonteCarloSVM(steps_mcmc, particles);
+pmcmc.run(st);
+MCMC_Checks(pmcmc.rho_prop(1000:5000));
+MCMC_Checks(pmcmc.sigma_prop(1000:5000));
+MCMC_Checks(pmcmc.beta_prop(1000:5000));
+%Mean : 0.998259, Median : 0.998681, Min : 0.996955, Max : 0.998681, Acceptance rate ratio : 0.000500 
+%Mean : 0.258502, Median : 0.253392, Min : 0.145597, Max : 0.418673, Acceptance rate ratio : 0.150500 
+%Mean : 0.149455, Median : 0.162586, Min : 0.095523, Max : 0.214124, Acceptance rate ratio : 0.003500 
+
+rho = 0.998681;
+sigma = 0.253392;
+beta = 0.162586;
+[log_val_SVM, estimated_states_SVM] = BootstrapParticleFilter_SVM(st.y, rho, sigma, beta, 10000, pmcmc.p_y_given_x);
+
+save sigma_svm;
+load sigma_svm.mat;
+sigma_svm = sigma_svm(5000:20000);
+sigma_svm(sigma_svm > 0.4) = [];
+MCMC_Checks(sigma_svm);
+
+quantile(sigma_svm, 1-0.975);
+quantile(sigma_svm, 0.975);
+
+vol_svm = exp(estimated_states_SVM);
+
+Y = sqrt([vol_two_factors' returns_volatility' ret_svl_vol' vol_svm']);
+plot(Y(10:end,:));
