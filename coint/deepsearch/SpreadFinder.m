@@ -7,6 +7,10 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
     stocks_count = size(stocks, 2);
     days_count   = size(stocks, 1);
 	write_file 	 = exist('filename', 'var');
+    
+    if(~exist('disp', 'var'))
+       disp = 1; 
+    end
 	
     if(write_file) f = fopen(filename, 'w'); end;
     s = 'Name 1, Id 1, Sector 1, Name 2, Id 2, Sector 2, Name 3, Id 3, Sector3, P Value No Cointegration, p val r1, pval r2, Corr 12, Corr 23, Corr 13, Corr Ret 12, Corr Ret 23, Corr ret 13, sum h\n';

@@ -1,4 +1,5 @@
 clear;
+clc;
 addpath('../filters/');
 addpath('../helpers/');
 addpath('../likelihoods/');
@@ -24,9 +25,9 @@ len_T_seq = length(T);
 var_part_dist_mat = zeros(len_T_seq, len_N_seq);
 c = 1;
 for t = T
+    fprintf('t = %i\n', t);
     [var_part_dist, N_seq] = ParticleDistribVarTest(t);
     var_part_dist_mat(c, :) = var_part_dist;
-    
     c = c + 1;
 end
 
@@ -34,16 +35,19 @@ X = zeros(1,1);
 Y = zeros(1,1);
 Z = zeros(1,1);
 for c = 1:len_T_seq
-    id = sum(var_part_dist_mat(c, :) > 0.8484); %0.8484
-    fprintf('T=%i, opt N = %i\n', T(c), N_seq(id));
-    X(end+1) = T(c);
-    Y(end+1) = N_seq(id);
-    Z(end+1) = 1.1844 * T(c) + 20.3463; %polyfit(X,Y,1)
+    try
+        id = sum(var_part_dist_mat(c, :) > 0.8484); %0.8484
+        fprintf('T=%i, opt N = %i\n', T(c), N_seq(id));
+        X(end+1) = T(c);
+        Y(end+1) = N_seq(id);
+        Z(end+1) = 1.20 * T(c) + 3; %polyfit(X,Y,1)
+    catch ex
+    end
 end
 plot(X,Y,'b--o', X, Z, 'r');
-ylabel('Number of particles N');
+ylabel('Optimal number of particles N');
 xlabel('Number of steps T');
-legend('N_{opt} with var 0.8484', '1.1844 \times T + 20.3463', 'Location','southeast');
+legend('N_{opt} with var 0.8484', '1.20 \times T + 3.00', 'Location','southeast');
 
 [log_marginal_likelihood_mat2] = Sensibility_with_rho( 1000, 0.70:0.01:0.99, 0.91, 1, 0.2, 3, 1000 );
 plot(rho_seq, log_marginal_likelihood_mat2); %beautiful

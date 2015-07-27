@@ -1,6 +1,6 @@
 run('../Init.m');
 run('Headers.m');
-spreads = SpreadFinder(pp, 0.8, 236:245); %Why there is only 7 spreads?
+spreads = SpreadFinder(pp, 0.8, 236:260); %Why there is only 7 spreads?
 %range 236:240 is enough
 tic;
 nstd_range = 1.0:0.1:3.0;

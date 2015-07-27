@@ -2,7 +2,12 @@ function [ ] = MCMC_Checks( props )
     
     subplot(2,2,1);
     plot(props);
-    ylim([min(props) max(props)]);
+    
+    min_p = min(props);
+    max_p = max(props);
+    if(min_p ~= max_p)
+        ylim([ min_p max_p ]);
+    end
     
     subplot(2,2,2);
     qqplot(props);
