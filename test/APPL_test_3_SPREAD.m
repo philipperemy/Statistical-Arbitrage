@@ -7,7 +7,7 @@ addpath('../likelihoods/');
 addpath('../coint/deepsearch/');
 addpath('../coint/impl/');
 
-%%%% FIRST GET A SPREAD %%%%
+%%%% FIRST GET A SPREAD %%%% 09-Sep-2003 - 04-Jun-2006
 load('../data/spx.mat');
 pp = TruncateData(pp, 5000, 5999);
 %spreads = SpreadFinder(pp, 0.8, 236:260);
@@ -16,6 +16,16 @@ pp = TruncateData(pp, 5000, 5999);
 [ h, spread, ~ ] = SpreadConstructor( [238 452 498], [GetPrice(pp,238) GetPrice(pp,452) GetPrice(pp,498)] );
 returns = Compute_Returns(spread.px);
 st = SVLogReturns(returns, 0);
+
+subplot(2,1,1);
+plot(spread.px, 'b');
+xlabel('Time');
+ylabel('Price');
+subplot(2,1,2);
+bar(st.y, 'b');
+xlabel('Time');
+ylabel('Percentage');
+
 
 steps_mcmc = 5000;
 particles = 1000;

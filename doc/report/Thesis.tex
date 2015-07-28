@@ -598,6 +598,7 @@ Remarkably $x$ is no more present and the ratio is exactly the same as the margi
 \end{algorithm}
 
 \chapter{Stochastic Volatility}
+The most important feature of the conditional return distribution $y_t | \mathcal{F}_{t-1}$ is its variance dynamics. The first research on modeling this volatility was Engle (1982) with the famous ARCH model. The main objective was to fit volatility clustering and the fat tails of the return distributions.
 In this section, we introduce the standard stochastic volatility with Gaussian errors. Next, we consider different well-known extensions of the SV model. The first extension is a SV model with Student-t errors. In the second extension, we incorporate a leverage effect by modelling a correlation parameter between measurement and state errors. In the third extension, we implement a model that has both stochastic volatility and moving average errors. In the fourth extension, the conditional mean is supposed to be proportional to the conditional volatility. Finally, the fifth extension incorporates two stochastic processes to model the volatility of the returns.
 
 \section{Model $\mathcal{M}_1$ Standard Stochastic Volatility Model}
@@ -769,13 +770,15 @@ S_t | X_t = x_t  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac
 where $(X_t)_{t>0}$ corresponds to the process of a standard stochastic volatility model. This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
 
 \section{Model $\mathcal{M}_6$ Two Factors Stochastic Volatility}
-Harvey and Ruiz (1994) showed, with the principal component analysis, that two factors might be enough to account for the movements in volatility. The study was performed on daily observations on exchange rate. This model, known as the two factor stochastic volatility model can be useful if more than one process statistically impacts the volatility of the returns. It is defined as:
+With a principal component analysis, Harvey and Ruiz (1994) showed that a short-run and a long-run factors might be enough to explain the returns volatility. The study was performed on daily observations on several exchange rates. This model is known as the two factor stochastic volatility and relies on two different latent processes. It is defined as:
 \begin{align*}
   X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right)\\
   Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right)\\
-  Y_t 						&=  \exp \left(\frac{\mu}{2} + \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1)
+  Y_t 						&=  \beta \exp \left( \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1)
 \end{align*}
-$S_t | \theta, X_t = x_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \exp \left(\mu + x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\mu, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. $\mu$ is a term to adjust the mean of the volatility. Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
+$S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. Veiga (2006) showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, Chernov and Ghysels (2000), Andersen et al. (2002) found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. \\
+\noindent
+Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
 
 \section{Model Comparison}
 The output of the particle filter is an unbiased estimate of $p(y|\theta)$, with the unobserved states integrated out. However this estimation is not sufficient to compare two models. It is always preferred to use the true marginal likelihood $p(y_{1:T})$. According to Bayesian theory, the marginal likelihood for a model $\mathcal{M}$ is defined as
@@ -808,7 +811,13 @@ In practical applications, the true value of $\theta_{tr}$ is usually unknown an
 
 \section{Estimation of the parameters}
 
-Mean : 0.253315, Median : 0.251490, Min : 0.143482, Max : 0.394160, Acceptance rate ratio : 0.140114, skewness : 0.2248, kurtosis : 2.9453, Confidence Intervals (95\%) : 0.1822, 0.3345.
+\begin{figure}[htb]
+\centering
+\includegraphics[width = 0.75\textwidth]{apple_2003_2006}
+\caption{APPL stock. Period is from 09-Sep-2003 to 04-Jun-2006}
+\label{apple_2003_2006}
+\end{figure}
+
 
 \begin{table}[htb]
 \centering
@@ -908,7 +917,12 @@ Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatili
 \label{n_opt_function_t}
 \end{figure}
 
-
+\begin{figure}[htb]
+\centering
+\includegraphics[width = 0.75\textwidth]{spread_amr_crane_2003_2006}
+\caption{Spread AMR CORP - CRANE CO - DOVER CORP. $\beta = (1, -0.0865, -0.3796)$. Period is from 09-Sep-2003 to 04-Jun-2006}
+\label{spread_amr_crane_2003_2006}
+\end{figure}
 
 %put a plot with the stock and all the volatilities of the returns. Can be really interesting.
 
@@ -931,9 +945,9 @@ $\phi_Z$                                &         &        &         &         &
 $\sigma_X$                              &         &        &         &         &         & 0.1268\\
 $\sigma_Z$                              &         &        &         &         &         & 0.4913\\
 $\mu$                                   &         &        &         &         &         & 0 \\
-$\log(L)$                               & 1792.3  & 1797.8 & 1795.1  & 2649.2  & 2649.3  & 1801.3\\
-AIC                                     & -3578.6 & -3587.6& -3582.2 & -5290.4 & -5292.6 & -3592.6\\
-$2 \log \mathcal{BF}(\cdot, \mathcal{M}6)$& 0     & 0      & 0       & 0       & 0       & 0\\
+$\log(L)$                               & 1792.3  & 1797.8 & 1795.1  & 1793.5  & 1788.5  & 1801.3\\
+AIC                                     & -3578.6 & -3587.6& -3582.2 & -3579.0 & -3571.0 & -3592.6\\
+$2 \log \mathcal{BF}(\cdot, \mathcal{M}6)$& 18    & 7      & 12.4    & 15.6    & 25.6    & 0\\
 $N$                                     & 1000    & 1000   & 1000    & 1000    & 1000    & 1000\\
 $T$                                     & 689     & 689    & 689     & 689     & 689     & 689\\
 Steps                                   & 10000   & 10000  & 10000   & 10000   & 10000   & 10000\\

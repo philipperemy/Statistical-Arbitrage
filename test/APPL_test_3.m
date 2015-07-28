@@ -14,6 +14,17 @@ appl_prices = appl_prices(5000:5999);
 returns = Compute_Returns(appl_prices);
 st = SVLogReturns(returns, 0);
 
+%%%% HACK %%%%
+subplot(2,1,1);
+plot(appl_prices(end-689:end), 'b');
+xlabel('Time');
+ylabel('Price');
+subplot(2,1,2);
+bar(st.y(end-689:end), 'b');
+xlabel('Time');
+xlim([0 689]);
+ylabel('Percentage');
+
 steps_mcmc = 5000;
 particles = 1000;
 
