@@ -200,17 +200,16 @@ copied or distributed except with permission from the author.}
 \listoffigures
 \listoftables
 
+
+\chapter*{Acknowledgements}
+Nothing added yet. Stay tuned.
+
 \begin{abstract}
 Statistical Arbitrage is a computationally-intensive approach which involves the simultaneous buying and selling of security portfolios according to predefined or adaptive statistical models. Statistical Arbitrage strategies are heavily based on the construction of stationary mean-reverting spreads and sophisticated models to identify opportunities. This thesis enriches the classic cointegration-based pairs trading by considering two cases: triples of assets, and quadruples where one is an index. It is common,in pairs trading strategies to impose that the pairs belong to the same sector, for example in Chan (2009) and Dunis et al. (2010). Similar to Caldeira Moura (2013) for pairs trading, we do not adopt this restriction for triple trading as the computational cost is still acceptable. It becomes much harder with quadruple trading with a dataset composed of the most liquid stocks from the US exchanges. Two strategies are discussed in this thesis: Bollinger Bands and Z-score. The volatility of the traded assets is estimated using several stochastic volatility models where the parameters are estimated via Particle Markov Chain Monte Carlo. The profitability of the strategy is assessed with data from the S\&P500 on 1232 stocks between 01-Jan-1990 and 19-Mar-2014. Empirical analysis shows that the proposed strategy accounts for excess returns of 17\% per year, Sharpe Ratio above 2 and low correlation with the market.
 
 \end{abstract}
 \newpage
-%\chapter*{Acknowledgements}
-%Thank you supervisor/friends/family/pet.
-%\begin{myquote}
-%Include an acknowledgement.
-%\end{myquote}
-%\newpage
+
 
 % Automatically create a table of contents
 %\renewcommand{\contentsname}{Table of Contents}
@@ -365,15 +364,13 @@ The next step is to determine the number of lags to include in the model. Differ
 \item Determine the optimal max lag value denoted $L_{max}$. It is clear that $L_{min} = 0$ is the minimum value of lag length that could be used. Schwert suggested to use $L_{max} = 12 \left(\frac{T}{100} \right)^{\frac{1}{4}}$ where $T$ is the length of the time series. It guarantees that $L_{max}$ grows with $T$.
 \item When $L_{min}$ and $L_{max}$ are established, ADF t-statistics are calculated for all lag length values between the range $(L_{min}, L_{max})$. The most negative value from all averaged ADF t-statistics indicates the value of lag length that produces the most stationary residuals.
 \end{itemize}
-The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less suitable for economic data because it is widely known that the returns $\Delta y_t$ show no autocorrelation.\\
-Finally when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
-
+The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less suitable for economic data because it is widely known that the returns $\Delta y_t$ show no autocorrelation. Finally, when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
 
 
 \chapter{Particle MCMC}
 
 \section{Introduction}
-Particle MCMC embeds a particle filter within an MCMC scheme. The standard version uses a particle filter to propose new values for the stochastic process (basically $x_{0:T}$), and MCMC moves to propose new values for the parameters (usually named $\theta$). One of the most challenging task in designing a PMCMC sampler is considering the trade-off between the Monte Carlo error of the particle filter and the mixing of the MCMC moves. Intuitively, when $N$, the number of particles grows to infinity, the variance of the error becomes very small and the mixing of the chain becomes very poor.
+Particle MCMC is a powerful technique for estimating parameters of a complex model where classical methods such as maximum likelihood estimation are limited. This is the case for State-Space models which incorporate latent variables. Particle MCMC embeds a particle filter within an MCMC scheme. The standard version uses a particle filter to propose new values for the stochastic process (basically $x_{0:T}$), and MCMC moves to propose new values for the parameters (usually named $\theta$). One of the most challenging task in designing a PMCMC sampler is considering the trade-off between the Monte Carlo error of the particle filter and the mixing of the MCMC moves. Intuitively, when $N$, the number of particles grows to infinity, the variance of the error becomes very small and the mixing of the chain becomes very poor.
 
 \section{State-Space Models}
 The state-space models are parametrised by $\theta = (\theta_1,...,\theta_n)$ and all components are considered to be independent one another. $\theta$ is associated a prior distribution $p(\theta) = \prod_i p(\theta_i)$ State-space models are usually defined in continuous time because physical laws are most often described in terms of differential equations. However, most of the time, a discrete-time representation exists. It is often written in the innovation form that describes noise. An example of such a process is describe in the Stochastic Volatility section. The model is composed of an unobserved process $X_{0:T}$ and $Y_{1:T}$, known as the observations. $X_{0:T}$ is assumed to be first order markovian, governed by a transition kernel $K(x_{t+1}|x_t)$. The probability density of a realization $x_{0:T}$ is written as:
@@ -776,9 +773,24 @@ With a principal component analysis, Harvey and Ruiz (1994) showed that a short-
   Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right)\\
   Y_t 						&=  \beta \exp \left( \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1)
 \end{align*}
-$S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. Veiga (2006) showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, Chernov and Ghysels (2000), Andersen et al. (2002) found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. \\
+$S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. Veiga (2006) showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, Chernov and Ghysels (2000), Andersen et al. (2002) found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. Another variant of this model with a leverage parameter $\rho$ on $(X_t)_{t>0}$ exists but is not presented because it showed comparable results on the sample sets.\\
 \noindent
 Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
+
+\chapter{Model estimation and selection}
+
+\section{Validation of the models}
+
+\noindent
+In practical applications, the true value of $\theta_{tr}$ is usually unknown and it makes the validation harder. The validation is an important pre-task because it tests the implementation, the choice of the priors and the proposal distributions, measures the dispersion of the estimator $\hat{\theta}$ to the true value $\theta_{tr}$. The first step involves the sample generation of both the process and the observations $(X_t, Y_t)_{t > 0}$. We choose an arbitrary value for $\theta_{tr}$. From this point, $x^*_{1:T}$ and $y^*_{1:T}$ are sampled. Each model takes $(y_t^*)_{1:T}$ as argument and outputs an estimator $(\hat{x_{1:T}}, \hat{\theta})$. The estimated values are then compared to the true values using some measures such as the MSE defined by $MSE(\hat{\theta}) = E[ ( \hat{\theta} - \theta_{tr} )^2 ]$. It is also interesting to cross validate the models. In this example, $x^*_{1:T}$ and $y^*_{1:T}$ have been sampled from the model $\mathcal{M}_x$. The marginal likelihood of the data $p(y_{1:T})$ should be maximal for $\mathcal{M}_x$. If the parameters are estimated by another model $\mathcal{M}_y$ say, we should have $p(y_{1:T} | \mathcal{M}_x) > p(y_{1:T} | \mathcal{M}_y)$.
+
+
+\section{Parametrisation and estimation}
+
+Once the model has been validated, it can be fitted to sample data. The number of steps required in Particle MCMC is taken large enough to ensure that enough samples are available for analysis. Unless stated otherwise, the PMCMC scheme algorithm will loop 10000 times before stopping. The first 1000 samples are discarded for each parameter. This is because the chains require several steps to reach their equilibrium distribution. A component-wise scheme is used to update the parameters, one by one sequentially. Note that it is possible to parallel this scheme it by introducing a bias. However, a more efficient way is to parallel the filter, still with a bias. Both algorithms have been implemented and are available in the appendix. Because the bias has not been rigourously, a simple version with no parallel was used for the computations. Once the burn-in phase was performed, the mean value $\bar{\theta}$ is selected from the distribution $\mathcal{D}(\theta)$ as the best estimation for $\theta_{tr}$. Some statistics, moments and confidence intervals can be obtained from $\mathcal{D}(\theta)$.
+
+\section{Determination of the number of particles}
+The determination of the correct number of particles $N$ is important in a PMCMC scheme to balance accuracy and good mixing of the chains. The test is based on the knowledge of the true value $\theta_{tr} = \bar{\theta}$. An artificial dataset composed of daily returns with $T=1000$ is generated from model $\mathcal{M}_2$. For a given value of $N$, the bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods $Var(\log p_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. As seen previously in section \ref{sec:tuning_n}, $N$ is optimal when $Var(\log p_N(y|\bar{\theta})) = 0.8464$. From Figure \ref{est_var_pn_theta_n}, $N = 1500$ seems to be the value to select. Pitt (2011) reported that the penalty for a slightly bigger variance is not too severe. The best candidate is therefore $N = 1000$ for $T=1000$. The process is repeated for several values of $T$ to detect a general rule.
 
 \section{Model Comparison}
 The output of the particle filter is an unbiased estimate of $p(y|\theta)$, with the unobserved states integrated out. However this estimation is not sufficient to compare two models. It is always preferred to use the true marginal likelihood $p(y_{1:T})$. According to Bayesian theory, the marginal likelihood for a model $\mathcal{M}$ is defined as
@@ -801,15 +813,6 @@ p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
 \noindent
 When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, Kass and Raftery (1995) suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
 
-\chapter{Model estimation and selection}
-
-\section{Validation of the models}
-
-\noindent
-In practical applications, the true value of $\theta_{tr}$ is usually unknown and it makes the validation harder. The validation is an important pre-task because it tests the implementation, the choice of the prior and proposal distributions, and measures the dispersion of the latent variables and the estimator $\hat{\theta}$ to the true value $\theta_{tr}$. The first step involves the sample generation of both the process and the observations $(X_t, Y_t)_{t > 0}$. We choose an arbitrary value for $\theta_{tr}$. From this point, $x^*_{1:T}$ and $y^*_{1:T}$ are sampled. Each model takes $(y_t^*)_{1:T}$ as argument and outputs an estimator $(\hat{x_{1:T}}, \hat{\theta})$. The estimated values are then compared to the true values using some measures such as the MSE defined by $MSE(\hat{\theta}) = E[ ( \hat{\theta} - \theta_{tr} )^2 ]$. It is also interesting to cross validate the models. In this example, $x^*_{1:T}$ and $y^*_{1:T}$ have been sampled from the model $\mathcal{M}_x$. The marginal likelihood of the data $p(y_{1:T})$ should be maximal for $\mathcal{M}_x$. If the parameters are estimated by another model $\mathcal{M}_y$ say, we should have $p(y_{1:T} | \mathcal{M}_x) > p(y_{1:T} | \mathcal{M}_y)$.
-
-
-\section{Estimation of the parameters}
 
 \begin{figure}[htb]
 \centering
@@ -856,8 +859,6 @@ Burn-in                                 & 1000    & 1000   & 1000    & 1000 & & 
 \label{sigma_svm}
 \end{figure}
 
-\section{Determination of the number of particles}
-The determination of the correct number of particles $N$ is important in a PMCMC scheme to balance accuracy and good mixing of the chains. The test is based on the knowledge of the true value $\theta_{tr} = \bar{\theta}$. An artificial dataset composed of daily returns with $T=1000$ is generated from model $\mathcal{M}_2$. For a given value of $N$, the bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods $Var(\log p_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. As seen previously in section \ref{sec:tuning_n}, $N$ is optimal when $Var(\log p_N(y|\bar{\theta})) = 0.8464$. From Figure \ref{est_var_pn_theta_n}, $N = 1500$ seems to be the value to select. Pitt (2011) reported that the penalty for a slightly bigger variance is not too severe. The best candidate is therefore $N = 1000$ for $T=1000$. The process is repeated for several values of $T$ to detect a general rule.
 
 \begin{figure}[htb]
 \centering
@@ -913,7 +914,7 @@ Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatili
 \begin{figure}[htb]
 \centering
 \includegraphics[width = 0.75\textwidth]{n_opt_function_t}
-\caption{Behaviour of $N_opt$ when $T$ varies}
+\caption{Behaviour of $N_{opt}$ when $T$ varies}
 \label{n_opt_function_t}
 \end{figure}
 
