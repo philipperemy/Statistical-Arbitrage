@@ -166,6 +166,41 @@ subplot(2,1,2);
 plot(estimated_states_TwoF2(10:end)', 'r');
 legend('Latent Process Z');
 
+%%% STO TWO FACTORS COR
+
+st = SVLogReturns(returns, 0);
+pmcmc = ParticleMarkovChainMonteCarloSVTwoFactorsBetaCor(steps_mcmc, particles);
+pmcmc.run(st);
+
+MCMC_Checks(pmcmc.rho_prop(4500:5000));
+MCMC_Checks(pmcmc.sigma_prop(4500:5000));
+MCMC_Checks(pmcmc.rho2_prop(4500:5000));
+MCMC_Checks(pmcmc.sigma2_prop(4500:5000));
+MCMC_Checks(pmcmc.beta_prop(4500:5000));
+MCMC_Checks(pmcmc.cor_prop(4500:5000));
+
+%1000-5000
+%Mean : 0.726889, Median : 0.939994, Min : 0.000980, Max : 0.999692, Acceptance rate ratio : 0.315000 
+%Mean : 0.251178, Median : 0.158994, Min : 0.000055, Max : 1.797519, Acceptance rate ratio : 0.188500 
+%Mean : 0.724905, Median : 0.968776, Min : 0.000519, Max : 0.999451, Acceptance rate ratio : 0.273000 
+%Mean : 0.293810, Median : 0.223074, Min : 0.009743, Max : 1.256647, Acceptance rate ratio : 0.183250 
+%Mean : 0.776786, Median : 0.460051, Min : 0.132099, Max : 5.000000, Acceptance rate ratio : 0.346750 
+%Mean : -0.287015, Median : -0.292068, Min : -0.999363, Max : 0.985386, Acceptance rate ratio : 0.341750
+
+%MCMC step: 4950 ,rho_prop = 0.999674 ,sigma_prop = 0.072545 ,rho2_prop = 0.755427 ,sigma2_prop = 0.344350 ,beta_prop = 0.369088 ,cor_prop = -0.853284 , likelihood = 1808.145163
+
+rho1    = 0.999674;
+sigma1  = 0.072545;
+rho2    = 0.755427;
+sigma2  = 0.344350;
+beta    = 0.369088;
+cor     = -0.853284;
+
+[log_p_y_given_theta_two_factors_lev, estimated_states_lev, estimated_states2_lev] = BootstrapParticleFilter_TwoFactorsCor(st.y, rho1, sigma1, rho2, sigma2, beta, cor, 10000, pmcmc.p_y_given_x);
+                
+
+%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% STOCHASTIC VOLATILITY TWO FACTORS BETA %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

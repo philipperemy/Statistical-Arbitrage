@@ -4,19 +4,14 @@ addpath('../helpers/');
 addpath('../pmcmc/');
 addpath('../models/');
 addpath('../likelihoods/');
-
 load('../data/spx.mat');
-
 p_y_given_x = @(y,sig) normpdf(y, 0, sig);
-
 APPLE_TICKER = 239;
 appl_prices = GetPrice(pp, APPLE_TICKER);
 appl_prices = appl_prices(5000:5999);
 %%% Now we use the returns St/St-1 - 1 instead of the log returns
 returns = Compute_Returns(appl_prices);
-
 st = SVLogReturns(returns, 0);
-
 steps_mcmc = 5000;
 particles = 1000;
 
@@ -45,7 +40,6 @@ returns_volatility_var = beta^2*exp(estX_SV);
 returns_volatility_sd = sqrt(returns_volatility_var);
 N = 1000; %generate N observations of the process
 T = length(returns);
-generated_processes_returns = ones(N, T);
 generated_processes = zeros(N, T);
 
 real_vol = zeros(T,1);
@@ -54,6 +48,8 @@ for t = 2:T
     generated_processes(:,t) = normrnd(appl_prices(t-1), returns_volatility_sd(t)*appl_prices(t-1), N, 1);
     %generated_processes(:,t) = appl_prices(t-1)*(1+returns_volatility_sd(t)*randn(N,1));
 end
+
+plot(generated_processes');
 
 ma = tsmovavg(appl_prices,'s',20,1);
 
@@ -99,21 +95,18 @@ plot(movingstd(appl_prices, 20));
 plot([mean(movstd_mat, 1)' movingstd(appl_prices, 20)]);
 plot([quantile(movstd_mat, 0.9, 1)' movingstd(appl_prices, 20)]);
 
-% 
-% Relaxing beta condition. estimate it now.
-% steps_mcmc = 5000;
-% pmcmc = ParticleMarkovChainMonteCarloStudentBetaSV(steps_mcmc, particles);
-% pmcmc.run(st);
-% 
-% [log_p_y_given_theta_SVT, estX_SVT] = BootstrapParticleFilter_Student(st.y, 0.9989, 0.266967, 0.998863, 6.74, 10000, pmcmc.p_y_given_x);
-% BayesFactor(log_p_y_given_theta_SVT, log_p_y_given_theta_SV) %bayes factor is 8-20
-% 
-% MCMC_Checks(pmcmc.rho_prop(1000:6000));
-% figure;
-% MCMC_Checks(pmcmc.sigma_prop(1000:6000));
-% figure;
-% MCMC_Checks(pmcmc.nu_prop(1000:6000));
-% figure;
-% MCMC_Checks(pmcmc.beta_prop(1000:6000));
-% 
-% 
+plot(mean(movstd_mat, 1));
+hold on;
+plot(movingstd(appl_prices, 20));
+
+std_eval = mean(movstd_mat, 1)';
+std_real = movingstd(appl_prices, 20);
+ma = tsmovavg(appl_prices,'s',20,1);
+d = 1.5;
+Y = [ma-d*std_eval ma appl_prices ma+d*std_eval];
+Y = [Y ma-d*std_real ma+d*std_real];
+plot(Y);
+legend('boll-e', 'ma', 'prices', 'boll+e', 'boll-r', 'boll+r');
+
+normalized_std_diff = (std_eval-std_real)./appl_prices;
+plot(normalized_std_diff(30:end))

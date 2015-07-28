@@ -658,7 +658,7 @@ S_t | x_t &= \mu(t) + \sigma(t) \epsilon_{Y,t}
 It turns out that $(S_t | x_t)_{t>0}$ follows a $t$ location-scale distribution of parameters $(\mu(t), \sigma(t), \nu)$.
 
 \section{Model $\mathcal{M}_3$ SVL - Stochastic Volatility Leverage}
-In the second extension, a leverage effect is added. Let $\rho$ denote the correlation between the innovation processes $(\epsilon_{X,t})_{t>0}$ and $(\epsilon_{Y,t})_{t>0}$. $\theta$ is enriched with this new parameter $\rho$.
+In the second extension, a leverage effect is added. Indeed, it is of common knowledge that most measures of volatility of an asset are negatively correlated with the returns of that asset. Let $\rho$ denote the correlation between the innovation processes $(\epsilon_{X,t})_{t>0}$ and $(\epsilon_{Y,t})_{t>0}$. $\theta$ is enriched with this new parameter $\rho$.
 
 \begin{theorem}
 \textit{
@@ -755,7 +755,7 @@ variance of $Y_t$ is given by:
 $$Var \left(y_t | \mathcal{F}_{t^-}, \theta \right) = e^{x_t} + \psi^2 e^{x_{t-1}}$$
 That is, the conditional variance is time-varying through two channels. First, it is a moving average of the two most recent variances $e^{x_t}$ and $e^{x_{t-1}}$ and second, the volatility also evolve according to the stationary AR(1) ruling the process $(X_t)_{t>0}$.
 
-\section{Model $\mathcal{M}_5$ Stochastic Volatility model with stochastic mean (SV-M))}
+\section{Model $\mathcal{M}_5$ Stochastic Mean}
 Koopman and Hol Uspensky (2002) suggested an extension where the stochastic volatility also enters the conditional mean equation. This model is known as the Stochastic Volatility in Mean (SVM). It is defined as
 
 \begin{align*}
@@ -775,6 +775,10 @@ With a principal component analysis, Harvey and Ruiz (1994) showed that a short-
 $S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. Veiga (2006) showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, Chernov and Ghysels (2000), Andersen et al. (2002) found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. Another variant of this model with a leverage parameter $\rho$ on $(X_t)_{t>0}$ exists but is not presented because it showed comparable results on the sample sets.\\
 \noindent
 Estimating these parameters using Particle Markov Chain Monte Carlo is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X < \phi_Z$.
+
+\section{Model $\mathcal{M}_7$ Two Factors Stochastic Volatility with Leverage}
+
+One final extension is to consider the two factors stochastic volatility and assume that the correlation $\rho = cor(\epsilon_{X,t}, \epsilon_{Y,t})$ is statistically different from zero. The idea is the same as the one developped for the model $\mathcal{M}_3$. Recall that $(X_t)_{t>0}$ is the long-run factor which corresponds to the stochastic trend of the returns volatility. From the models presented before, this model is by far the most complex because 6 parameters are to be estimated: $\theta = (\beta, \rho, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. Ruiz and Veiga (2006) studied a slightly different version where the $(X_t)_{t>0}$ is a fractional integrated Gaussian noise process but the overall behaviour remains the same. They proved that the first order autocorrelation $cor(|y_t|,|y_{t+1}|)$ is smaller than the second order autocorrelation $cor(y_t^2,y_{t+1}^2)$ when $\rho < 0$. If $\rho = 0$, there is no asymmetry in the model. As explained by Rama Cont (2005), it is usually the case in practical applications.
 
 \chapter{Model estimation and selection}
 
@@ -885,6 +889,7 @@ Acceptance Rate & 0.08                & 0.14               & 0.11 \\
 \caption{Estimation of the parameters for the SV model $\bar{\theta}_{\mathcal{M}5}$. Data is APPL.}
 \end{table}
 
+TO CHANGE
 Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_6)$. $\log (L)$ is the log marginal likelihood $p_N(y|\bar{\theta}, \mathcal{M})$. We find that the Gaussian two factor SV model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is very small whereas $\phi_Z$ is almost null and $\sigma_Z$ is high. It means that the volatility of the returns can be decomposed into two distinct processes: a stochastic trend and a process which could be assimilated to white noise. It is easy to see that the stochastic trend process accounts for the volatility clustering and the second process for the noise associated to the returns.
 
 
@@ -928,30 +933,33 @@ Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatili
 
 \subsection{Case study with a spread}
 
+TO CHANGE
+Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_6)$. $\log (L)$ is the log marginal likelihood $p_N(y|\bar{\theta}, \mathcal{M})$. We find that the Gaussian two factor SV model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is very small whereas $\phi_Z$ is almost null and $\sigma_Z$ is high. It means that the volatility of the returns can be decomposed into two distinct processes: a stochastic trend and a process which could be assimilated to white noise. It is easy to see that the stochastic trend process accounts for the volatility clustering and the second process for the noise associated to the returns.
+
+
 \begin{table}[htb]
 \centering
-\begin{tabular}{lllllll}
+\begin{tabular}{llllllll}
 \label{estimation_of_svm_appl}
-Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
+Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$& $\bar{\theta}_{\mathcal{M}7}$\\ 
 \hline
 $\phi$								                  & 0.9981  & 0.9993 & 0.9986  & 0.9981  & 0.9986 & \\
 $\sigma$                                & 0.2238  & 0.1752 & 0.2188  & 0.1694  & 0.2533 & \\
-$\beta$                                 & 0.4419  & 0.5722 & 0.4559  & 0.2359  & 0.1625 & 0.3478\\
+$\beta$                                 & 0.4419  & 0.5722 & 0.4559  & 0.2359  & 0.1625 & 0.3478 & 0.3690\\
 $\nu$                                   &         & 7.6850 &         &         &         &\\
-$\rho$                                  &         &        & -0.3017 &         &         & \\
+$\rho$                                  &         &        & -0.3017 &         &         & & -0.8532\\
 $\psi$                                  &         &        &         & 0.0060  &         & \\
-$\phi_X$                                &         &        &         &         &         & 0.9995\\
-$\phi_Z$                                &         &        &         &         &         & 0.1926\\
-$\sigma_X$                              &         &        &         &         &         & 0.1268\\
-$\sigma_Z$                              &         &        &         &         &         & 0.4913\\
-$\mu$                                   &         &        &         &         &         & 0 \\
-$\log(L)$                               & 1792.3  & 1797.8 & 1795.1  & 1793.5  & 1788.5  & 1801.3\\
-AIC                                     & -3578.6 & -3587.6& -3582.2 & -3579.0 & -3571.0 & -3592.6\\
-$2 \log \mathcal{BF}(\cdot, \mathcal{M}6)$& 18    & 7      & 12.4    & 15.6    & 25.6    & 0\\
-$N$                                     & 1000    & 1000   & 1000    & 1000    & 1000    & 1000\\
-$T$                                     & 689     & 689    & 689     & 689     & 689     & 689\\
-Steps                                   & 10000   & 10000  & 10000   & 10000   & 10000   & 10000\\
-Burn-in                                 & 1000    & 1000   & 1000    & 1000    & 1000    & 1000\\
+$\phi_X$                                &         &        &         &         &         & 0.9995 & 0.9996\\
+$\phi_Z$                                &         &        &         &         &         & 0.1926 & 0.7554\\
+$\sigma_X$                              &         &        &         &         &         & 0.1268 & 0.0725\\
+$\sigma_Z$                              &         &        &         &         &         & 0.4913 & 0.3443\\
+$\log(L)$                               & 1792.3  & 1797.8 & 1795.1  & 1793.5  & 1788.5  & 1801.3 & 1806.7\\
+AIC                                     & -3578.6 & -3587.6& -3582.2 & -3579.0 & -3571.0 & -3592.6 & -3601.4\\
+$2 \log \mathcal{BF}(\cdot, \mathcal{M}7)$& 28.8    & 17.8      & 23.2    & 26.4    & 36.4    & 10.8 & 0 \\
+$N$                                     & 1000    & 1000   & 1000    & 1000    & 1000    & 1000 & 1000\\
+$T$                                     & 689     & 689    & 689     & 689     & 689     & 689 & 689\\
+Steps                                   & 10000   & 10000  & 10000   & 10000   & 10000   & 10000& 10000\\
+Burn-in                                 & 1000    & 1000   & 1000    & 1000    & 1000    & 1000 & 1000\\
 \hline
 \end{tabular}
 \caption{Estimation of the parameters for the SVM model. Data is Spr APPL-MSTA.}
