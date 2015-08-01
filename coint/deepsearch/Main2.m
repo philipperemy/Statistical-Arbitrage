@@ -1,7 +1,9 @@
 run('../Init.m');
 run('Headers.m');
 
+%one year is not enough. Take more.
 year_start_ids = Extract_Years(pp);
+year_start_ids = year_start_ids([1 2*(1:1:floor(25/2))+1]); %select period of two years
 percentage = 2/3;
 spread_length = 10;
 
@@ -9,9 +11,12 @@ nstd_range = 1.0:0.1:3.0;
 wts_range = 0:1;
 wsize_range = 5:1:20;
 
+%The problem is that when we form the spread. The test asset prices may
+%mismatch in prices
 for i = 1:length(year_start_ids)-2
-    fprintf('year %i\n', i);
+    fprintf('year %i-%i\n', i, i+1);
     [pp_train, pp_test] = Create_Sets( pp, year_start_ids(i), year_start_ids(i+2), percentage );
+    
     spreads = SpreadFinder(pp_train, 0.8, 236:240, 0);
     
     %Cross validation of the spread

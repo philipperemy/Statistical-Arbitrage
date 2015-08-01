@@ -933,7 +933,6 @@ Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatili
 
 \subsection{Case study with a spread}
 
-TO CHANGE
 Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_6)$. $\log (L)$ is the log marginal likelihood $p_N(y|\bar{\theta}, \mathcal{M})$. We find that the Gaussian two factor SV model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is very small whereas $\phi_Z$ is almost null and $\sigma_Z$ is high. It means that the volatility of the returns can be decomposed into two distinct processes: a stochastic trend and a process which could be assimilated to white noise. It is easy to see that the stochastic trend process accounts for the volatility clustering and the second process for the noise associated to the returns.
 
 
