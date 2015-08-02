@@ -74,8 +74,8 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
             end
         end
     end
-    toc;
     
     if(write_file) fclose(f); end;
+    toc;
 end
 

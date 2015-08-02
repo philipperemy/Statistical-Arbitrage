@@ -1,5 +1,3 @@
-
-
 function [ h, spread, res ] = SpreadConstructor2( stock_ids, stock_prices )
 
     res         = struct();

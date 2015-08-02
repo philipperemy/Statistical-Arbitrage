@@ -1,7 +1,10 @@
-run('../Init.m');
-run('Headers.m');
-spreads = SpreadFinder(pp, 0.8, 236:260); %Why there is only 7 spreads?
-%range 236:240 is enough
+addpath('../../helpers');
+load ../data/spx.mat; 
+spx = csvread('../data/spx.csv');
+
+%execute first the SpreadFinder to fill the object called spreads
+%spreads = SpreadFinder(pp, 0.8, 236:260);
+
 tic;
 nstd_range = 1.0:0.1:3.0;
 wts_range = 0:1;

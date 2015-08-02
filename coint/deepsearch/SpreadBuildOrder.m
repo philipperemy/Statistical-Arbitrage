@@ -2,7 +2,7 @@ function [ order ] = SpreadBuildOrder( pp, spread, direction, nominal, max_ss_pe
     %SpreadSendOrder(pp, [713, 949, 1187], [0.628830509030226, 0.148724199923458], 1, 1000, 0.5, 10)	
 	
     BUY = 1;
-    access_price = @(x, varargin) x(varargin{:});
+    access_price = @(x, varargin) x(varargin{:}); %hack
     
     short_selling_nominal_limit = max_ss_per * nominal;
     

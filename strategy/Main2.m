@@ -1,5 +1,7 @@
-run('../Init.m');
-run('Headers.m');
+addpath('../helpers/');
+load ../data/spx.mat; 
+spx = csvread('../data/spx.csv');
+
 
 %one year is not enough. Take more.
 year_start_ids = Extract_Years(pp);

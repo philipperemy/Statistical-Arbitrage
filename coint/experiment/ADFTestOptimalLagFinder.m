@@ -1,11 +1,11 @@
-function [ res ] = ADFTestOptimalLagFinder(pp, id1, id2, id3, range)
+function [ res ] = ADFTestOptimalLagFinder(pp, id1, id2, id3, date_range)
 
     Y = [GetPrice(pp, id1), GetPrice(pp, id2), GetPrice(pp, id3)];
     if(exist('range', 'var'))
-        Y = Y(range,:);
+        Y = Y(date_range,:);
     end
 
-    [res, spread,~] = SpreadConstructor( [id1 id2 id3], Y);
+    [res, spread, ~] = SpreadConstructor( [id1 id2 id3], Y);
     if (res == 0)
         res = -1;
         return;
