@@ -26,6 +26,7 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
 
     spreads_count = 0;
     for i = i_range
+        fprintf('i = %i\n', i);
         for j = (i+1):stocks_count
             for k = (j+1):stocks_count
 

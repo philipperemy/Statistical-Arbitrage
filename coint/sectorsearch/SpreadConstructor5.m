@@ -1,4 +1,4 @@
-function [ h, spread, res ] = SpreadConstructor2( stock_ids, stock_prices )
+function [ h, spread, res ] = SpreadConstructor5( stock_ids, stock_prices )
 
     res         = struct();
     spread      = struct();

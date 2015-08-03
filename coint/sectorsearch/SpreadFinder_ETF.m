@@ -3,6 +3,7 @@ run('Prepare_Stocks.m');
 for sector = sectors'
     ids = strmatch(sector, stocks.sector);
     max_R = 0;
+    vec = zeros(1,100);
     stock_etf = diff(mean(normc(GetPriceArray(stocks, ids)),2));
     fprintf('SECTOR:');
     disp(sector);
@@ -21,9 +22,12 @@ for sector = sectors'
                     stock_4 = stocks.ret(:,l);
 
                     val = Compute_R_2_ETF(stock_etf, stock_1, stock_2, stock_3, stock_4);
-                    if(val > max_R && val < 0.999) %avoid 100% correlation
-                        max_R = val;
-                        fprintf('ETF, %i, %i, %i, %i, %f\n', ids(i), ids(j), ids(k), ids(l), max_R);
+                    if(val < 0.999) %avoid 100% correlation
+                        vec = Update_Map(vec, val);
+                        if(val > max_R)
+                            max_R = val;
+                            fprintf('ETF, %i, %i, %i, %i, %f\n', ids(i), ids(j), ids(k), ids(l), max_R);
+                        end
                     end
                 end
             end
