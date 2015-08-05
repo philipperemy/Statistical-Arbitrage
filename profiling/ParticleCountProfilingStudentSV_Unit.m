@@ -5,7 +5,7 @@ function [ log_marginal_likelihood_mat ] = ParticleCountProfilingStudentSV_Unit(
     for N = N_seq
         for i = 1:MC_count
             log_marginal_likelihood_mat(j, i) = BootstrapParticleFilter_Student(st.y, rho, sigma, beta, nu, N, p_y_given_x);
-            %fprintf('%i, %i\n', i, N);
+            fprintf('%i, %i\n', i, N);
         end
         j = j + 1;
     end

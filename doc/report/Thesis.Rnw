@@ -9,7 +9,7 @@
 %%% American Mathematical Society packages
 \usepackage{amsfonts,amssymb,amsmath,amsthm}
 \usepackage{amsbsy}
-
+\usepackage{float}
 \usepackage{listings}
 \usepackage{color}
 
@@ -22,6 +22,8 @@
 
 \newcommand\Tau{\mathcal{T}}
 \newcommand{\matr}[1]{\mathbf{#1}} % undergraduate algebra version
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 \lstset{
   frame=tblr,           
@@ -333,35 +335,44 @@ Cointegration is said to exist between two or more non-stationary time series if
 
 \section{Vector Auto Regressive Process (VAR)}
 The Vector Autoregressive (VAR) process is a generalization of the univariate AR process to the multivariate case. It is defined as:
-
-$$\matr{X}_t = \matr{\nu} + \sum_{j=1}^k \matr{A}_j \matr{X}_{t-j} + \matr{\epsilon}_t \text{, } \epsilon_t \sim SWN(0, \Sigma)$$
+\begin{equation}
+\matr{X}_t = \matr{\nu} + \sum_{j=1}^k \matr{A}_j \matr{X}_{t-j} + \matr{\epsilon}_t \text{, } \epsilon_t \sim SWN(0, \Sigma)
+\end{equation}
 where $\matr{X}_t = (x_{1t},...,x_{nt})_{t \geq 0}$, each of the $A_j$ is a ($nxn$) matrix of parameters, $\nu$ is a fixed vector of intercept terms. Finally $\epsilon_t$ is a n-dimensional strict white noise process of covariance matrix $\Sigma$. The process $X_t$ is said to be stable if the roots of the determinant of the characteristic polynomial $|\matr{I}_n - \sum_{j=1}^k \matr{A}_j z^j| = 0$ lie outside the complex unit circle. If there are roots on the unit circle then some or all the variables in $\matr{X}_t$ are $I(1)$ and they mat also be cointegrated. If $\matr{Y}_t$ is cointegrated, then the VAR representation is not the most suitable representation because the cointegrating relations are not explicitly apparent. In this case, the VECM model is more adapted.
 
 \section{Vector Error Correction models (VECM)}
 In an error correction model (ECM), the changes in a variable depend on the deviations from some equilibrium relation. Suppose the case $n=2, \matr{X}_t = (x_t, y_t)$ where $x_t$ represents the price of a Future contract on a commodity and $y_t$ is the spot price of this same commodity traded on the same market. Assume further more that the equilibrium relation between them is given by $y_t = \beta x_t$ and the increments of $y_t$, $\Delta y_t$ depend on the deviation from this equilibrium at time $t-1$. A similar relation may also hold for $x_t$. The system is defined by:
 \begin{align*}
-\Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{y_t} \\
-\Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{x_t}
+\Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{y_t} \numberthis \\
+\Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \epsilon_{x_t} \numberthis
 \end{align*}
 where $\alpha$ represents the speed of adjustments to disequilibrium and $\beta$ is the long run coefficient of the equilibrium. In a more general error correction model, the $\Delta y_t$ and $\Delta x_t$ may in addition depend on previous changes in both variables as, for instance, in the following model with lag one:
 \begin{align*}
-\Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{11} \Delta y_{t-1} + \gamma_{12} \Delta x_{t-1} + \epsilon_{y_t} \\
-\Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{21} \Delta y_{t-1} + \gamma_{22} \Delta x_{t-1} + \epsilon_{x_t}
+\Delta y_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{11} \Delta y_{t-1} + \gamma_{12} \Delta x_{t-1} + \epsilon_{y_t} \numberthis \\
+\Delta x_t &= \alpha (y_{t-1} - \beta x_{t-1}) + \gamma_{21} \Delta y_{t-1} + \gamma_{22} \Delta x_{t-1} + \epsilon_{x_t} \numberthis
 \end{align*}
 In matrix notation and in the general case, the VECM is written as:
-$$\Delta \matr{Y}_t = \prod \matr{Y}_{t-1} + \sum_{j=1}^{k-1} \matr{\Gamma}_j \Delta \matr{Y}_{t-j} + \matr{\epsilon}_t $$
+\begin{equation}
+\Delta \matr{Y}_t = \prod \matr{Y}_{t-1} + \sum_{j=1}^{k-1} \matr{\Gamma}_j \Delta \matr{Y}_{t-j} + \matr{\epsilon}_t
+\end{equation}
 where $\matr{\Gamma}_j = - \sum_{i=j+1}^k \matr{A}_i$ and $\prod = \left(\sum_{i=1}^k \matr{A}_i \right) - \matr{I}_n$. This way of specifying the system contains information on both the short-run and long run adjustments to changes in $y_t$, via the estimates of $\hat{\matr{\Gamma}_j}$ and $\hat{\prod}$ respectively. In the VECM, $\Delta \matr{Y}_t$ and its lags are $I(0)$. The term $\prod \matr{Y}_{t-1}$ is the only one which includes potential $I(1)$ variables and for $\Delta \matr{Y}_t$ to be $I(0)$, it must be the case that $\prod \matr{Y}_{t-1}$ is also $I(0)$. Therefore, $\prod \matr{Y}_{t-1}$ must contain the cointegrating relations provided that they exist. If the VAR(k) has unit roots then 
 \begin{align*}
-det |\matr{I}_n - \sum_{j=1}^k \matr{A}_j z^j| = 0 \\
-det \left(\prod \right) = 0
+det |\matr{I}_n - \sum_{j=1}^k \matr{A}_j z^j| = 0 \numberthis \\
+det \left(\prod \right) = 0 \numberthis
 \end{align*}
 which means that $\prod$ is singular. A singular matrix has a reduced rank and $rank(\prod) = r < n$. Two cases are to consider. If the rank is 0, it implies that $\prod = 0$. In this case, $\matr{Y}_t \sim I(1)$ and is not cointegrated. The VECM reduces to a VAR(k-1) in first differences
-$$\Delta \matr{Y}_t = \sum_{j=1}^{k-1} \matr{\Gamma}_j \Delta \matr{Y}_{t-j} + \matr{\epsilon}_t $$
+\begin{equation}
+\Delta \matr{Y}_t = \sum_{j=1}^{k-1} \matr{\Gamma}_j \Delta \matr{Y}_{t-j} + \matr{\epsilon}_t
+\end{equation}
 If $0 < rank(\prod) = r < n$. This implies that $\matr{Y}_t$ is $I(1)$ with $r$ linearly independent cointegrating vectors and $n-r$ common stochastic trends (unit roots). Since $\prod$ has rank $r$, it can be written as the product $\prod = \alpha \beta'$ where $\alpha$ and $\beta$ are of dimension $n \times r$ and rank $r$.  The rows of $\beta'$ form a basis for the $r$ cointegrating vectors and the lements of $\alpha$ distribute the impact of the cointegrating vectors to the evolution of $\Delta \matr{Y}_t$. The VECM becomes
-$$\Delta \matr{Y}_t = \alpha \beta' \matr{Y}_{t-1} + \sum_{j=1}^{k-1} \matr{\Gamma}_j \Delta \matr{Y}_{t-j} + \matr{\epsilon}_t $$
+\begin{equation}
+\Delta \matr{Y}_t = \alpha \beta' \matr{Y}_{t-1} + \sum_{j=1}^{k-1} \matr{\Gamma}_j \Delta \matr{Y}_{t-j} + \matr{\epsilon}_t
+\end{equation}
 where $\beta' \matr{Y}_{t-1} \sim I(0)$ since $\beta'$ is a matrix of cointegrating vectors. It is also important to notice that the factorization of $\prod = \alpha \beta'$ is not unique since for any $r \times r$ nonsingular matrix $\matr{H}$ we have
 
-$$\alpha \beta' = \alpha \matr{H} \matr{H}^{-1} \beta' = (\matr{a}\matr{H})(\beta \matr{H}^{-1'})' = \matr{a}^* \beta^{*'}, \matr{a}^* = \matr{a}\matr{H}, \beta^* = \beta \matr{H}^{-1'}$$
+\begin{equation}
+\alpha \beta' = \alpha \matr{H} \matr{H}^{-1} \beta' = (\matr{a}\matr{H})(\beta \matr{H}^{-1'})' = \matr{a}^* \beta^{*'}, \matr{a}^* = \matr{a}\matr{H}, \beta^* = \beta \matr{H}^{-1'}
+\end{equation}
 Hence the factorization only identifies the space spanned by the cointegrating relations. To obtain unique values of $\alpha$ and $\beta'$ requires further restrictions on the model.
 
 \section{Testing for Unit Roots in Stochastic Processes}
@@ -387,6 +398,8 @@ The next step is to determine the number of lags to include in the model. Differ
 \end{itemize}
 The general method to find the optimal lag for the Phillips-Perron test is to begin with few lags, and then evaluate the sensitivity of the results by adding more lags. Another rule of thumb is to look at sample autocorrelations of $\Delta y_t = y_t - y_{t-1}$. Slow rates of decay require more lags. It is less suitable for economic data because it is widely known that the returns $\Delta y_t$ show no autocorrelation. Finally, when the optimal lags are known, multiple tests are run to avoid any possible inconsistency.
 
+JOHANSEN BASED ON VECM
+PUT NICE PICTURE OF COINTEGRATED
 
 \chapter{State-Space Models and Particle MCMC}
 
@@ -396,16 +409,20 @@ Particle MCMC is a powerful technique for estimating parameters of a complex mod
 \section{State-Space Models}
 The state-space models are parametrised by $\theta = (\theta_1,...,\theta_n)$ and all components are considered to be independent one another. $\theta$ is associated a prior distribution $p(\theta) = \prod_i p(\theta_i)$ State-space models are usually defined in continuous time because physical laws are most often described in terms of differential equations. However, most of the time, a discrete-time representation exists. It is often written in the innovation form that describes noise. An example of such a process is describe in the Stochastic Volatility section. The model is composed of an unobserved process $X_{0:T}$ and $Y_{1:T}$, known as the observations. $X_{0:T}$ is assumed to be first order markovian, governed by a transition kernel $K(x_{t+1}|x_t)$. The probability density of a realization $x_{0:T}$ is written as
 
-$$p(X_{0:T} = x_{0:T} | \theta) = p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) $$
+\begin{equation}
+p(X_{0:T} = x_{0:T} | \theta) = p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) 
+\end{equation}
 
 The process $X$ is not observed directly, but through $y_{1:T}$. The state-space model assumes that each $y_t$ is dependent of $x_t$. As a consequence, the conditional likelihood of the observations, given the state process can be derived as
 
-$$p(y_{1:T} | x_{1:T}, \theta) = \prod_{t=1}^T p(y_t | x_t, \theta) $$
+\begin{equation}
+p(y_{1:T} | x_{1:T}, \theta) = \prod_{t=1}^T p(y_t | x_t, \theta) 
+\end{equation}
 
 The general idea is to find $\theta$ which maximize the marginal likelihood $p(y_{1:T}|\theta)$, $x$ integrated out. It is interesting to begin by the approximation of $p(x_{1:T}, \theta | y_{1:T})$. By Bayes theorem
 \begin{align*}
-p(x_{1:T}, \theta | y_{1:T}) &\propto p(\theta)p(x_{1:T}|\theta)p(y_{1:T}|x_{1:T}, \theta) \\
- &= p(\theta) p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) \prod_{t=1}^T p(y_t | x_t, \theta)
+p(x_{1:T}, \theta | y_{1:T}) &\propto p(\theta)p(x_{1:T}|\theta)p(y_{1:T}|x_{1:T}, \theta)  \\
+ &= p(\theta) p(x_1|\theta) \prod_{t=2}^T p(x_t|x_{t-1}, \theta) \prod_{t=1}^T p(y_t | x_t, \theta) \numberthis
 \end{align*}
 
 \noindent
@@ -421,24 +438,29 @@ More precisely, the procedure is initialised with a sample from $x_0^k \sim p(x_
 \noindent
 Sequential Importance Resampling (SIR) filters with transition prior probability distribution as importance function are commonly known as bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(x_k| x_{0:k-1}, y_{0:k}) = p(x_k|x_{k-1})$ and the weights formula is now
 
-$$
+\begin{equation}
 w_k^{(i)} = w_{k-1}^{(i)} \frac{p(y_k|x_k^{(i)})p(x_k^{(i)}|x^{(i)}_{k-1})}{\pi(x_k^{(i)}|x^{(i)}_{0:k-1},y_{0:k})}= w_{k-1}^{(i)} p(y_k|x_k^{(i)})
-$$ 
+\end{equation}
+ 
 
 \noindent
 It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(x_{t+1}|y_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $y_t$
 
-$$ p^N_{\theta}(y_t | y_{1:t-1}) = \frac{1}{N} \sum_{k=1}^N w_t^k$$
+\begin{equation}
+ p^N_{\theta}(y_t | y_{1:t-1}) = \frac{1}{N} \sum_{k=1}^N w_t^k
+\end{equation}
 
 \noindent
 and the conditional marginal $y_{1:T}$ over all the state space is
 
-$$ p^N_{\theta}(y_{0:T}) = p(y_1)\prod_{t=2}^T p(y_t | y_{1:t-1})$$
+\begin{equation}
+ p^N_{\theta}(y_{0:T}) = p(y_1)\prod_{t=2}^T p(y_t | y_{1:t-1})
+\end{equation}
 
 As $T$ is usually large, it is preferred to work with the log likelihoods
 \begin{align*}
-\log p_{\theta}(y_{1:t}) &= \log(p_\theta(y_1)) + \sum_{t=2}^t \log p_\theta(y_t | y_{1:t-1}) \\
-\log \hat{p}^N_{\theta}(y_{1:t}) &= \sum_{t=2}^t \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{(t)} \right)
+\log p_{\theta}(y_{1:t}) &= \log(p_\theta(y_1)) + \sum_{t=2}^t \log p_\theta(y_t | y_{1:t-1}) \numberthis \\
+\log \hat{p}^N_{\theta}(y_{1:t}) &= \sum_{t=2}^t \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{(t)} \right) \numberthis
 \end{align*}
 
 \begin{algorithm}
@@ -500,14 +522,14 @@ For multinomial resampling, the selection indices $I^1,\cdots,I^n$ are condition
 \begin{align*}
 \text{Var}_M \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] &= \frac{1}{n^2} \text{Var} \left[ \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
 																					  &= \frac{1}{n^2} \sum_{i=1}^n \text{Var} \left[ f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \\
-																					  &= \frac{1}{n} \left\{\sum_{i=1}^n \omega_i f^2(\xi_i) - n \left(\sum_{i=1}^n \omega_i f(\xi_i)\right)^2\right\}
+																					  &= \frac{1}{n} \left\{\sum_{i=1}^n \omega_i f^2(\xi_i) - n \left(\sum_{i=1}^n \omega_i f(\xi_i)\right)^2\right\} \numberthis
 \end{align*}
 
 An important result for Stratified resampling is
 \begin{align*}
 E \left[ \sum_{i=1}^n f(\xi_i^\sim)  \bigg| \mathcal{F}_t \right] &= E \left[ \sum_{i=1}^n f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right] \\
 																  &= \sum_{i=1}^n E \left[ f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right] \\
-																  &= n \sum_{i=1}^n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du \\
+																  &= n \sum_{i=1}^n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du \numberthis \\
 																  &= n \sum_{i=1}^n \omega_i f(\xi_i)
 \end{align*}
 $U^1,\cdots,U^n$ are still conditionally independent given $\mathcal{F}_t$ for the stratified resampling
@@ -523,17 +545,19 @@ $U^1,\cdots,U^n$ are still conditionally independent given $\mathcal{F}_t$ for t
 																					  &= \frac{1}{n^2} \sum_{i=1}^n \left\{ E \left[ f \circ \xi \circ D_\omega^{inv}(U^i)^2 \bigg| \mathcal{F}_t \right] - E \left[ f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right]^2 \right\}\\
 																					  &= \frac{1}{n^2} E \left[ \sum_{i=1}^n f \circ \xi \circ D_\omega^{inv}(U^i)^2 \bigg| \mathcal{F}_t \right] - \frac{1}{n^2} E \left[ f \circ \xi \circ D_\omega^{inv}(U^i) \bigg| \mathcal{F}_t \right]^2 \\
 																					  &= \frac{1}{n} \sum_{i=1}^n \omega_i f^2(\xi_i) - \frac{1}{n^2} \sum_{i=1}^n \left[ n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 \\
-																					  &= \frac{1}{n} \sum_{i=1}^n \omega_i f^2(\xi_i) - \sum_{i=1}^n \left[ \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2
+																					  &= \frac{1}{n} \sum_{i=1}^n \omega_i f^2(\xi_i) - \sum_{i=1}^n \left[ \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 \numberthis
 \end{align*}
 
 By Jensen's inequality,
 
 \begin{align*}
 \sum_{i=1}^n \left[ \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 &\geq \left[\sum_{i=1}^n \int_{(i-1)/n}^{i/n} f \circ \xi \circ D_\omega^{inv}(u)\text{ }du\right]^2 \\
-																									&= \left[ \sum_{i=1}^n w_i f(\xi_i)\right]^2
+																									&= \left[ \sum_{i=1}^n w_i f(\xi_i)\right]^2 \numberthis
 \end{align*}
 Finally,
-$$\text{Var}_M \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \geq \text{Var}_S \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right]$$
+\begin{equation}
+\text{Var}_M \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \geq \text{Var}_S \left[ \frac{1}{n} \sum_{i=1}^n f(\xi_i^\sim) \bigg| \mathcal{F}_t \right] \numberthis
+\end{equation}
 which closes the proof.
 \end{proof}
 
@@ -558,39 +582,68 @@ The multinomial implementation is the Octave default version.
 \label{sec:tuning_n}
 %http://arxiv.org/pdf/1309.3339v3.pdf p2
 A critical issue in practice is the choice of the number of particles $N$. A large $N$ gives a more accurate estimate of the log likelihood at greater computational cost, while a small $N$ would lead to a very large estimator variance. \cite{tran2014} showed that the efficiency of estimating an intractable likelihood using Bayesian inference and importance sampling is weakly sensitive to $N$ around its optimal value. Furthermore, the loss of efficiency decreases at worse linearly when we choose $N$ higher than the optimal value, whereas
-the efficiency can deteriorate exponentially when $N$ is below the optimal. \cite{pitt2012} showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant as it is a function of the parameters as well ass a decreasing function of $N$. A reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{0:T}]$ from an initial short run of the PMCMC scheme with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance
-of the log-likelihood $Var(\log p_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from \cite{pitt2012}, their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well.
+the efficiency can deteriorate exponentially when $N$ is below the optimal. \cite{pitt2012} showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant as it is a function of the parameters as well as a decreasing function of $N$. Figure \ref{tuning_n_rho_varying} gives a hint that the variance is not likely to oscillate in big proportions when the model parameters $\theta$ changes. \cite{pitt2012} suggests that a reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{0:T}]$ from an initial short run of the PMCMC scheme with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance of the log-likelihood Var$(\log p_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from \cite{pitt2012}, their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{tuning_n_rho_varying}
+\caption{$\text{Var}(\log p_N(y|\bar{\theta}))$ when $\theta$ varies through $\rho$. Dataset generated from $\mathcal{M}_2$ with $\rho = 0.91, \sigma = 1$ and $\nu = 3$.}
+\label{tuning_n_rho_varying}
+\end{figure}
+
+\noindent
+The reasonable strategy of \cite{pitt2012} is not viable in practice as it requires to have a good estimate of $\bar{\theta}$ which is often difficult to achieve with a short run of PMCMC due to the burn-in phase. It is much more relevant to derive a general rule on how to choose $N$ optimal, provided that such a rule exists. A test is conducted on an artificial dataset where the true value $\theta_{tr} = \bar{\theta}$ is known. It is composed of $T=1000$ daily returns, generated from model $\mathcal{M}_2$. For a given value of $N$, the bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods Var$(\log p_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. From Figure \ref{est_var_pn_theta_n}, the optimal of $N$ seems to be around 1000. The process is repeated for several values of $T$ to detect a general rule. Figure \ref{n_opt_function_t} shows the results for $T \in [0, 2000]$ and $N \in [0, 2500]$. A linear trend can easily be identified. To reinforce this belief, a linear regression $N = a T + b$ is performed. Both the values $b \simeq 0$ and $a \simeq 1$ suggest that the rule $T = N$ seems to hold.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{tuning_n_optimal_var}
+\caption{$Var(\log p_N(y|\bar{\theta}))$ for different values of $N$ on an artificial dataset with $T=1000$}
+\label{est_var_pn_theta_n}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{n_opt_function_t}
+\caption{Behaviour of $N_{opt}$ when $T$ varies}
+\label{n_opt_function_t}
+\end{figure}
 
 \section{Particle marginal Metropolis-Hastings Algorithm}
 
 Before explaining in details how the Particle marginal Metropolis-Hastings Algorithm (PMMH) works, a more general context is presented. The Metropolis Hastings MCMC scheme is used to target $p(\theta| y) \propto p(y|\theta)p(\theta)$ with the ratio:
 
 \begin{align*}
-\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p({y}|\theta^\star)}{p({y}|\theta)} \right)
+\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p({y}|\theta^\star)}{p({y}|\theta)} \right) \numberthis
 \end{align*}
 
-where $q(\theta^\star|\theta)$ is the proposal density. As discussed before, in hidden Markov models, the marginal likelihood $p(y|\theta) = \int_{\mathbb{R}^T} p(y|x)p(x|\theta) dx$ is often intractable and the ratio is hard to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,x|y)$. Usually the knowledge of the kernel $K(x_t|x_{t-1})$ makes $p(x|\theta)$ tractable. For instance, for a linear Gaussian process $x_{t+1} = \rho x_t + \tau \epsilon_{t+1}$, a path $x_{0:T}$ can be simulated as long as $\rho$, $\tau$ and $x_0$ are known quantities. The MH is built in two stages. First, a new $\theta^*$ is proposed from $q(\theta^\star|\theta)$. Then, $x^*$ is sampled from $p(x^\star|\theta^\star)$. The generated pair $(\theta^\star,x^\star)$ is accepted with the ratio:
+\noindent
+where $q(\theta^\star|\theta)$ is the proposal density. As discussed before, in hidden Markov models, the marginal likelihood $p(y|\theta) = \int_{\mathbb{R}^T} p(y|x)p(x|\theta) dx$ is often intractable and the ratio becomes impossible to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,x|y)$. Usually the knowledge of the kernel $K(x_t|x_{t-1})$ makes $p(x|\theta)$ tractable. For instance, for a path $x_{0:T}$ governed by a linear Gaussian process $x_t = \rho x_{t-1} + \tau \epsilon_t \text{, } \epsilon_t \sim \mathcal{N}(0,1)$ can be simulated as long as $\rho$, $\tau$ and $x_0$ are known quantities. The MH is built in two stages. First, a new $\theta^*$ is proposed from $q(\theta^\star|\theta)$. Then, $x^*$ is sampled from $p(x^\star|\theta^\star)$. The generated pair $(\theta^\star,x^\star)$ is accepted with the ratio
 
 \begin{align*}
-\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)} \right)
+\min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)} \right) \numberthis
 \end{align*}
-At each step, $x^*$ is consistent with $\theta^*$ because it was generated from $p(x^\star|\theta^\star)$. The problem of this approach is that the sampled $x^*$ may not be consistent with $y$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $x^\star$ to track $p(y|x^\star,\theta)$. This is the reason why $x^*$ should be sampled from $p(x^\star|\theta^\star,y)$. With the remark, the ratio now becomes:
+At each step, $x^*$ is consistent with $\theta^*$ because it was generated from $p(x^\star|\theta^\star)$. The problem of this approach is that the sampled $x^*$ may not be consistent with $y$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $x^\star$ to track $p(y|x^\star,\theta)$. This is why $x^*$ should be sampled from $p(x^\star|\theta^\star,y)$. With the remark, the ratio now becomes
 
 \begin{align*}
- \min \left(1, \frac{p(\theta^\star)}{p(\theta)}   \frac{p({x}^\star|\theta^\star)}{p({x}|\theta)}   \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)}   \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)}  \frac{p({x}|y,\theta)}{p({x}^\star|y,\theta^\star)} \right)
+ \min \left(1, \frac{p(\theta^\star)}{p(\theta)}   \frac{p({x}^\star|\theta^\star)}{p({x}|\theta)}   \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)}   \frac{p(y|{x}^\star,\theta^\star)}{p(y|{x},\theta)}  \frac{p({x}|y,\theta)}{p({x}^\star|y,\theta^\star)} \right) \numberthis
 \end{align*}
 
-Using the basic marginal likelihood identity of \cite{chib1995}, the ratio is simplified to:
+\noindent
+Using the basic marginal likelihood identity of \cite{chib1995}, the ratio is simplified to
 
 \begin{align*}
- \min \left(1, \frac{p(\theta^\star)}{p(\theta)}  \frac{p(y|\theta^\star)}{p(y|\theta)} \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)} \right)
+ \min \left(1, \frac{p(\theta^\star)}{p(\theta)}  \frac{p(y|\theta^\star)}{p(y|\theta)} \frac{f(\theta|\theta^\star)}{f(\theta^\star|\theta)} \right) \numberthis
 \end{align*}
 
-It is now clear that a pseudo-marginal MCMC scheme for state space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in \cite{andrieu2010}.
+\noindent
+It is now clear that a pseudo-marginal MCMC scheme for state space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in \cite{andrieu2010}. Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used. The PMMH algorithm (Algorithm \ref{algo_pmcmc}) is an MCMC algorithm for state space models jointly updating $\theta$ and $x_{0:T}$. First, a proposed new $\theta^\star$ is generated from a proposal $f(\theta^\star|\theta)$, and then a corresponding $x_{0:T}^\star$ is generated by running a bootstrap particle filter using the proposed new model parameters, $\theta^\star$, and selecting a single trajectory by sampling once from the final set of particles using the final set of weights. This proposed pair $(\theta^\star,x_{0:T}^\star)$ is accepted using the Metropolis-Hastings ratio
 
-Remarkably $x$ is no more present and the ratio is exactly the same as the marginal scheme shown before. Indeed the ideal marginal scheme corresponds to PMMH when $N \rightarrow +\infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one bootstrap particle filter is used. The PMMH algorithm is depicted in Algorithm \ref{algo_pmcmc}.
+\begin{equation}
+\displaystyle \frac{\hat{p}_{\theta^\star}(y_{1:T})p(\theta^\star)q(\theta|\theta^\star)}{\hat{p}_{\theta}(y_{1:T})p(\theta)q(\theta^\star|\theta)}
+\end{equation} 
+where $\hat{p}^N_{\theta^\star}(y_{1:T})$ is the particle filter's unbiased estimate of marginal likelihood. 
 
-\begin{algorithm}
+\begin{algorithm}[H]
 \caption{Particle pseudo marginal Metropolis-Hastings Algorithm}\label{algo_pmcmc}
 \begin{algorithmic}[1]
 \Procedure{Input}{$y_{1:T}$, a proposal distribution $q(\cdot|\cdot)$, the number of particles $N$, the number of MCMC steps $M$}
@@ -615,15 +668,15 @@ Remarkably $x$ is no more present and the ratio is exactly the same as the margi
 \end{algorithmic}
 \end{algorithm}
 
-\chapter{Stochastic Volatility}
+\chapter{Stochastic Volatility Models}
 The most important feature of the conditional return distribution $y_t | \mathcal{F}_{t-1}$ is its variance dynamics. The first research on modeling this volatility was \cite{engle1982} with the famous ARCH model. The main objective was to fit volatility clustering and the fat tails of the return distributions.
 In this section, we introduce the standard stochastic volatility with Gaussian errors. Next, we consider different well-known extensions of the SV model. The first extension is a SV model with Student-t errors. In the second extension, we incorporate a leverage effect by modelling a correlation parameter between measurement and state errors. In the third extension, we implement a model that has both stochastic volatility and moving average errors. In the fourth extension, the conditional mean is supposed to be proportional to the conditional volatility. Finally, the fifth extension incorporates two stochastic processes to model the volatility of the returns.
 
 \section{Model $\mathcal{M}_1$ Standard Stochastic Volatility Model}
 The standard discrete-time stochastic volatility model for the asset prices returns $(Y_t)_{t>0}$ is defined as:
 \begin{align*}
-  X_t &=  \phi X_{t-1} + \sigma \epsilon_{X,t} \\
-  Y_t &=  \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t}
+  X_t &=  \phi X_{t-1} + \sigma \epsilon_{X,t} \numberthis \\
+  Y_t &=  \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t} \numberthis
 \end{align*}
 where $(\epsilon_{X,t})_{t>0},(\epsilon_{Y,t})_{t>0}$ are two independent and standard normally distributed processes. Let $\theta = (\rho, \sigma^2, \beta)$ be the parameters vector. This model is non-linear because of the non-additive noise of the transition kernel. $(X_t)_{t>0}$ governs the volatility process of the observed returns $(Y_t)_{t>0}$, $\sigma$ is the volatility of the volatility, and $\phi$ the persistence parameter. The condition $|\phi| < 1$  is imposed to have a stationary process, with initial condition $X_0 \sim \mathcal{N} \left(0, \frac{\sigma^2}{1-\phi^2} \right)$, where $\frac{\sigma^2}{1-\phi^2}$ is the unconditional variance of $(X_t)_{t>0}$. The next part explains the link between the stochastic volatility model and the Geometric Brownian Motion (GBM).
 
@@ -640,7 +693,7 @@ The process can be discretized this way, where $\epsilon_R \sim N(0,1)$:
 \begin{align*}
 S_{t+1}-S_t &= \mu S_t + \sigma S_t \epsilon_R \\
 S_{t+1} 	&= S_t + \mu S_t + \sigma S_t \epsilon_R \\
-S_t 	&= S_{t-1} + \mu S_{t-1} + \sigma S_{t-1} \epsilon_R
+S_t 	&= S_{t-1} + \mu S_{t-1} + \sigma S_{t-1} \epsilon_R \numberthis
 \end{align*}
 
 \noindent
@@ -649,7 +702,7 @@ Setting $\mu = 0$ gives $S_t = S_{t-1} + \sigma S_{t-1} \epsilon_R$ for the GBM.
 Y_t | X_t = x_t 					&\sim \mathcal{N}(0, \beta^2 \exp(x_t)) \\
 \frac{S_t}{S_{t-1}}-1 | X_t = x_t 	&\sim \mathcal{N}(0, \beta^2 \exp(x_t)) \\
 \frac{S_t}{S_{t-1}} | X_t = x_t 	&\sim \mathcal{N}(1, \beta^2 \exp(x_t)) \\
-S_t | X_t = x_t 					&\sim \mathcal{N}(S_{t-1}, S_{t-1}^2 \beta^2 \exp(x_t))
+S_t | X_t = x_t 					&\sim \mathcal{N}(S_{t-1}, S_{t-1}^2 \beta^2 \exp(x_t)) \numberthis
 \end{align*}
 
 \noindent
@@ -662,20 +715,26 @@ The first extension is a stochastic volatility model with heavier tails with $\e
 \textit{
 Assume that $X$ is a random variable of probability density function $f_X(x)$. The probability density function $f_Y(y)$ of $Y=g(X)$ where $g$ is monotonic, is given by
 }
-$$f_Y(y) = \left|\frac{d}{dy}(g^{-1}(y))\right| \cdot f_X(g^{-1}(y))$$
+\begin{equation}
+f_Y(y) = \left|\frac{d}{dy}(g^{-1}(y))\right| \cdot f_X(g^{-1}(y))
+\end{equation}
 \end{theorem}
 
 \noindent
 Applying this theorem on $y_t = \sigma(t) \epsilon_{Y,t}$ where $\sigma(t) = \beta \exp \left(\frac{x_t}{2} \right)$ and $g^{-1}_t(x) = \frac{x}{\sigma(t)}$ gives,
 
-$$p(y_t | X_t = x_t, \theta) = \frac{\Gamma(\frac{\nu+1}{2})}{\Gamma(\frac{\nu}{2}) \sqrt{\nu\pi}} \frac{1}{\sigma_t}\left( 1 + \frac{y_t^2}{\sigma_t^2 \nu}\right)^{-\left(\frac{v+1}{2} \right)}$$
+\begin{equation}
+p(y_t | X_t = x_t, \theta) = \frac{\Gamma(\frac{\nu+1}{2})}{\Gamma(\frac{\nu}{2}) \sqrt{\nu\pi}} \frac{1}{\sigma_t}\left( 1 + \frac{y_t^2}{\sigma_t^2 \nu}\right)^{-\left(\frac{v+1}{2} \right)}
+\end{equation}
 where $\Gamma(\cdot)$ is the gamma function. This result can also be retrieved by considering the $t$ location-scale distribution with parameters $(\mu = 0, \sigma, \nu)$, whose probability density function is given by
-$$\frac{\Gamma \left(\frac{\nu+1}{2} \right)}{\sigma \sqrt{\pi \nu} \Gamma \left(\frac{\nu}{2} \right)} \left[ \frac{\nu + \left( \frac{x-\mu}{\sigma}\right)^2}{\nu}\right]^{-\left(\frac{\nu+1}{2} \right)}$$
+\begin{equation}
+\frac{\Gamma \left(\frac{\nu+1}{2} \right)}{\sigma \sqrt{\pi \nu} \Gamma \left(\frac{\nu}{2} \right)} \left[ \frac{\nu + \left( \frac{x-\mu}{\sigma}\right)^2}{\nu}\right]^{-\left(\frac{\nu+1}{2} \right)}
+\end{equation}
 
 The reasoning to find a closed form of $(S_t | x_t)$ is similar to the standard stochastic volatility model. Still under the assumption that $\epsilon_{Y,t} \sim t(\nu)$, if $X$ has a $t$ location-scale distribution, with parameters $\mu, \sigma, \nu$, then $\frac{x-\mu}{\sigma}$ has a Student's $t$ distribution with $v$ degrees of freedom. Reverting the equation yields, $x = \mu + \sigma \epsilon_{Y,t}$. Consequently,
 \begin{align*}
-S_t | x_t &= S_{t-1} + \beta S_{t-1} \exp \left( \frac{x_t}{2} \right) \epsilon_{Y,t} \\
-S_t | x_t &= \mu(t) + \sigma(t) \epsilon_{Y,t}
+S_t | x_t &= S_{t-1} + \beta S_{t-1} \exp \left( \frac{x_t}{2} \right) \epsilon_{Y,t} \numberthis\\
+S_t | x_t &= \mu(t) + \sigma(t) \epsilon_{Y,t} \numberthis
 \end{align*}
 It turns out that $(S_t | x_t)_{t>0}$ follows a $t$ location-scale distribution of parameters $(\mu(t), \sigma(t), \nu)$.
 
@@ -696,27 +755,31 @@ Y_t 								&= \beta \exp \left(\frac{x_t}{2}\right)  \rho \epsilon_{X,t} + \bet
 Y_t | X_t = x_t 					&\sim \mathcal{N} \left(\beta \rho \exp \left(\frac{x_t}{2}\right) \epsilon_{X,t}, \beta^2 \exp \left(x_t\right) \cdot (1-\rho^2) \right) \\
 \frac{S_t}{S_{t-1}}-1 | X_t = x_t 	&\sim \mathcal{N}\left(\rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \\
 \frac{S_t}{S_{t-1}} | X_t = x_t 	&\sim \mathcal{N}\left(1 + \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \\
-S_t | X_t = x_t 					&\sim \mathcal{N}\left( S_{t-1} + S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, S_{t-1}^2 \beta^2 \exp(x_t) \cdot (1-\rho^2)\right)
+S_t | X_t = x_t 					&\sim \mathcal{N}\left( S_{t-1} + S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, S_{t-1}^2 \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \numberthis
 \end{align*}
 The differences between the normal leverage model and the standard model where $\rho = 0$, are the correcting drift term $S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}$ and the factor $(1-\rho^2) \leq 1$ reducing the volatility.
 
 It turns out that the model with the highest likelihood is the Normal Leverage Stochastic Volatility model. The model is equipped with a two steps filtration $(\mathcal{F}_t)_{t \in \mathbb{N}}$. $x_t$ and $y_t$ are both measured respectively at time $t^-$ and $t$, where $t^- = t - \epsilon$. The concept of two steps is important here to understand that $x_t$ and $y_t$ are not measured at the same time but in a sequential way. Again by the Cholesky decomposition, $y_t$ can be written as:
 
-$$y_t | x_t = \rho \beta \exp(x_t / 2) \epsilon_{X,t} + \beta \exp(x_t / 2) \sqrt{1-\rho^2} \epsilon_R$$
+\begin{equation}
+y_t | x_t = \rho \beta \exp(x_t / 2) \epsilon_{X,t} + \beta \exp(x_t / 2) \sqrt{1-\rho^2} \epsilon_R
+\end{equation}
 The only random quantity here is $\epsilon_R \sim N(0,1)$. Both factors on the right hand side are measurable at time $t^-$. Therefore, $y_t|x_t$ is normally distributed:
 
-$$y_t | x_t \sim \mathcal{N}\left(\mathcal{A} = \rho \beta \exp(x_t / 2) \epsilon_{X,t}, \mathcal{B} = \beta^2 \exp(x_t) (1-\rho^2)\right)$$
+\begin{equation}
+y_t | x_t \sim \mathcal{N}\left(\mathcal{A} = \rho \beta \exp(x_t / 2) \epsilon_{X,t}, \mathcal{B} = \beta^2 \exp(x_t) (1-\rho^2)\right)
+\end{equation}
 Using the fact that any AR(1) admits an infinite MA representation,
 \begin{align*}
 x_t &= \phi x_{t-1} + \sigma \epsilon_{X,t} \\ 
 	&= \phi(\phi x_{t-2} +\sigma \epsilon_{X,t-1}) + \sigma \epsilon_{X,t} \\
-    &= \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j}
+    &= \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j} \numberthis
 \end{align*}
 and using this new representation into $\mathcal{A}$ gives:
 \begin{align*}
 \mathcal{A} &= \rho \beta \exp(x_t / 2) \epsilon_{X,t} \\
 			&= \rho \beta \exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \\
-			&= \rho \beta \exp \left( \frac{\phi}{2} x_{t-1}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t}
+			&= \rho \beta \exp \left( \frac{\phi}{2} x_{t-1}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \numberthis
 \end{align*}
 At time $t-1$, only $\mathcal{C} = \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t}$ is random. Because $\epsilon_{X,t}$ is independent from $x_{t-1}$,
 %%mean(exp(2*rnorm(1000000)))
@@ -724,14 +787,14 @@ At time $t-1$, only $\mathcal{C} = \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \
 \begin{align*}
 E[\mathcal{A}] &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right)\right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
 			   &= \rho \beta E\left[\prod_{j=1}^\infty \exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
-			   &= \rho \beta \prod_{j=1}^\infty E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right]  E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right]
+			   &= \rho \beta \prod_{j=1}^\infty E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right]  E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \numberthis
 \end{align*}
 
 \begin{align*}
 E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left(\frac{-x^2}{2} + \frac{\sigma \phi^j}{2} x \right) dx \\
 																			 &= \left[ \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) erf \left( \frac{2x- \sigma\phi^j}{2 \sqrt{2}} \right) \right]^{+\infty}_{-\infty} \\
 																			 &= \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) (1 - (-1)) \\
-																			 &= \exp \left(\frac{(\sigma\phi^j)^2}{8} \right)
+																			 &= \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \numberthis
 \end{align*}
 
 
@@ -740,7 +803,7 @@ E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] &= 
 E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left( \frac{-x^2}{2} + \frac{\sigma}{2} x \right) dx \\
 																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) \left[ erf \left(\frac{2x-\sigma}{2\sqrt{2}} \right) - \frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \right]^{+\infty}_{-\infty} \\
 																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) (1 - (-1)) \\
-																				  &= \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right)
+																				  &= \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \numberthis
 \end{align*}
 Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^{-x^2} \rightarrow 0 \text{ }(x \rightarrow \infty)$. Therefore, 
 \begin{align*}
@@ -748,7 +811,7 @@ Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^
 				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \\
 				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \sum_{j=1}^\infty \phi^{2j} \right) \\
 				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \left(\frac{1}{1-\phi^{2}} - 1\right)\right) \\
-           &= \rho \beta \frac{\sigma}{2} \exp \left( \frac{\sigma^2}{8} \frac{1}{1-\phi^{2}} \right)
+           &= \rho \beta \frac{\sigma}{2} \exp \left( \frac{\sigma^2}{8} \frac{1}{1-\phi^{2}} \right) \numberthis
 \end{align*}
 
 %http://www.wolframalpha.com/input/?i=1%2Fsqrt%282*pi%29+exp%28-x%5E2%2F2%2Bs*x%29
@@ -761,39 +824,40 @@ Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^
 				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) \\
 				   &= \beta^2 (1-\rho^2) \exp \left( \sum_{j=0}^\infty \frac{(\sigma \phi^j)^2}{2} \right) \\
 				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \sum_{j=0}^\infty \phi^{2j} \right) \\
-				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \frac{1}{1-\phi^{2}}\right)
+				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \frac{1}{1-\phi^{2}}\right) \numberthis
 \end{align*}
 
 %http://people.anu.edu.au/joshua.chan/Chan-Hsiao-2013.pdf
 \section{Model $\mathcal{M}_4$ SV-MA(1) - Moving Average}
 The plain stochastic volatility model assumes that the errors in the measurement equation are serially independent. This is often an appropriate assumption for modelling financial data. To test this assumption, the plain model can be extended by allowing the errors in the measurement equation to follow a moving average (MA) process of order $m$. Here, we choose a more simple specification and set $m = 1$. Hence, our model becomes:
 \begin{align*}
-X_t									&= \phi X_{t-1} + \sigma \epsilon_{X,t} \\
-Y_t									&= \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t} + \psi \beta \exp \left( \frac{X_{t-1}}{2} \right) \epsilon_{Y,t-1} \\
+X_t									&= \phi X_{t-1} + \sigma \epsilon_{X,t} \numberthis \\
+Y_t									&= \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t} + \psi \beta \exp \left( \frac{X_{t-1}}{2} \right) \epsilon_{Y,t-1} \numberthis \\
 Y_t	| X_t = x_t						&\sim \mathcal{N} \left(0, \beta^2 \exp \left( x_t \right) + \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right) \\
-S_t | X_t = x_t						&\sim \mathcal{N} \left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left( x_t \right) +  S_{t-1}^2 \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right)
+S_t | X_t = x_t						&\sim \mathcal{N} \left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left( x_t \right) +  S_{t-1}^2 \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right) \numberthis
 \end{align*}
 As before, we ensure that the root of the characteristic polynomial associated with the MA coefficient $\psi$ is outside the unit circle, $|\psi| < 1$. When $\psi = 0$, the SV-MA(1) model is reduced to the standard stochastic volatility model. The conditional
 variance of $Y_t$ is given by:
-$$Var \left(y_t | \mathcal{F}_{t^-}, \theta \right) = e^{x_t} + \psi^2 e^{x_{t-1}}$$
+\begin{equation}
+Var \left(y_t | \mathcal{F}_{t^-}, \theta \right) = e^{x_t} + \psi^2 e^{x_{t-1}}
+\end{equation}
 That is, the conditional variance is time-varying through two channels. First, it is a moving average of the two most recent variances $e^{x_t}$ and $e^{x_{t-1}}$ and second, the volatility also evolve according to the stationary AR(1) ruling the process $(X_t)_{t>0}$.
 
 \section{Model $\mathcal{M}_5$ Stochastic Mean}
 \cite{koopman2002} suggested an extension where the stochastic volatility also enters the conditional mean equation. This model is known as the Stochastic Volatility in Mean (SVM). It is defined as
-
 \begin{align*}
-y_t 			 &= \beta \exp\left(\frac{X_t}{2}\right) + \exp\left(\frac{X_t}{2}\right) \epsilon_{Y,t} \\
-Y_t | X_t = x_t  &\sim \mathcal{N} \left(\beta \exp\left(\frac{x_t}{2}\right) , \exp\left(x_t\right) \right) \\
-S_t | X_t = x_t  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac{x_t}{2}\right), S_{t-1}^2 \exp\left(x_t\right) \right)
+Y_t 			 &= \beta \exp\left(\frac{X_t}{2}\right) + \exp\left(\frac{X_t}{2}\right) \epsilon_{Y,t} \numberthis\\
+Y_t | X_t = x_t  &\sim \mathcal{N} \left(\beta \exp\left(\frac{x_t}{2}\right) , \exp\left(x_t\right) \right) \numberthis\\
+S_t | X_t = x_t  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac{x_t}{2}\right), S_{t-1}^2 \exp\left(x_t\right) \right) \numberthis
 \end{align*}
 where $(X_t)_{t>0}$ corresponds to the process of a standard stochastic volatility model. This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
 
 \section{Model $\mathcal{M}_6$ Two Factors Stochastic Volatility}
 With a principal component analysis, \cite{harvey1994} showed that a short-run and a long-run factors might be enough to explain the returns volatility. The study was performed on daily observations on several exchange rates. This model is known as the two factor stochastic volatility and relies on two different latent processes. It is defined as:
 \begin{align*}
-  X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right)\\
-  Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right)\\
-  Y_t 						&=  \beta \exp \left( \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1)
+  X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right) \numberthis \\
+  Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right) \numberthis\\
+  Y_t 						&=  \beta \exp \left( \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1) \numberthis
 \end{align*}
 $S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. \cite{veiga2006} showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, \cite{chernov2000} found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. Another variant of this model with a leverage parameter $\rho$ on $(X_t)_{t>0}$ exists but is not presented because it showed comparable results on the sample sets.\\
 \noindent
@@ -803,13 +867,16 @@ Estimating these parameters using Particle Markov Chain Monte Carlo is fairly st
 
 One final extension is to consider the two factors stochastic volatility and assume that the correlation $\rho = cor(\epsilon_{X,t}, \epsilon_{Y,t})$ is statistically different from zero. The idea is the same as the one developped for the model $\mathcal{M}_3$. Recall that $(X_t)_{t>0}$ is the long-run factor which corresponds to the stochastic trend of the returns volatility. From the models presented before, this model is by far the most complex because 6 parameters are to be estimated: $\theta = (\beta, \rho, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. \cite{ruiz2008} studied a slightly different version where the $(X_t)_{t>0}$ is a fractional integrated Gaussian noise process but the overall behaviour remains the same. They proved that the first order autocorrelation $cor(|y_t|,|y_{t+1}|)$ is smaller than the second order autocorrelation $cor(y_t^2,y_{t+1}^2)$ when $\rho < 0$. If $\rho = 0$, there is no asymmetry in the model. As explained by \cite{cont2005}, it is usually the case in practical applications. Still with the Cholesky decomposition and with the same methodology presented for model $\mathcal{M}_3$, $y_t$ can be written as
 
-$$y_t | x_t, z_t \sim \mathcal{N}\left(\rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t + z_t) (1-\rho^2)\right)$$
+\begin{align*}
+y_t | x_t, z_t, \theta            &\sim \mathcal{N}\left(\rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t + z_t) (1-\rho^2)\right) \numberthis \\
+S_t | x_t, z_t, S_{t-1}, \theta   &\sim \mathcal{N}\left(S_{t-1} + S_{t-1} \rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, S_{t-1}^2 \beta^2 \exp(x_t + z_t) (1-\rho^2)\right) \numberthis
+\end{align*}
 
 \noindent
 The MA($\infty$) representation of $X_t$ and $Z_t$ are respectively
 \begin{align*}
-X_t &= \sigma_X \sum_{j=0}^\infty \phi_X^j \epsilon_{X, t-j} \\
-Z_t &= \sigma_Z \sum_{j=0}^\infty \phi_Z^j \epsilon_{X, t-j}
+X_t &= \sigma_X \sum_{j=0}^\infty \phi_X^j \epsilon_{X, t-j} \numberthis\\
+Z_t &= \sigma_Z \sum_{j=0}^\infty \phi_Z^j \epsilon_{X, t-j} \numberthis
 \end{align*}
 
 \noindent
@@ -819,65 +886,76 @@ From the law of total expectation, $E(Y) = E_Y\left[ E_{Y|X,Z}[Y | X, Z] \right]
 \begin{align*}
 E\left[ Y_t \right] &= E\left[ E[Y_t | x_t, z_t] \right] \\
                                   &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \prod_{i=1}^\infty E\left[\exp \left( \frac{\sigma_X}{2} \phi_X^i \epsilon_{X, t-i} \right)  \right]  \prod_{j=0}^\infty E\left[\exp \left( \frac{\sigma_Z}{2} \phi_Z^j \epsilon_{X, t-j} \right)  \right] \\
-                  &= \frac{\sigma_X}{2} \exp \left(\frac{\sigma_X^2}{8}\right) \exp \left( \frac{\sigma_X^2}{8} \left(\frac{1}{1-\phi_X^{2}} - 1\right)\right) \exp \left( \frac{\sigma_Z^2}{8} \left(\frac{1}{1-\phi_Z^{2}}\right)\right) \\
+                  &= \frac{\sigma_X}{2} \exp \left(\frac{\sigma_X^2}{8}\right) \exp \left( \frac{\sigma_X^2}{8} \left(\frac{1}{1-\phi_X^{2}} - 1\right)\right) \exp \left( \frac{\sigma_Z^2}{8} \left(\frac{1}{1-\phi_Z^{2}}\right)\right) \numberthis \\
 \end{align*}
 
+\noindent
+Similarly, the law of total variance is used to compute the unconditional variance of the stochastic process $(Y_t)_{t>0}$. It is assumed that Var($Y) < \infty$ which is the case in practice as the returns are finite almost surely. By definition,
 
+\begin{equation}
+\text{Var}(Y) = \underbrace{E_{X,Z}(Var[Y|X,Z])}_{(1)} + \underbrace{\text{Var}_{X,Z}(E[Y|X,Z])}_{(2)}
+\end{equation}
 
+\noindent
+The term (1) is computed using the same logic as seen for model $\mathcal{M}_3$ with the independence of $X_t$ and $Z_t$ for every $t > 0$.
 \begin{align*}
-E_{X,Z}\left[ \text{Var}[Y_t | x_t, z_t] \right] &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right)
+E_{X,Z}\left[ \text{Var}[Y_t | x_t, z_t] \right] &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right) \numberthis
 \end{align*}
 
-
+\noindent
+The term (2) is rewritten as
 \begin{align*}
 \text{Var}_{X,Z} \left[ E[Y_t | x_t, z_t] \right] &= \rho^2 \beta^2 \text{Var} \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \\
-                                                  &= \rho^2 \beta^2 \left( E \left[ \exp \left(x_t + z_t\right) \right] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2 \right)
+                                                  &= \rho^2 \beta^2 \left( E \left[ \exp \left(x_t + z_t\right) \right] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2 \right) \numberthis
 \end{align*}
 
 \noindent
 Recall from the calculus for model $\mathcal{M}_3$, $E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] = \exp \left(\frac{(\sigma\phi^j)^2}{8} \right)$. By a trivial substitution, $\sigma' = 2 \sigma$, $E\left[\exp \left( \sigma' \phi^j \epsilon_{X, t-j} \right) \right] = \exp \left(\frac{(\sigma'\phi^j)^2}{2} \right)$. Therefore,
 
 \begin{align*}
-\text{Var}_{X,Z} \left[ E[Y_t | x_t, z_t] \right] &= \rho^2 \beta^2 \left( E [ \exp (x_t) ] E [ \exp (z_t) ] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
+(2) &= \rho^2 \beta^2 \left( E [ \exp (x_t) ] E [ \exp (z_t) ] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
                                                   &= \rho^2 \beta^2 \left( \prod_{j=0}^\infty \exp \left(\frac{(\sigma_X\phi_X^j)^2}{2} \right) \prod_{j=0}^\infty \exp \left(\frac{(\sigma_Z\phi_Z^j)^2}{8} \right) - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
                                                   &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
                                                   &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - E \left[ \left( \exp \left(\frac{x_t}{2}\right) \right)\right]^2 E \left[ \left( \exp \left(\frac{z_t}{2}\right) \right)\right]^2\right) \\
-                                                  &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right)
+                                                  &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right) \numberthis
 \end{align*}
 
-Finally from the law of total variance,
-
+Finally by adding (1) and (2),
 \begin{multline}
 Var(Y) = \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right) \\ + \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right)
 \end{multline}
 
-\chapter{Model estimation and selection}
+\chapter{Validation, Estimation and Selection of the best SV model}
 
 \section{Validation of the models}
 
 \noindent
-In practical applications, the true value of $\theta_{tr}$ is usually unknown and it makes the validation harder. The validation is an important pre-task because it tests the implementation, the choice of the priors and the proposal distributions, measures the dispersion of the estimator $\hat{\theta}$ to the true value $\theta_{tr}$. The first step involves the sample generation of both the process and the observations $(X_t, Y_t)_{t > 0}$. We choose an arbitrary value for $\theta_{tr}$. From this point, $x^*_{1:T}$ and $y^*_{1:T}$ are sampled. Each model takes $(y_t^*)_{1:T}$ as argument and outputs an estimator $(\hat{x_{1:T}}, \hat{\theta})$. The estimated values are then compared to the true values using some measures such as the MSE defined by $MSE(\hat{\theta}) = E[ ( \hat{\theta} - \theta_{tr} )^2 ]$. It is also interesting to cross validate the models. In this example, $x^*_{1:T}$ and $y^*_{1:T}$ have been sampled from the model $\mathcal{M}_x$. The marginal likelihood of the data $p(y_{1:T})$ should be maximal for $\mathcal{M}_x$. If the parameters are estimated by another model $\mathcal{M}_y$ say, we should have $p(y_{1:T} | \mathcal{M}_x) > p(y_{1:T} | \mathcal{M}_y)$.
+In practical applications, the true value of $\theta_{tr}$ is usually unknown and it makes the validation harder. The validation is an important pre-task because it tests the implementation, the choice of the priors and the proposal distributions, measures the dispersion of the estimator $\hat{\theta}$ to the true value $\theta_{tr}$. The first step involves the sample generation of both the process and the observations $(X_t, Y_t)_{t > 0}$. We choose an arbitrary value for $\theta_{tr}$. From this point, $x^*_{1:T}$ and $y^*_{1:T}$ are sampled. Each model takes $(y_t^*)_{1:T}$ as argument and outputs an estimator $(\hat{x_{1:T}}, \hat{\theta})$. The estimated values are then compared to the true values using some measures such as the MSE defined by $MSE(\hat{\theta}) = E[ ( \hat{\theta} - \theta_{tr} )^2 ]$. It is also interesting to cross validate the models. In this example, $x^*_{1:T}$ and $y^*_{1:T}$ have been sampled from the model $\mathcal{M}_x$. The marginal likelihood of the data $p(y_{1:T})$ should be maximal for $\mathcal{M}_x$. If the parameters are estimated by another model $\mathcal{M}_y$ say, we should have $p(y_{1:T} | \mathcal{M}_x) > p(y_{1:T} | \mathcal{M}_y)$ according to the likelihood principles.
 
 
 \section{Parametrisation and estimation}
 
 Once the model has been validated, it can be fitted to sample data. The number of steps required in Particle MCMC is taken large enough to ensure that enough samples are available for analysis. Unless stated otherwise, the PMCMC scheme algorithm will loop 10000 times before stopping. The first 1000 samples are discarded for each parameter. This is because the chains require several steps to reach their equilibrium distribution. A component-wise scheme is used to update the parameters, one by one sequentially. Note that it is possible to parallel this scheme it by introducing a bias. However, a more efficient way is to parallel the filter, still with a bias. Both algorithms have been implemented and are available in the appendix. Because the bias has not been rigourously, a simple version with no parallel was used for the computations. Once the burn-in phase was performed, the mean value $\bar{\theta}$ is selected from the distribution $\mathcal{D}(\theta)$ as the best estimation for $\theta_{tr}$. Some statistics, moments and confidence intervals can be obtained from $\mathcal{D}(\theta)$.
 
-\section{Determination of the number of particles}
-The determination of the correct number of particles $N$ is important in a PMCMC scheme to balance accuracy and good mixing of the chains. The test is based on the knowledge of the true value $\theta_{tr} = \bar{\theta}$. An artificial dataset composed of daily returns with $T=1000$ is generated from model $\mathcal{M}_2$. For a given value of $N$, the bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods $Var(\log p_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. As seen previously in section \ref{sec:tuning_n}, $N$ is optimal when $Var(\log p_N(y|\bar{\theta})) = 0.8464$. From Figure \ref{est_var_pn_theta_n}, $N = 1500$ seems to be the value to select. \cite{pitt2012} reported that the penalty for a slightly bigger variance is not too severe. The best candidate is therefore $N = 1000$ for $T=1000$. The process is repeated for several values of $T$ to detect a general rule.
-
 \section{Model Comparison}
 The output of the particle filter is an unbiased estimate of $p(y|\theta)$, with the unobserved states integrated out. However this estimation is not sufficient to compare two models. It is always preferred to use the true marginal likelihood $p(y_{1:T})$. According to Bayesian theory, the marginal likelihood for a model $\mathcal{M}$ is defined as
 
-$$p(Y_{1:T} | \mathcal{M}) = \int_{\theta} p(Y_{1:T} | \theta, \mathcal{M}) p(\theta | \mathcal{M}) d\theta$$
+\begin{equation}
+p(Y_{1:T} | \mathcal{M}) = \int_{\theta} p(Y_{1:T} | \theta, \mathcal{M}) p(\theta | \mathcal{M}) d\theta
+\end{equation}
 
 \noindent
 \cite{gelfand1994} proposed a very general estimate for this marginal likelihood
 
 %TODO:check it N = IT_mcmc?
 %$$\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as It}_{mcmc} \rightarrow +\infty$$
-$$\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as } N \rightarrow \infty$$
-For this estimator to be consistent, $g(\theta_i)$ must be thin-tailed relative to the denominator. For most cases, a multivariate normal distribution $N(\theta^*, \Sigma^*)$ can be used, where $\theta^* = \frac{1}{N} \sum_{i=1}^N \theta^i$ and $\Sigma^* = \frac{1}{N-1} \sum_{i=1}^N \left(\theta^i - \theta^*\right)\left(\theta^i - \theta^*\right)^T$. The difficulty of this approach resides in the implementation. As a matter of fact, $p(Y_T | \theta)$ is usually very small as $T$ grows. The trick here is to consider the sum of the exponential of the logarithms and factorize by the maximum logarithm to avoid rounding errors. For example, when N = 3 and let assume that the log-terms on the LHS are equal to $-120$, $-121$ and $-122$ :
+\begin{equation}
+\left(\frac{1}{N} \sum_{i=1}^N \frac{g(\theta_i)}{p(Y_{1:T} | \theta_i) p(\theta_i)}\right)^{-1} \rightarrow p(Y_{1:T}) \text{ as } N \rightarrow \infty
+\end{equation}
+For this estimator to be consistent, $g(\theta_i)$ must be thin-tailed relative to the denominator. \cite{gelfand1994} argued that for most cases, a multivariate normal distribution $N(\theta^*, \Sigma^*)$ can be used, where $\theta^*$ and $\Sigma^*$ are equal to the empirical mean and sample unbiased variance, $\theta^* = \frac{1}{N} \sum_{i=1}^N \theta^i$ and $\Sigma^* = \frac{1}{N-1} \sum_{i=1}^N \left(\theta^i - \theta^*\right)\left(\theta^i - \theta^*\right)^T$. \\
+
+\noindent
+The difficulty of this approach resides in its implementation. By its definition, $p(Y_{1:T} | \theta)$ is usually either very close to 0 or very big as the size of the state-space, $T$, grows. The trick here is to consider the sum of the exponential of the logarithms and factorize by the maximum logarithm to avoid rounding errors. For example, let $N = 3$ and assume that the log-terms on the LHS are equal to $-120$, $-121$ and $-122$ :
 \begin{align*}
 p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
 - \log p(Y_T) &= \log (e^{-120} ( 1 + e^{-1} + e^{-2})) \\
@@ -885,10 +963,13 @@ p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
 \end{align*}
 
 \noindent
-When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{kass1995} suggest to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
+When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{kass1995} suggests to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
 
 
-\begin{figure}[htb]
+\subsection{Case study with a stock}
+A practical case is considered both on a stock and a spread to see if the results are in accordance. The stock at hand is Apple (APPL) and the period is Sep, 09 2003 - Jun, 04 2006 (Figure \ref{apple_2003_2006}). The daily returns are computed according to $Y_t = S_t / S_{t-1} - 1$ and are given as input to the stochastic volatility models. Table \ref{estimation_of_sv_appl} reports estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_6)$. $\log (L)$ is the log marginal likelihood $p_N(y|\bar{\theta}, \mathcal{M})$. We find that the Gaussian two factor SV model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 10.8 which indicates very strong evidence in favour of the SVTF model and its leverage $\rho$. Compared to the SV with leverage $\mathcal{M}_3$ with one factor, the Kass factor in favour of SVL is 23.3 which is very strong evidence. The distribution of the parameters are also fairly concentrated around their means. Overall, the values of $\phi$ are very close to one and confirm strong daily volatility persistence, in accordance to the volatility clustering fact in econometrics. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is much smaller whereas $\phi_Z$ is almost 0 and $\sigma_Z$ is higher. It seems clear now that the volatility of the returns can be decomposed into two distinct processes: a long-run stochastic trend $(X_t)_{t>0}$ and a process $(Z_t)_{t>0}$ accounting for short-run dynamics.
+
+\begin{figure}[H]
 \centering
 \includegraphics[width = 0.75\textwidth]{apple_2003_2006}
 \caption{APPL stock. Period is from 09-Sep-2003 to 04-Jun-2006}
@@ -896,11 +977,11 @@ When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{
 \end{figure}
 
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \begin{tabular}{lllllll}
-\label{estimation_of_svm_appl}
-Parameter      	& $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
+\label{estimation_of_sv_appl}
+Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
 \hline
 $\phi$								                  & 0.9991  & 0.9989 & 0.9960  & 0.9981 & 0.9986 & \\
 $\sigma$                                & 0.2395  & 0.1983 & 0.2728  & 0.1694 & 0.2533 & \\
@@ -926,7 +1007,7 @@ Burn-in                                 & 1000    & 1000   & 1000    & 1000 & & 
 \end{table}
 
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
 \includegraphics[width = 0.75\textwidth]{sigma_svm}
 \caption{Estimation of $\sigma$ with the SVM model $\mathcal{M}_5$}
@@ -934,16 +1015,7 @@ Burn-in                                 & 1000    & 1000   & 1000    & 1000 & & 
 \end{figure}
 
 
-\begin{figure}[htb]
-\centering
-\includegraphics[width = 0.75\textwidth]{tuning_n_optimal_var}
-\caption{$Var(\log p_N(y|\bar{\theta}))$ for different values of $N$ on an artificial dataset with $T=1000$}
-\label{est_var_pn_theta_n}
-\end{figure}
-
-\subsection{Case study with a stock}
-
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \begin{tabular}{llll}
 \label{marginal_log_lik_appl}
@@ -960,57 +1032,31 @@ Acceptance Rate & 0.08                & 0.14               & 0.11 \\
 \caption{Estimation of the parameters for the SV model $\bar{\theta}_{\mathcal{M}5}$. Data is APPL.}
 \end{table}
 
-TO CHANGE
-Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_6)$. $\log (L)$ is the log marginal likelihood $p_N(y|\bar{\theta}, \mathcal{M})$. We find that the Gaussian two factor SV model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is very small whereas $\phi_Z$ is almost null and $\sigma_Z$ is high. It means that the volatility of the returns can be decomposed into two distinct processes: a stochastic trend and a process which could be assimilated to white noise. It is easy to see that the stochastic trend process accounts for the volatility clustering and the second process for the noise associated to the returns.
-
-
-
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width = 0.75\textwidth]{tuning_n_rho_varying}
-\caption{$\text{Var}(\log p_N(y|\bar{\theta}))$ when $\theta$ varies through $\rho$. Dataset generated from $\mathcal{M}_2$ with $\rho = 0.91, \sigma = 1$ and $\nu = 3$.}
-\label{tuning_n_rho_varying}
-\end{figure}
-
-\begin{figure}[htb]
-\centering
-\includegraphics[width = 1\textwidth]{appl_vol_3_models}
-\caption{Volatilities of the returns $y_t$ for $\mathcal{M}_1$, $\mathcal{M}_3$ and $\mathcal{M}_6$}
-\label{appl_vol_3_models}
-\end{figure}
-
-\begin{figure}[htb]
-\centering
-\includegraphics[width = 1\textwidth]{appl_twofactors_latent_processes}
+\includegraphics[width = 0.75\textwidth]{appl_twofactors_latent_processes}
 \caption{Estimation of the latent processes $X$ and $Z$ in the Two Factors SV model}
 \label{appl_twofactors_latent_processes}
 \end{figure}
 
-\begin{figure}[htb]
-\centering
-\includegraphics[width = 0.75\textwidth]{n_opt_function_t}
-\caption{Behaviour of $N_{opt}$ when $T$ varies}
-\label{n_opt_function_t}
-\end{figure}
 
-\begin{figure}[htb]
+%put a plot with the stock and all the volatilities of the returns. Can be really interesting.
+
+\subsection{Case study with a spread}
+
+The same proceduce was conducted for a Spread, composed of three stocks: AMR CORP, CRANE CO and DOVER CORP with associated cointegrating vector $\beta = (1, -0.0865, -0.3796)$. Period is from 09-Sep-2003 to 04-Jun-2006. Table \ref{estimation_of_svm_appl_spr} reports estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. We find that the Gaussian two factor SVL model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 10.8 which indicates very strong evidence in favour of the SVTF model and its leverage $\rho$. Compared to the SV with leverage $\mathcal{M}_3$ with one factor, the Kass factor in favour of SVL is 23.3 which is very strong evidence. The distribution of the parameters are also fairly concentrated around their means. Overall, the values of $\phi$ are very close to one and confirm strong daily volatility persistence, in accordance to the volatility clustering fact in econometrics. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is much smaller whereas $\phi_Z$ is almost 0 and $\sigma_Z$ is higher. It seems clear now that the volatility of the returns can be decomposed into two distinct processes: a long-run stochastic trend $(X_t)_{t>0}$ and a process $(Z_t)_{t>0}$ accounting for short-run dynamics.
+
+\begin{figure}[H]
 \centering
 \includegraphics[width = 0.75\textwidth]{spread_amr_crane_2003_2006}
 \caption{Spread AMR CORP - CRANE CO - DOVER CORP. $\beta = (1, -0.0865, -0.3796)$. Period is from 09-Sep-2003 to 04-Jun-2006}
 \label{spread_amr_crane_2003_2006}
 \end{figure}
 
-%put a plot with the stock and all the volatilities of the returns. Can be really interesting.
-
-\subsection{Case study with a spread}
-
-Table \ref{marginal_log_lik_appl} reports estimation for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_6)$. $\log (L)$ is the log marginal likelihood $p_N(y|\bar{\theta}, \mathcal{M})$. We find that the Gaussian two factor SV model performs best in terms of the marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVL versus SV is 8 and this indicates strong evidence in favour of the SVL model. Compared to SVt, the Kass factor in favour of SVL is 13 which is also very strong evidence. The distribution of the parameters are also fairly concentrated around their means. The values of $\phi$ very close to one confirm strong daily volatility persistence, in accordance with stylized facts in econometrics known as volatility clustering. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is very small whereas $\phi_Z$ is almost null and $\sigma_Z$ is high. It means that the volatility of the returns can be decomposed into two distinct processes: a stochastic trend and a process which could be assimilated to white noise. It is easy to see that the stochastic trend process accounts for the volatility clustering and the second process for the noise associated to the returns.
-
-
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \begin{tabular}{llllllll}
-\label{estimation_of_svm_appl}
+\label{estimation_of_svm_appl_spr}
 Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$& $\bar{\theta}_{\mathcal{M}7}$\\ 
 \hline
 $\phi$								                  & 0.9981  & 0.9993 & 0.9986  & 0.9981  & 0.9986 & \\
@@ -1032,14 +1078,25 @@ Steps                                   & 10000   & 10000  & 10000   & 10000   &
 Burn-in                                 & 1000    & 1000   & 1000    & 1000    & 1000    & 1000 & 1000\\
 \hline
 \end{tabular}
-\caption{Estimation of the parameters for the SVM model. Data is Spr APPL-MSTA.}
+\caption{Estimation of the parameters for the SVM model. Data is Spr AMR CORP - CRANE CO - DOVER CORP.}
 \end{table}
 
-\section{Model selection}
+\section{Volatility Modelling}
+Once the best model has been selected, validated and its parameters estimated, the volatility of the asset can be approximated. For a given process $(\matr{X}_t)_{t>0} \in \mathbb{R}^N$ on a state-space, the returns $(Y_t)_{t>0}$ modelled by a SV model, are usually of the form $y_t | \matr{x}_t, \theta \sim \mathcal{D}(\mu(t), \sigma^2(t))$. By definition, $Y_t = S_t / S_{t-1} - 1$. We then have $S_t | S_{t-1}, \matr{x}_t, \theta \sim \mathcal{D}(S_{t-1} \mu(t)+S_{t-1}, S_{t-1}^2 \sigma^2(t))$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 1\textwidth]{appl_vol_3_models}
+\caption{Volatilities of the returns $y_t$ for $\mathcal{M}_1$, $\mathcal{M}_3$ and $\mathcal{M}_6$}
+\label{appl_vol_3_models}
+\end{figure}
 
 \chapter{Statistical Arbitrage}
 \section{Introduction}
-Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. The difference between this long and short position is known as the spread. Once the spread deviates far from its long-run equilibrium, a position is opened and is unwind when the spread reverts. This approach has the advantage of eliminating the market exposure (memo corr cumsum with SP500 should be around 0).
+Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. The difference between this long and short position is known as the spread. Once the spread deviates far from its long-run equilibrium, a position is opened and is unwind when the spread reverts. Dealing with spreads instead of non-stationarity stocks is beneficial because stationary series are on average much more reverting. This approach has the advantage of eliminating the market exposure (memo corr cumsum with SP500 should be around 0).
+
+\section{Presentation of the dataset}
+The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the American stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of co-integration in quantitative strategies.
 
 \section{Composition of the portfolio}
 The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in selection the tuples for trading based on the best in-sample Sharpe Ratios. We form the portfolio of 20 best trading pairs that present the greatest SR in the in-sample simulations and use them to compose a pairs trading portfolio to be employed out-of-sample. Once a trade is initiated, the portfolio is not rebalanced. Only two types of transactions are considered: move into a new position, or the total unwind of a previously opened position. Any opened position is closed at the end of the study.
@@ -1054,7 +1111,7 @@ Boll^\pm(t) &= m(t) \pm \alpha \sqrt{\frac{1}{n} \sum_{j=1}^n \left(S_j - m(t) \
 \end{align*}
 where $(S_t)_{t \geq 0}$ is the price of the asset, $n$ is the number of time periods in the moving average and $\alpha$ is the number of standard deviations to shift the Bollinger bands. The default values are $n = 20$ and $\alpha = 2$. $m(t)$ is called the mid band and is used as a relative mean value. $Boll^+(t)$ and $Boll^-(t)$ are respectively the upper and lower bands. Their purpose is to measure how far the price deviates from its mean. Under the assumption that the returns are normally distributed, 95\% of the prices should appear within the bands when $\alpha = 2$. The simple moving averages used in the computation of the bands can be replaced by exponential moving averages which gives more weights to new values and may increase the accuracy.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
 \includegraphics[width = 0.75\textwidth]{bollinger_bands_intro}
 \caption{Example of Bollinger bands strategy applied to Walt Disney Co NYSE (2002). The default values are $n = 20$ and $\alpha = 2$.}
@@ -1071,12 +1128,16 @@ The main idea behind using these stochastic volatility models is to catch the dy
 
 \noindent
 The first approach consists in working directly with the returns. This contrasts with the default Bollinger bands strategy where the price series is used to compute the volatility. The idea is to detect large movements in returns and bet for a reversion to the long-range mean. This strategy employs a large quantity of trades because it is highly sensitive to price movements. A simple moving average of lag $p$ on the volatility $\sigma(t)$ is considered to detect such movements:
-$$SMA_\sigma(t, p) = \frac{1}{p} \sum_{i=0}^{p-1}\sigma(t-i)$$
+\begin{equation}
+SMA_\sigma(t, p) = \frac{1}{p} \sum_{i=0}^{p-1}\sigma(t-i)
+\end{equation}
 The mid band is generated from a moving average over the returns. The upper and lower bands are generated by adding and subtracting this rolling volatility $SMA_\sigma$ to the mid band. \\
 
 \noindent
 The second method is based on drawing a large of number of sample paths from the model to estimate the volatility of the spread. The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands strategy. Once every volatility was computed, each of them must be aggregated to form the final rolling volatility $(r\sigma(t)_{t>0}$ from the different generated paths. This quantity is the one used in the computation of the upper and lower bands. The way the rolling volatility is computed and its associated lag are omitted here, for a better clarity. Algorithm 3 summarizes the procedure for the standard stochastic volatility whose equation is given below as a recall
-$$S_t | X_t = x_t, S_{t-1} \sim \mathcal{N}(\mu(t) = S_{t-1}, \sigma^2(t)= S_{t-1}^2 \beta^2 \exp(x_t))$$
+\begin{equation}
+S_t | X_t = x_t, S_{t-1} \sim \mathcal{N}(\mu(t) = S_{t-1}, \sigma^2(t)= S_{t-1}^2 \beta^2 \exp(x_t))
+\end{equation}
 
 \begin{algorithm}
 \caption{Rolling volatility computed with the standard stochastic volatility model}\label{volatility_std_sv}
@@ -1117,8 +1178,10 @@ Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, \cite{caldeira2013} suggest
 \text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
 \end{align*}
 
+\noindent
+Note that unlike the Bollinger Bands, the Z-score is highly sensitive to stochastic trends because the mean is supposed to be constant. For the strategy to work, the spread should not be divergent. This shows how important it is to choose the right alternative hypothesis of ARD instead of TS (Trend Stationary) in the unit root tests. In practical applications and according to the risk policy of the firm, a stop loss threshold is set to avoid any huge losses.
 
-\section{Data}
+\section{Dataset}
 The data used in this study consists of daily closing prices of the 1232 stocks from the US markets. All the stocks used are listed in stock exchanges such as Dow Jones or NASDAQ, which means they are among the most liquid stocks traded within the US markets. This characteristic is important for the strategies, since it greatly diminishes the slippage effect, reduces the transaction costs and permits to unwind any position without impacting the market too much. The data were obtained from Bloomberg, taken from the period of January 1990 to March 2014. The data are adjusted for dividends and splits, avoiding false trading signals generated by these events, as pointed out by \cite{broussard2012}.
 
 \section{Procedure}
@@ -1141,18 +1204,20 @@ Time & 0.33 ms   & 19.08 ms      & 2.33 ms      & 3.04 ms        \\ \hline
 \noindent
 When it comes to pairs trading, a simple correlation test is enough to conclude. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
 
-$$R_{xx} =\begin{pmatrix}
+\begin{equation}
+R_{xx} =\begin{pmatrix}
 r_{x1x1}    & r_{x1x2} & ...  & r_{x1xn}  \\
 r_{x2x1}    & \ddots &   & \vdots  \\
 \vdots       &   & \ddots &   \\
 r_{xnx1}    & \hdots &   & r_{xnxn} \\
-\end{pmatrix} $$
+\end{pmatrix} 
+\end{equation}
 One problem arises: the value of the coefficient depends on the ordering of the tuple. To provide convincing evidence of this fact, let's consider a simple example. A regression of $y$ on $x$ and $z$ will in general have a different $R$ that will a regression of $z$ on $x$ and $y$. Let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R$. It means that the ordering inside a tuple has its importance, at least from a statistical point of view. This assertion is also true for all cointegrations tests, except for the Johansen test where the ordering does not matter. This notion of ordering is much less obvious from a pure financial point of view. \\
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width = 1\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
-\caption{Distribution of $100 \times R^2$ for the data composed of 1232 US stocks. Period is from Jan 01, 2012 to May 27, 2013}
+\includegraphics[width = 0.9\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
+\caption{Distribution of $100 \times R^2$ for the quadruples (not all are cointegrated). Period is from Jan 01, 2012 to May 27, 2013}
 \label{apple_2003_2006}
 \end{figure}
 
@@ -1160,8 +1225,19 @@ One problem arises: the value of the coefficient depends on the ordering of the 
 \noindent
 A rigorous testing of cointegration is performed to select the candidates. First, all the time series are tested for a unit root with an Augmented Dickey Fuller test. For a fixed $n$, all possible tuples are formed and $R^2$ is evaluated for each of them. A threshold $R_{th}$ is arbitrary picked up (default is 0.80) and the tuples whose $R^2> R_{th}$ are selected. For every selected tuple, form the spread $S_t = \beta_0 P_{t0} - \sum_{i=1}^{n-1} \beta_i P_{ti}$ and apply a triple Johansen, Dickey Fuller and Phillips-Perron test to check for cointegration. If the tuple is cointegrated i.e. all the three tests have positive outcome, form the spread and mark it as cointegrated.
 
+\subsection{Assumption of the same sector}
+\cite{chan2009} and \cite{dunis2010} argued that the tuples should belong to the same sector, otherwise the cointegration and the correlation would be purely fortuitous. To check the veracity of this assumption, all the possible cointegrated triples are formed on the whole period of the dataset (from 01-Jan-1990 to 14-Mar-2014) and the $R^2$ is computed using the methodology exposed before. The cointegrated triples are then sorted according to their $R^2$ from the highest to the lowest value. Each triple is characterized by the sector criteria: All, Partial or None. All means the three assets composing the triple belong to the same sector, Partial that exactly two belong to the same sector, None that all belong to different sectors. As a result, 30418 cointegrated triples were formed. 816 belonged to All, 10517 to Partial and the remaining 19085 to None. Figure \ref{triples_sector} shows that for very high $R^2$ on daily returns, almost all the cointegrated triples belong to the same sector. Then for high $R^2$, the proportion of partial triples becomes higher than two other groups until the half of the set. The conclusion is that when the number of selected cointegrating triples or more generally tuples is not very large (less than 500 or 1.5\% here for the whole period), it is reasonable to consider the assumption of the same sector.
+
+ 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 1\textwidth]{triples_sector}
+\caption{Repartition of the cointegrated triples sorted by $R^2$ from highest to lowest and regarding their belonging to sectors. Period is from 01-Jan-1990 to 14-Mar-2014}
+\label{triples_sector}
+\end{figure}
+
 \subsection{Creation of the Trading Signals}
-For cointegrated marked spreads, the second part of the algorithm creates trading signals based on predefined investment decision rules. A trading rule determines when to open and close a position. With Bollinger bands strategy, the basic rule is:
+For cointegrated marked spreads, the second part of the algorithm creates trading signals based on predefined investment decision rules. A trading rule determines when to open and close a position. With Bollinger bands strategy, the basic rule is
 
 \begin{itemize}
 \item Open a long position when there is an upward crossing between the spread and the lower band;
@@ -1184,19 +1260,20 @@ Bollinger bands strategy requires to estimate three parameters: the number of pe
 \subsection{Performance Assessment}
 The performance of the portfolios are examined in terms of cumulative return, variance of returns $(\sigma^2)$, Sharpe Ratio (SR) and Maximum Drawdown (MDD). The maximum drawdown (MDD) is defined as the maximum percentage drop incurred from a peak to a bottom up to time $T$. Drawdowns help determine an investment's financial risk.
 
-$$MDD(T) = \smash{\displaystyle\max_{\tau \in (0,T)}} \left[\smash{\displaystyle\max_{\tau \in (0,T)}} X(t) - X(\tau) \right] $$
+\begin{equation}
+MDD(T) = \smash{\displaystyle\max_{\tau \in (0,T)}} \left[\smash{\displaystyle\max_{\tau \in (0,T)}} X(t) - X(\tau) \right] 
+\end{equation}
 
 The Sharpe Ratio (RP) based on daily returns is defined as
 
-$$SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t})^2 }} \text{, where } \bar{R_T} = T^{-1} \sum_{t=1}^T R_t $$
+\begin{equation}
+SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t})^2 }} \text{, where } \bar{R_T} = T^{-1} \sum_{t=1}^T R_t 
+\end{equation}
 
 One of the techniques to assess the performance of a strategy is to compare it to the very simple Buy and Hold strategy where the holder buys various assets at time $0$ and keep them until time $T$. \cite{gatev2006} also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs and assuming the fact that you cannot beat the market with a random approach in the long run. So better not trade at all in this case.
 
 \section{Estimation and out-of-sample results}
 The sample is split into several training (in-sample) and testing sets (out-of-sample). Cross validation is performed on the training sets to tune the parameters of the strategies. The performance is evaluated on the testing set. We suggest a period of one year for testing and four months for testing.
-
-\section{Presentation of the dataset}
-The sample period used starts in January 1990 and ends in March 2014 summing up to 8844 observations. Daily equity closing prices obtained from Bloomberg. The analysis covers all stocks in the SP500 index from the American stock markets. The proposed statistical arbitrage generated average excess returns of 12\% per year in out-of-samples simulations, Sharpe ratio of 1.70, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of co-integration in quantitative strategies.
 
 \section{Model selection}
 For each training period, the spread is computed and all the stochastic volatility models presented are applied to its returns. The model with the highest marginal likelihood is taken as reference and the Bayes factors are computed relatively to this model. AIC is also used to reinforce our decisions. We set $N$, the number of particles to 1000 and run the different samplers for $M = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. We find that the Gaussian Stochastic Volatility Leverage model performs best in terms of the marginal likelihood criterion. An advantage of using Bayes Factors and AIC is that they automatically penalize highly parametrized models that do not deliver improved content. Figure 1 displays the SPX500 index for the period 1/1/2010-1/1/2014 followed by the returns and the filtered estimates of $(X_t)_{t>0}$.
@@ -1206,7 +1283,7 @@ We find that the Gaussian SVL model performs best in terms of the marginal likel
 
 The strategy is compared to the traditional buy and hold strategy where the investor buys a basket of stocks to reproduce the S\&P500 index and holds it until the end of the period where the position is unwound. Table xx presents the results of both strategies.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \begin{tabular}{lll}
 \hline
@@ -1306,17 +1383,35 @@ where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent st
 \section{Stratified Resampling}
 \lstinputlisting{../../filters/resampleStratified.m}
 
+\section{Generation of the data for validation based on models specifications}
+\lstinputlisting{../../models/HiddenMarkovModel.m}
+\lstinputlisting{../../models/StochasticVolatilityModel.m}
+\lstinputlisting{../../models/StochasticVolatilityModelM.m}
+\lstinputlisting{../../models/StochasticVolatilityModelMA1.m}
+\lstinputlisting{../../models/StochasticVolatilityModelNormalLeverage.m}
+\lstinputlisting{../../models/StochasticVolatilityModelStudent.m}
+\lstinputlisting{../../models/StochasticVolatilityModelTwoFactors.m}
+
 \section{Bootstrap Particle Filter for Standard SV}
 \lstinputlisting{../../filters/BootstrapParticleFilter.m}
-
-\section{Bootstrap Particle Filter for Student SV}
-\lstinputlisting{../../filters/BootstrapParticleFilter_Student.m}
 
 \section{Bootstrap Particle Filter for Normal Leverage SV}
 \lstinputlisting{../../filters/BootstrapParticleFilter_NormalLeverage.m}
 
+\section{Bootstrap Particle Filter for Student SV}
+\lstinputlisting{../../filters/BootstrapParticleFilter_Student.m}
+
+\section{Bootstrap Particle Filter for SVM}
+\lstinputlisting{../../filters/BootstrapParticleFilter_SVM.m}
+
+\section{Bootstrap Particle Filter for SVMA1}
+\lstinputlisting{../../filters/BootstrapParticleFilter_SVMA1.m}
+
 \section{Bootstrap Particle Filter for Two Factors SV}
 \lstinputlisting{../../filters/BootstrapParticleFilter_TwoFactors.m}
+
+\section{Bootstrap Particle Filter for Two Factors SV with Leverage}
+\lstinputlisting{../../filters/BootstrapParticleFilter_TwoFactorsCor.m}
 
 \section{Particle Markov Chain Monte Carlo (Abstract Class)}
 \lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarlo.m}
@@ -1324,14 +1419,26 @@ where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent st
 \section{Particle Markov Chain Monte Carlo Standard Stochastic Volatility Model}
 \lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSV.m}
 
+\section{Particle Markov Chain Monte Carlo SVM}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVM.m}
+
+\section{Particle Markov Chain Monte Carlo SVMA1}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVMA1.m}
+
 \section{Particle Markov Chain Monte Carlo SV Normal Leverage Model}
-\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVNormalLeverage.m}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVNormalLeverageBeta.m}
 
 \section{Particle Markov Chain Monte Carlo SV Student Model}
 \lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloStudentBetaSV.m}
 
 \section{Particle Markov Chain Monte Carlo SV Two Factors}
-\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVTwoFactors.m}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVTwoFactorsBeta.m}
+
+\section{Particle Markov Chain Monte Carlo SV Two Factors with Leverage}
+\lstinputlisting{../../pmcmc/ParticleMarkovChainMonteCarloSVTwoFactorsBetaCor.m}
+
+
+
 
 \section{Bayes Factor - Kass and Raftery}
 \lstinputlisting{../../likelihoods/BayesFactor.m}
@@ -1355,10 +1462,22 @@ where $\{\phi_t^S\}_{t \geq 0}$ and $\{\phi_t^S\}_{t \geq 0}$ are independent st
 \lstinputlisting{../../strategy/SimpleTradingStrategyCV.m}
 
 \section{Reversion Frequency Calculator}
-\lstinputlisting{../../strategy/ReversionFrequencyCalculator.m}
+\lstinputlisting{../../helpers/ReversionFrequencyCalculator.m}
 
 \section{Crossing Points Calculator}
 \lstinputlisting{../../strategy/CrossingPointsCalculator.m}
+
+\section{Computation of the returns}
+\lstinputlisting{../../helpers/Compute_Returns.m}
+
+\section{$R^2$ computation for quadruples (efficient implementation)}
+\lstinputlisting{../../helpers/Compute_R_2.m}
+
+\section{Windowed Standard Volatility (Rolling)}
+\noindent
+This code was written by John D'Errico (2005) and is under the BSD License. \\
+\url{http://www.mathworks.com/matlabcentral/fileexchange/9428-movingstd-x-k-windowmode-}
+\lstinputlisting{../../helpers/movingstd.m}
 
 \section{Main}
 \lstinputlisting{../../strategy/Main2.m}

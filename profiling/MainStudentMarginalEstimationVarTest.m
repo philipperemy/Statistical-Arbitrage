@@ -9,14 +9,14 @@ addpath('../pmcmc/');
 mySeed = 57; % an integer number
 rng(mySeed,'twister') %You can replace 'twister' with other generators
 
-% [var_part_dist, N_seq] = ParticleDistribVarTest(200);
-% hold off
-% plot(N_seq, var_part_dist)
-% hold on
-% plot([1 3000],[0.8464 0.8464])
-% legend('Variance of p_N(y|\theta)', 'Optimal variance');
-% xlabel('Number of particles (N)');
-% ylabel('Var(p_N(y|\theta))');
+[var_part_dist, N_seq] = ParticleDistribVarTest(1000);
+hold off
+plot(N_seq, var_part_dist, 'b--o');
+hold on
+plot([1 3000],[0.8464 0.8464], 'r');
+legend('Variance of p_N(y|\theta)', 'Optimal variance');
+xlabel('Number of particles (N)');
+ylabel('Var(p_N(y|\theta))');
 
 N_seq = 100:100:3000;
 T = 100:100:2000;

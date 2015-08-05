@@ -1,5 +1,4 @@
 
-%Works ONLY for lags = 0
 function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
 
     tic;

@@ -1,5 +1,7 @@
 
-function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices )
+%Works for lag = 0 ONLY now
+%Maybe use diff(ret) instead of prices only
+function [ res, spread, pvals_jci ] = SpreadConstructorTSBasic( stock_ids, stock_prices )
 
     pvals_jci         = struct;
     spread            = struct;
@@ -11,12 +13,12 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
     s3_px             = stock_prices(:,3); id3 = stock_ids(3);
 
     %first test for a unit root. Specificity of JCI test is that order is not important.
-    [~,p_val_jci,~,~,~] = jcitest([s1_px, s2_px, s3_px], 'lags', 0:5);
+    [~,p_val_jci,~,~,~] = jcitest([s1_px, s2_px, s3_px], 'lags', 0);
 
     pval_r0 = p_val_jci.r0(1);
     pval_r1 = p_val_jci.r1(1);
     pval_r2 = p_val_jci.r2(1);
-    if(any(p_val_jci.r0 > P_VAL_THRES))
+    if(pval_r0 > P_VAL_THRES)
         return;
     end
     
@@ -32,7 +34,7 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
     beta = mod.Coefficients.Estimate;
     triple_output = [id1, id2, id3];
     spr = s1_px - beta(1) * s2_px - beta(2) * s3_px;
-    [~, p_value_adf] = adftest(spr, 'model','ARD','lags', 0);
+    [~, p_value_adf] = adftest(spr, 'model','TS','lags', 0);
         
     if(p_value_adf > P_VAL_THRES)
 
@@ -40,7 +42,7 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
         beta = mod.Coefficients.Estimate;
         triple_output = [id2, id1, id3];
         spr = s2_px - beta(1) * s1_px - beta(2) * s3_px;
-        [~, p_value_adf] = adftest(spr, 'model','ARD','lags', 0);
+        [~, p_value_adf] = adftest(spr, 'model','TS','lags', 0);
 
         if(p_value_adf > P_VAL_THRES)
 
@@ -48,7 +50,7 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
             beta = mod.Coefficients.Estimate;
             triple_output = [id3, id1, id2];
             spr = s3_px - beta(1) * s1_px - beta(2) * s2_px;
-            [~, p_value_adf] = adftest(spr, 'model','ARD','lags', 0);
+            [~, p_value_adf] = adftest(spr, 'model','TS','lags', 0);
 
             if(p_value_adf > P_VAL_THRES)
                 return;
@@ -57,7 +59,7 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
     end
 
     %ultimate test for a unit root
-    if(~pptest(spr, 'model', 'ARD', 'lags', 0))
+    if(~pptest(spr, 'model', 'TS', 'lags', 0))
         return;
     end
     
