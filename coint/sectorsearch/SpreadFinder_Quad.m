@@ -96,6 +96,3 @@ area(quad_11);
 xlabel(sectors(11));
 xlim([0 100]);
 set(gca,'XTick',[1 5 9 10] );
-
-model = arima('Constant',0.5,'AR',{0.7,0.25},'Variance',.1);
-model2 = arima('Constant',0.0,'AR',{0.1,0.1},'Variance',.5);

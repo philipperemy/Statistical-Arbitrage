@@ -13,3 +13,7 @@ hold on;
 xlim([20 200]);
 ylabel('Prices (USD)');
 xlabel('Time (Days)');
+
+
+
+a = GetPriceArray(pp, [236 237 238 239]);

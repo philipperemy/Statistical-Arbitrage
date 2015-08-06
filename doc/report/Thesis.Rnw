@@ -564,19 +564,19 @@ which closes the proof.
 \noindent
 From a mathematical point of view, the stratified resampling seems the perfect match. A benchmark study consisting in resampling 1000 weights a large number of times was performed and the results are promising. The stratified is among the algorithms which performs the best in terms of speed. Coupled with a lower variance when resampling, it is the most compelling method to use inside the particle filters. 
 
-%TODO put an histogram. It looks more professional
-\begin{table}[h]
+\begin{table}[H]
 \centering
-\label{table1}
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{ll}
 \hline
-Resampling method     & Residual & Stratified & Systematic & Multinomial \\ \hline
-Time (in seconds) & 18.90    & 0.62       & 0.63       & 1.87        \\ \hline
+\multicolumn{1}{|l|}{Resampling method}     & \multicolumn{1}{l|}{Elapsed Time (average)} \\ \hline
+Residual 					   &  18.90 s \\
+Stratified   				 &  0.62 s \\
+Systematic   				 &  0.63 s \\
+Multinomial          &  1.87 s \\
+\hline
 \end{tabular}
 \caption{Time spent to resample 100K times 1000 weights}
 \end{table}
-\noindent
-The multinomial implementation is the Octave default version.
 
 \section{Tuning the number of particles}
 \label{sec:tuning_n}
@@ -1086,9 +1086,51 @@ Once the best model has been selected, validated and its parameters estimated, t
 
 \begin{figure}[H]
 \centering
-\includegraphics[width = 1\textwidth]{appl_vol_3_models}
-\caption{Volatilities of the returns $y_t$ for $\mathcal{M}_1$, $\mathcal{M}_3$ and $\mathcal{M}_6$}
+\includegraphics[width = 0.75\textwidth]{appl_vol_3_models}
+\caption{Volatility associated to the returns $y_t$ for model $\mathcal{M}_1$, $\mathcal{M}_3$ and $\mathcal{M}_6$}
 \label{appl_vol_3_models}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{model_vol/1}
+\caption{Generation of $M = 1000$ MC prices trajectories with model $\mathcal{M}_7$}
+\label{vol_mod_1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{model_vol/2}
+\caption{Conditional variance of $S_t | S_{t-1}, x_t, \theta$ with model $\mathcal{M}_7$ }
+\label{vol_mod_2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{model_vol/3}
+\caption{Rolling volatility processes for the generated prices trajectories and the spread prices}
+\label{vol_mod_3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{model_vol/4}
+\caption{90 \% Confidence intervals for the generated prices trajectories}
+\label{vol_mod_4}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{model_vol/5}
+\caption{Bollinger Bands}
+\label{vol_mod_5}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.75\textwidth]{model_vol/6}
+\caption{Normalized difference $d(t) = (r\sigma(t)_E - r\sigma(t)_C) / S_t$between the evaluated $r\sigma(t)_E$ and common $r\sigma(t)_C$ windowed volatilities used in the Bollinger Bands}
+\label{vol_mod_6}
 \end{figure}
 
 \chapter{Statistical Arbitrage}
@@ -1103,8 +1145,7 @@ The first motivation of considering a portfolio approach is to lower the volatil
 
 \section{Strategies}
 \subsection{Bollinger Bands}
-Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $\{Boll^+_t, Boll^-_t\}$ above and below the moving average prices $\{m_t\}$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by:
-
+Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $\{Boll^+_t, Boll^-_t\}$ above and below the moving average prices $\{m_t\}$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by
 \begin{align*}
 m(t) &= \frac{1}{n}\sum_{j=1}^n S_j \text{ (SMA)} \\
 Boll^\pm(t) &= m(t) \pm \alpha \sqrt{\frac{1}{n} \sum_{j=1}^n \left(S_j - m(t) \right)}
@@ -1136,7 +1177,7 @@ The mid band is generated from a moving average over the returns. The upper and 
 \noindent
 The second method is based on drawing a large of number of sample paths from the model to estimate the volatility of the spread. The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands strategy. Once every volatility was computed, each of them must be aggregated to form the final rolling volatility $(r\sigma(t)_{t>0}$ from the different generated paths. This quantity is the one used in the computation of the upper and lower bands. The way the rolling volatility is computed and its associated lag are omitted here, for a better clarity. Algorithm 3 summarizes the procedure for the standard stochastic volatility whose equation is given below as a recall
 \begin{equation}
-S_t | X_t = x_t, S_{t-1} \sim \mathcal{N}(\mu(t) = S_{t-1}, \sigma^2(t)= S_{t-1}^2 \beta^2 \exp(x_t))
+S_t | X_t = x_t, S_{t-1}, \theta \sim \mathcal{N}(\mu(t) = S_{t-1}, \sigma^2(t)= S_{t-1}^2 \beta^2 \exp(x_t))
 \end{equation}
 
 \begin{algorithm}
@@ -1169,8 +1210,7 @@ $\sigma(t,p) = \frac{1}{N}\sum_{i=1}^N SMA_\sigma(t, p)_i$. It is a well known f
 Note that a rolling volatility is similar to a moving average on the volatility process. When $p \rightarrow 1$, $r\sigma(t,p)$ converges to $\sigma(t)$, the instant volatility associated to $S_t | \mathcal{F}_{t^-}$.
 
 \section{Z-score}
-Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, \cite{caldeira2013} suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasoning for the high threshold holds for short positions. \cite{caldeira2013} suggested the basic trading strategy signals:
-
+Once the spread $(\epsilon_t)_{t \geq 0}$ is formed, \cite{caldeira2013} suggests to compute the dimensionless z-score. Defined as $z_t = \frac{\epsilon_t-\mu_\epsilon}{\sigma_\epsilon}$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open a position when the z-score hits the n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. According to the 68-95-99.7 rule, having a two standard deviation thresholds from above and below seems relevant. If the z-score hits the low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position has to be unwind. The same reasoning for the high threshold holds for short positions. \cite{caldeira2013} suggested the basic trading strategy signals
 \begin{align*}
 \text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
 \text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
@@ -1190,19 +1230,23 @@ A typical trading strategy is made of three parts: selection of the suitable tup
 \subsection{Tuples selection}
 It is common in pair trading and more generally in tuple trading to require that the tuples belong to the same sector, for example in \cite{chan2009} and \cite{dunis2010}. Other did not adopt this restriction, for example \cite{caldeira2013}. It is harder but nevertheless possible to bypass this restriction at a greater computational cost when the number of assets grows. Several tricks are performed to diminish this combinatorial explosion; one is based on correlation. In the general case, cointegration usually implies correlation but correlation doesn't always imply cointegration. Spurious regression is a very good example where the reverse is not true. The idea is to filter the uncorrelated tuples to limit the number of candidates for cointegration. This assertion holds because a correlation test can be performed much faster than a cointegration test (cf. table 2).
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
-\label{table1}
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{ll}
 \hline
-Test     & Correlation & Johansen & Aug. Dickey Fuller & Phillips-Perron \\ \hline
-Time & 0.33 ms   & 19.08 ms      & 2.33 ms      & 3.04 ms        \\ \hline
+\multicolumn{1}{|l|}{Test}     & \multicolumn{1}{l|}{Elapsed Time (average)} \\ \hline
+Correlation $corr$						 &  0.33 ms \\
+Correlation $R^2$ (fast)       &  0.57 ms \\
+Johansen                       &  19.08 ms\\
+Aug. Dickey Fuller             &  2.33 ms\\
+Phillips-Perron                &  3.04 ms\\
+\hline
 \end{tabular}
 \caption{Average time spent to test a bivariate time series $X_t = (x_{t1}, x_{t2})$}
 \end{table}
 
 \noindent
-When it comes to pairs trading, a simple correlation test is enough to conclude. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
+When it comes to pairs trading, a simple correlation test is enough. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
 
 \begin{equation}
 R_{xx} =\begin{pmatrix}
@@ -1281,13 +1325,13 @@ We find that the Gaussian SVL model performs best in terms of the marginal likel
 
 \section{Results}
 
-The strategy is compared to the traditional buy and hold strategy where the investor buys a basket of stocks to reproduce the S\&P500 index and holds it until the end of the period where the position is unwound. Table xx presents the results of both strategies.
+The strategy is compared to the traditional buy and hold strategy where the investor buys a basket of stocks to reproduce the S\&P500 index and holds it until the end of the period where the position is unwound. Table xx presents the results of both strategies. Figure xx compares the cumulative excess returns and volatility of the strategy with the ones of the SPX index. The portfolio composed of the tuples shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. The second panel presents the implied volatility of the returns for both strategies computed with a standard stochastic volatility model. The strategy accounts for a low and stable volatility for the whole period. A very low correlation with the market returns attests the market neutral property of the strategy. Table 3 shows the performance year by year of the strategy and it is worth noticing that the excess returns is very high during the crisis where the volatility was very high. As highlighted by \cite{khandani2007} and \cite{avellaneda2010}, the second semester of 2007 and first semester of 2008 were quite complicated for quantitative in vestment funds. Particularly for statistical arbitrage strategies that experienced significant losses during the period, with subsequent recovery in some cases. Many managers suffered losses and had to deleverage their portfolios, not benefiting from the subsequent recovery. We obtain results which are consistent with \cite{khandani2007} and \cite{avellaneda2010} and validate their unwinding theory for the quant fund drawdown. Note that in Figure 3, the proposed pairs trading strategy presented significant losses in the first semester of 2008, starting its recovery in the second semester. \cite{khandani2007} and \cite{avellaneda2010} suggest that the events of 2007-2008 may be a consequence of a lack of liquidity, caused by funds that had to undo their positions.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lll}
 \hline
-Summary Statistics of the tuple Trading strategy				& Strategy & SPX (Buy and Hold)\\ \hline
+Summary Statistics of the tuple Trading strategy  			& Strategy & SPX (Buy and Hold)\\ \hline
 \# of observations in the sample								& 8844  \\
 \# of observations in the training window						& 170 \\
 \# of days in the trading period								& 84 \\
@@ -1308,9 +1352,6 @@ Maximum Drawdown  												& 3.80\% \\
 \hline
 \end{tabular}
 \end{table}
-
-\noindent
-Figure xx compares the cumulative excess returns and volatility of the strategy with the ones of the SPX index. The portfolio composed of the tuples shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. The second panel presents the implied volatility of the returns for both strategies computed with a standard stochastic volatility model. The strategy accounts for a low and stable volatility for the whole period. A very low correlation with the market returns attests the market neutral property of the strategy. Table 3 shows the performance year by year of the strategy and it is worth noticing that the excess returns is very high during the crisis where the volatility was very high. As highlighted by \cite{khandani2007} and \cite{avellaneda2010}, the second semester of 2007 and first semester of 2008 were quite complicated for quantitative in vestment funds. Particularly for statistical arbitrage strategies that experienced significant losses during the period, with subsequent recovery in some cases. Many managers suffered losses and had to deleverage their portfolios, not benefiting from the subsequent recovery. We obtain results which are consistent with \cite{khandani2007} and \cite{avellaneda2010} and validate their unwinding theory for the quant fund drawdown. Note that in Figure 3, the proposed pairs trading strategy presented significant losses in the first semester of 2008, starting its recovery in the second semester. \cite{khandani2007} and \cite{avellaneda2010} suggest that the events of 2007-2008 may be a consequence of a lack of liquidity, caused by funds that had to undo their positions.
 
 %\begin{figure}[!htb]
 %\centering
@@ -1333,8 +1374,6 @@ Figure xx compares the cumulative excess returns and volatility of the strategy 
 %\label{fig:1}
 %\end{figure}
 
-It converges to the standard normal probability density function as $\sigma \rightarrow 0$.
-
 %\begin{figure}[!htb]
 %\centering
 %\includegraphics[width = 1\textwidth]{img/expnorm.pdf}
@@ -1349,10 +1388,6 @@ It converges to the standard normal probability density function as $\sigma \rig
 
 \bibliographystyle{abbrvnat} % set the bibliography style
 \bibliography{bibtexfile} % generate the bibliography
-%\bibliographystyle{abbrvnat} % <- Mistake in earlier version. After the bibliography is created it's too late to change the style.
-% Pick a sensible bibliography style. 
-% If like above you choose to use author-year style citations, you must choose a natbib-compatible bibliographystyle such as 'plainnat'. Abbrvnat is one of the few built-in styles of this type. You may find many more bibliography styles (*.bst files) online. You can also choose to write your bibliography manually instead of using BibTeX (This will take you longer, unless you plan to use the content of a BibTeX-generated *.bbl file as your starting point).
-% When creating a BibTeX file using e.g. reference manager software, note that the entries may contain additional unwanted fields which you would then need to erase. For example, you probably don't want to include the URL of a journal paper in your bibliography.
 
 
 %\cleardoublepage \fancyhead[L]{APPENDIX}

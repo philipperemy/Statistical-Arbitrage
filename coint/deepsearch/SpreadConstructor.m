@@ -16,9 +16,9 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
     pval_r0 = p_val_jci.r0(1);
     pval_r1 = p_val_jci.r1(1);
     pval_r2 = p_val_jci.r2(1);
-    if(any(p_val_jci.r0 > P_VAL_THRES))
-        return;
-    end
+%     if(any(p_val_jci.r0 > P_VAL_THRES))
+%         return;
+%     end
     
     s1_px_ret = diff(log(s1_px));
     s2_px_ret = diff(log(s2_px));

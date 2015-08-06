@@ -17,6 +17,9 @@ pp = TruncateData(pp, 5000, 5999);
 returns = Compute_Returns(spread.px);
 st = SVLogReturns(returns, 0);
 
+steps_mcmc = 5000;
+particles = 1000;
+
 subplot(2,1,1);
 plot(spread.px, 'b');
 xlabel('Time');
@@ -26,16 +29,12 @@ bar(st.y, 'b');
 xlabel('Time');
 ylabel('Percentage');
 
-
-steps_mcmc = 5000;
-particles = 1000;
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% STOCHASTIC VOLATILITY SIMPLE MODEL %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 pmcmc = ParticleMarkovChainMonteCarloSV(steps_mcmc, particles);
-pmcmc.run(st);
+%pmcmc.run(st);
 
 %MCMC_Checks(pmcmc.rho_prop(1500:5000));
 %MCMC_Checks(pmcmc.sigma_prop(1500:5000));
@@ -55,7 +54,8 @@ beta 	= 0.441938;
 [log_p_y_given_theta_SV, estX_SV] = BootstrapParticleFilter(st.y, rho, sigma, beta, 10000, pmcmc.p_y_given_x);
 
 %yt|xt = N(0, beta^2 exp(xt))
-returns_volatility = beta^2*exp(estX_SV);
+returns_volatility_var = beta^2*exp(estX_SV);
+returns_volatility_sd = sqrt(returns_volatility_var);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% STOCHASTIC VOLATILITY STUDENT BETA %%%%%%%%%%%%
@@ -120,7 +120,7 @@ rho = 0.998628;
 sigma = 0.218811;
 cor = -0.301758;
 [log_p_y_given_theta_SVL_Beta, estimated_states_SVL] = BootstrapParticleFilter_NormalLeverage(st.y, rho, sigma, beta, cor, 0, 10000, pmcmc.p_y_given_x);
-
+ret_svl_vol = beta^2*exp(estimated_states_SVL)*(1-cor^2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% STOCHASTIC VOLATILITY TWO FACTORS     %%%%%%%%%
@@ -151,11 +151,10 @@ sigma1 = 0.491330;
 rho2 = 0.999559;
 sigma2 = 0.126825;
 beta = 0.3478;
-[log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, 0.1, 10000, pmcmc.p_y_given_x);
-
+[log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, beta, 10000, pmcmc.p_y_given_x);
 vol_two_factors = beta^2*exp(estimated_states_TwoF+estimated_states_TwoF2);
 
-Y = sqrt([vol_two_factors' returns_volatility' ret_svl_vol']);
+Y = sqrt([vol_two_factors' returns_volatility_var' ret_svl_vol']);
 plot(Y(10:end,:));
 legend('Two Factors SV ', 'Standard SV', 'Normal Leverage SV');
 
@@ -197,7 +196,7 @@ beta    = 0.369088;
 cor     = -0.853284;
 
 [log_p_y_given_theta_two_factors_lev, estimated_states_lev, estimated_states2_lev] = BootstrapParticleFilter_TwoFactorsCor(st.y, rho1, sigma1, rho2, sigma2, beta, cor, 10000, pmcmc.p_y_given_x);
-                
+vol_two_factors_leverage = beta^2*exp(estimated_states_lev+estimated_states2_lev);
 
 %%%
 
@@ -205,7 +204,7 @@ cor     = -0.853284;
 %%%%%%%%%%%% STOCHASTIC VOLATILITY TWO FACTORS BETA %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%beta unknown now
+% %beta unknown now OLD SEE WITH beta = 0.3478;
 st = SVLogReturns(returns, 0);
 pmcmc = ParticleMarkovChainMonteCarloSVTwoFactorsBeta(steps_mcmc, particles);
 pmcmc.run(st);
@@ -222,13 +221,12 @@ MCMC_Checks(pmcmc.beta_prop(2000:4940));
 %Mean : 0.164125, Median : 0.164335, Min : 0.099906, Max : 0.311600, Acceptance rate ratio : 0.067347 
 %Mean : 1.063325, Median : 0.691514, Min : 0.109365, Max : 5.000000, Acceptance rate ratio : 0.505782 
 
-rho1 = 0.367440;
-sigma1 = 0.426310;
-rho2 = 0.999250;
-sigma2 = 0.164335;
-beta = 0.691514;
-[log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, beta, 10000, pmcmc.p_y_given_x);
-
+% rho1 = 0.367440;
+% sigma1 = 0.426310;
+% rho2 = 0.999250;
+% sigma2 = 0.164335;
+% beta = 0.691514;
+% [log_p_y_given_theta_TwoF, estimated_states_TwoF, estimated_states_TwoF2] = BootstrapParticleFilter_TwoFactors(st.y, rho1, sigma1, rho2, sigma2, beta, 10000, pmcmc.p_y_given_x);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% STOCHASTIC VOLATILITY MA1             %%%%%%%%%
@@ -284,8 +282,25 @@ MCMC_Checks(sigma_svm);
 
 quantile(sigma_svm, 1-0.975);
 quantile(sigma_svm, 0.975);
+vol_svm = beta^2*exp(estimated_states_SVM);
 
-vol_svm = exp(estimated_states_SVM);
 
-Y = sqrt([vol_two_factors' returns_volatility' ret_svl_vol' vol_svm']);
-plot(Y(10:end,:));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% VOLATILITY MODELLING %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Y = sqrt([vol_two_factors' returns_volatility_var' ret_svl_vol' vol_two_factors_leverage']);
+
+
+%%%%%%%%%%% STANDARD SV %%%%%%%%%%%
+diff_sv = Volatility_Estimation_Bands_Mean_Zero(spread, returns_volatility_var);
+close all;
+%%%%%%%%% TWO FACTORS SV (EASIER THAN TFSVL) %%%%%%%%%%%
+diff_tfsv = Volatility_Estimation_Bands_Mean_Zero(spread, vol_two_factors);
+close all;
+%%%%%%%%% TWO FACTORS SVL %%%%%%%%%%%
+diff_tfsvl = Volatility_Estimation_Bands_Mean_Zero(spread, vol_two_factors_leverage);
+close all;
+Y = [diff_sv diff_tfsv diff_tfsvl];
+plot(Y(25:400, :));
+legend('SV', 'TFSV', 'TFSVL');
