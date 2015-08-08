@@ -61,6 +61,10 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
         return;
     end
     
+%     if(~vratiotest(spr))
+%        return; 
+%     end
+    
     %spread formed correctly
     res = 1;
     dimCol = 1;

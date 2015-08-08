@@ -173,10 +173,36 @@ beta = 0.162586;
 [log_val_SVM, estimated_states_SVM] = BootstrapParticleFilter_SVM(st.y, rho, sigma, beta, 10000, pmcmc.p_y_given_x);
 
 save sigma_svm;
-load sigma_svm.mat;
+load ('sigma_svm.mat');
 sigma_svm = sigma_svm(5000:20000);
 sigma_svm(sigma_svm > 0.4) = [];
 MCMC_Checks(sigma_svm);
+
+grid on; %always put it now
+props = sigma_svm;
+%%%FOR MATLAB
+plot(props);
+min_p = min(props);
+max_p = max(props);
+if(min_p ~= max_p)
+    ylim([ min_p max_p ]);
+end
+xlabel('MCMC steps');
+ylabel('\sigma'); grid on;
+
+qqplot(props); grid on;
+hist(props, 50); 
+xlim([0 0.6]); grid on;
+
+autocorr(props, 50); grid on;
+
+acc = mean(diff(props,1) ~= 0);
+fprintf('Mean : %f, Median : %f, Min : %f, Max : %f, Acceptance rate ratio : %f \n', mean(props), median(props), min(props), max(props), acc);
+
+%%%END MATLAB
+
+
+
 
 quantile(sigma_svm, 1-0.975);
 quantile(sigma_svm, 0.975);

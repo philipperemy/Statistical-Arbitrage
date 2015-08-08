@@ -3,9 +3,10 @@ addpath('../coint/deepsearch');
 
 load ../data/spx.mat; 
 spx = csvread('../data/spx.csv');
+addpath('../coint/impl');
 
 %execute first the SpreadFinder to fill the object called spreads
-spreads = SpreadFinder(pp, 0.8, 236:260);
+spreads = SpreadFinder(pp, 0.8, 236:240);
 
 tic;
 nstd_range = 1.0:0.1:3.0;
