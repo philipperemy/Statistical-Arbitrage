@@ -9,16 +9,20 @@ addpath('../pmcmc/');
 mySeed = 57; % an integer number
 rng(mySeed,'twister') %You can replace 'twister' with other generators
 
-[var_part_dist, N_seq] = ParticleDistribVarTest(1000);
+%%% FIRST PLOT
+
+N_seq = 100:100:3000;
+var_part_dist = ParticleDistribVarTest(1000);
 hold off
 plot(N_seq, var_part_dist, 'b--o');
 hold on
-plot([1 3000],[0.8464 0.8464], 'r');
+plot([1 N_seq(end)],[0.8464 0.8464], 'r');
 legend('Variance of p_N(y|\theta)', 'Optimal variance');
 xlabel('Number of particles (N)');
 ylabel('Var(p_N(y|\theta))');
 
-N_seq = 100:100:3000;
+%%% SECOND PLOT
+
 T = 100:100:2000;
 len_N_seq = length(N_seq);
 len_T_seq = length(T);
@@ -26,8 +30,7 @@ var_part_dist_mat = zeros(len_T_seq, len_N_seq);
 c = 1;
 for t = T
     fprintf('t = %i\n', t);
-    [var_part_dist, N_seq] = ParticleDistribVarTest(t);
-    var_part_dist_mat(c, :) = var_part_dist;
+    var_part_dist_mat(c, :) = ParticleDistribVarTest(t);
     c = c + 1;
 end
 
