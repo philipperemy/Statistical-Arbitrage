@@ -479,7 +479,7 @@ Equation (\ref{system_equation}) is known as the system equation and Equation (\
 \begin{equation}
 \begin{pmatrix}
 \Sigma_{\matr{W}_t} & \Sigma_{\matr{W}_t, \matr{V}_t}\\
-\Sigma_{\matr{V}_t, \matr{W}_t} & \Sigma_{\matr{V}_t}
+\Sigma_{\matr{V}_t, \matr{W}_t} & \Sigma_{\matr{V}_t} \label{corr_ssm}
 \end{pmatrix}
 \end{equation}
 The Directed Acyclic Graph for this state-space is given in Figure \ref{state_space_models}.
@@ -798,7 +798,6 @@ $dS_t = \mu S_t dt + \sigma S_t dW_t$
 where $W_t$ is a Wiener process, $\mu$ the drift and $\sigma$ the volatility. Both $\mu$ and $\sigma$ are assumed to be constant.}
 \end{definition}
 
-
 The process can be discretized by
 \begin{align*}
 S_{t+1}-S_t &= \mu S_t + \sigma S_t \epsilon_{t+1} \text{, } \epsilon_{t} \sim \mathcal{N}(0,1) \\
@@ -811,14 +810,14 @@ In the Stochastic Volatility model (SV), $(Y_t)_{t>0}$ represents the returns of
 Y_t | X_t = x_t, \theta 					&\sim \mathcal{N}(0, \beta^2 \exp(x_t)) \\
 %\frac{S_t}{S_{t-1}}-1 | X_t = x_t, \theta 	&\sim \mathcal{N}(0, \beta^2 \exp(x_t)) \\
 %\frac{S_t}{S_{t-1}} | X_t = x_t, \theta 	&\sim \mathcal{N}(1, \beta^2 \exp(x_t)) \\
-S_t | X_t = x_t, \theta 					&\sim \mathcal{N}(S_{t-1}, \underbrace{S_{t-1}^2 \beta^2 \exp(x_t)}_{\sigma^2(t)}) \numberthis
+S_t | X_t = x_t, \theta 					&\sim \mathcal{N}(S_{t-1}, \underbrace{S_{t-1}^2 \beta^2 \exp(x_t)}_{\sigma^2(t)}) \numberthis \label{cond_dist_sv_model}
 \end{align*}
 
 
  The variance $\sigma^2(t)$ always exists as a product of square and exponential terms. Finally, $S_t = S_{t-1} + \sigma(t) S_{t-1} \epsilon_t \text{, } \epsilon_t \sim \mathcal{N}(0,1)$ corresponds to the discretized Geometric Brownian Motion equation with $\mu = 0$ if and only if $\sigma(t) = \sigma \text{, } \forall t > 0$. The interest of using a Stochastic Volatility model essentially relies on the capability of modelling this volatility.
 
 \section{Model $\mathcal{M}_2$ - Stochastic Volatility Student-t (SVt)}
-The first extension is a stochastic volatility model with heavier tails with $\epsilon_{Y,t} \sim t(\nu)$. $\theta$ is enriched with the new parameter $\nu$, supposed to be unknown.
+The first extension is a stochastic volatility model with heavier tails where $\epsilon_{Y,t} \sim t(\nu)$. $\theta$ is enriched with the new parameter $\nu$, supposed to be unknown.
 
 \begin{theorem}
 \textit{
@@ -855,29 +854,27 @@ In the second extension, a leverage effect is added. \cite{black1976} discovered
 [Cholesky Decomposition] Let $X$, $Y$ be two standard normally distributed random variables. The correlation between X and Y is $\rho$ if and only if $Y = \rho X + \sqrt{1-p^2} Z$ where $Z \sim \mathcal{N}(0,1)$ and is independent of both $X$ and $Y$.
 }
 \end{theorem}
+Applying the Cholesky Decomposition on the innovations gives $\epsilon_{X,t} = \rho \epsilon_{Y,t} + \sqrt{1-\rho^2} Z$. This identity is helpful when it comes to generate artificial datasets from this model. It is worth noting that $\epsilon_{Y,t}$ is first measured and $\epsilon_{X,t}$ is updated accordingly. It means that $\epsilon_{Y,t}$ is independent from all the past values $(\epsilon_{X,s})_{s < t}$. Consequently, the conditional distributions of $Y_t$ and $S_t$ remain unchanged from Equation (\ref{cond_dist_sv_model}).
 
-
-Applying the Cholesky Decomposition on the innovations gives $\epsilon_{Y,t} = \rho \epsilon_{X,t} + \sqrt{1-\rho^2} Z$.
-\begin{align*}
-Y_t 								&= \beta \exp \left(\frac{x_t}{2}\right) \cdot \left( \rho \epsilon_{X,t} + \sqrt{1-\rho^2} Z \right) \\
-Y_t 								&= \beta \exp \left(\frac{x_t}{2}\right)  \rho \epsilon_{X,t} + \beta \exp \left(\frac{x_t}{2}\right) \sqrt{1-\rho^2} Z \\
-\frac{S_t}{S_{t-1}}-1 | X_t = x_t 					&\sim \mathcal{N} \left(\beta \rho \exp \left(\frac{x_t}{2}\right) \epsilon_{X,t}, \beta^2 \exp \left(x_t\right) \cdot (1-\rho^2) \right) \\
-\frac{S_t}{S_{t-1}} | X_t = x_t 	&\sim \mathcal{N}\left(1 + \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \\
-S_t | X_t = x_t 					&\sim \mathcal{N}\left( S_{t-1} + S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, S_{t-1}^2 \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \numberthis
-\end{align*}
-The differences between the normal leverage model and the standard model where $\rho = 0$, are the correcting drift term $S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}$ and the factor $(1-\rho^2) \leq 1$ reducing the volatility.
+% \begin{align*}
+% Y_t 								&= \beta \exp \left(\frac{x_t}{2}\right) \cdot \left( \rho \epsilon_{X,t} + \sqrt{1-\rho^2} Z \right) \\
+% Y_t 								&= \beta \exp \left(\frac{x_t}{2}\right)  \rho \epsilon_{X,t} + \beta \exp \left(\frac{x_t}{2}\right) \sqrt{1-\rho^2} Z \\
+% \frac{S_t}{S_{t-1}}-1 | X_t = x_t 					&\sim \mathcal{N} \left(\beta \rho \exp \left(\frac{x_t}{2}\right) \epsilon_{X,t}, \beta^2 \exp \left(x_t\right) \cdot (1-\rho^2) \right) \\
+% \frac{S_t}{S_{t-1}} | X_t = x_t 	&\sim \mathcal{N}\left(1 + \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \\
+% S_t | X_t = x_t 					&\sim \mathcal{N}\left( S_{t-1} + S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}, S_{t-1}^2 \beta^2 \exp(x_t) \cdot (1-\rho^2)\right) \numberthis
+% \end{align*}
+% The differences between the normal leverage model and the standard model where $\rho = 0$, are the correcting drift term $S_{t-1} \rho \beta \exp \left(\frac{x_t}{2} \right) \epsilon_{X,t}$ and the factor $(1-\rho^2) \leq 1$ reducing the volatility.
 
 %http://people.anu.edu.au/joshua.chan/Chan-Hsiao-2013.pdf
 \section{Model $\mathcal{M}_4$ - SV-MA(1) - Moving Average (SVMA)}
 The standard stochastic volatility model assumes that the errors in the measurement equation are serially independent. This is often an appropriate assumption for modelling financial data. To test this assumption, the plain model can be extended by allowing the errors in the measurement equation to follow a moving average (MA) process of order $m$. Here, we choose a more simple specification and set $m = 1$. Hence, our model becomes
 \begin{align*}
-X_t									      &= \phi X_{t-1} + \sigma \epsilon_{X,t} \numberthis \\
 Y_t									      &= \beta \exp \left( \frac{X_t}{2} \right) \epsilon_{Y,t} + \psi \beta \exp \left( \frac{X_{t-1}}{2} \right) \epsilon_{Y,t-1} \numberthis \\
 Y_t	| \mathcal{F}_{t^-}		&\sim \mathcal{N} \left(0, \beta^2 \exp \left( x_t \right) + \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right) \\
 S_t | \mathcal{F}_{t^-}	  &\sim \mathcal{N} \left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left( x_t \right) +  S_{t-1}^2 \psi^2 \beta^2 \exp \left( x_{t-1} \right) \right) \numberthis
 \end{align*}
-As before, we ensure that the root of the characteristic polynomial associated with the MA coefficient $\psi$, is outside the unit circle: $|\psi| < 1$. When $\psi = 0$, the SV-MA(1) model is reduced to the standard stochastic volatility model. The conditional
-variance of $Y_t$ is given by $\var \left(Y_t | \mathcal{F}_{t^-} \right) = \beta^2 e^{x_t} + \beta^2 \psi^2 e^{x_{t-1}}$. The conditional variance is time-varying through two channels: a moving average composed of the two most recent variances $\beta^2 e^{x_t}$ and $\beta^2 e^{x_{t-1}}$ and secondly, according to the stationary $AR(1)$ process $(X_t)_{t>0}$.
+where the process $X$ is defined in Equation (\ref{std_SV_process_X}). As before, we ensure that the root of the characteristic polynomial associated with the MA coefficient $\psi$, is outside the unit circle: $|\psi| < 1$. When $\psi = 0$, the SV-MA(1) model is reduced to the standard stochastic volatility model. The conditional
+variance of $Y_t$ is given by $\var \left(Y_t | \mathcal{F}_{t^-} \right) = \beta^2 e^{x_t} + \beta^2 \psi^2 e^{x_{t-1}}$. The conditional variance is time-varying through two channels: a moving average composed of the two most recent variances $\beta^2 e^{x_t}$ and $\beta^2 e^{x_{t-1}}$ and secondly, according to the stationary $AR(1)$ process $X$.
 
 \section{Model $\mathcal{M}_5$ - Stochastic Mean (SVM)}
 \cite{koopman2002} suggested an extension where the stochastic volatility also enters into the conditional mean equation. This model is known as the Stochastic Volatility in Mean (SVM). It is defined as
@@ -886,27 +883,26 @@ Y_t 			 &= \beta \exp\left(\frac{X_t}{2}\right) + \exp\left(\frac{X_t}{2}\right)
 %Y_t | X_t = x_t  &\sim \mathcal{N} \left(\beta \exp\left(\frac{x_t}{2}\right) , \exp\left(x_t\right) \right) \numberthis\\
 S_t | \mathcal{F}_{t^-}  &\sim \mathcal{N} \left(S_{t-1} + S_{t-1} \beta \exp\left(\frac{x_t}{2}\right), S_{t-1}^2 \exp\left(x_t\right) \right) \numberthis
 \end{align*}
-where $(X_t)_{t>0}$ corresponds to the process of a standard stochastic volatility model defined in Equation (\ref{std_SV_process_X}). This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
+where $X$ corresponds to the process of a standard stochastic volatility model defined in Equation (\ref{std_SV_process_X}). This model is pertinent if we believe that the conditional mean is somehow proportional to the conditional volatility. This can be the case in financial data, where high volatility appears in clusters where the absolute conditional mean is high.
 
 \section{Model $\mathcal{M}_6$ - Two Factors Stochastic Volatility (TFSV)}
-With a principal component analysis, \cite{harvey1994} showed that a short-run and a long-run factors might be enough to explain the returns volatility. The study was performed on daily observations on several exchange rates. This model is known as the two factor stochastic volatility and relies on two different latent processes. It is defined as
+With a principal component analysis, \cite{harvey1994} showed that a short-run and a long-run factors might be enough to explain the returns volatility. The study was performed on daily observations on several exchange rates. This model is known as the two factor stochastic volatility and relies on two different latent processes $X$ and $Z$. It is defined as
 \begin{align*}
-  X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t} &|\phi_X| < 1, \epsilon_{X,t} \sim \mathcal{N}(0,1), X_0 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right) \numberthis \label{tfsv_process_X} \\
-  Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t} &|\phi_Z| < 1, \epsilon_{Z,t} \sim \mathcal{N}(0,1), Z_0 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right) \numberthis\\
+  X_t 						&=  \phi_X X_{t-1} + \sigma_X \epsilon_{X,t-1} &|\phi_X| < 1, \epsilon_{X,t-1} \sim \mathcal{N}(0,1), X_1 \sim \mathcal{N} \left(0, \frac{\sigma_X^2}{1 - \phi_X^2} \right) \numberthis \label{tfsv_process_X} \\
+  Z_t 						&=  \phi_Z Z_{t-1} + \sigma_Z \epsilon_{Z,t-1} &|\phi_Z| < 1, \epsilon_{Z,t-1} \sim \mathcal{N}(0,1), Z_1 \sim \mathcal{N} \left(0, \frac{\sigma_Z^2}{1 - \phi_Z^2} \right) \numberthis\\
   Y_t 						&=  \beta \exp \left( \frac{X_t+Z_t}{2} \right) \epsilon_{Y,t} &\epsilon_{Y,t} \sim \mathcal{N}(0,1) \numberthis
 \end{align*}
-Under these assumptions, the conditional distribution of the spread is $S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now defined as $\theta = (\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. \cite{veiga2006} showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, \cite{chernov2000} found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. \\
-
-Estimating these parameters using \textit{Particle Markov Chain Monte Carlo} is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X_t$ and one for $Z_t$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X > \phi_Z$.
+Under these assumptions, the conditional distribution of the spread is $S_t | \theta, X_t = x_t, Z_t = z_t \sim \mathcal{N}\left(S_{t-1}, S_{t-1}^2 \beta^2 \exp \left(x_t + z_t\right) \right)$. The parameters vector $\theta$ is now $(\beta, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$ where $\beta$ is a scaling term. It is of common knownledge that the returns are leptokurtic, i.e. with a positive kurtosis. \cite{veiga2006} showed that the second term introduced in the model helps generate extra kurtosis and accounts for short-run dynamics. Also, \cite{chernov2000} found that SV models with one volatility factor are not able to characterize all moments of asset return distributions. In particular, the fat tails of the return distribution are captured rather poorly. \\
+Estimating these parameters using \textit{Particle Markov Chain Monte Carlo} is fairly straightforward. The particle filter must be updated such that two sets of particles (one for $X$ and one for $Z$) must be drawn instead of one. Because of the symmetry between $X_t$ and $Z_t$ in $Y_t$, some conditions on the parameters have to be set to ensure the convergence, such that $\phi_X > \phi_Z$.
 
 \section{Model $\mathcal{M}_7$ - Two Factors Stochastic Volatility with Leverage (TFSVL)}
 
-One final extension considers the two factors stochastic volatility and assume that the correlation $\rho = cor(\epsilon_{X,t}, \epsilon_{Y,t})$ is statistically different from zero. The idea is the same as the one developped for the model $\mathcal{M}_3$. Recall that $(X_t)_{t>0}$ is the long-run factor from Equation (\ref{tfsv_process_X}) which corresponds to the stochastic trend of the returns volatility. From the models presented before, this model is by far the most complex because 6 parameters are to be estimated: $\theta = (\beta, \rho, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. \cite{ruiz2008} studied a slightly different version where the $(X_t)_{t>0}$ is a fractional integrated Gaussian noise process but the overall behaviour remains the same. They proved that the first order autocorrelation $cor(|y_t|,|y_{t+1}|)$ is smaller than the second order autocorrelation $cor(y_t^2,y_{t+1}^2)$ when $\rho < 0$. As explained by \cite{cont2005}, it is usually the case in practical applications. If $\rho = 0$, there is no more asymmetry in the model. Still with the Cholesky decomposition and with the same methodology presented for model $\mathcal{M}_3$, $Y_t$ can be expressed as
+In the final extension, we consider the two factors stochastic volatility with a correlation $\rho = cor(\epsilon_{X,t}, \epsilon_{Y,t})$. The idea is the same as the one developped for the model $\mathcal{M}_3$. We assume a non-zero correlation between the innovations of the returns and the long-run factor $X$ from Equation (\ref{tfsv_process_X}). From the models presented before, this model is by far the most complex because 6 parameters are to be estimated: $\theta = (\beta, \rho, \phi_X, \phi_Z, \sigma_X, \sigma_Z)$. \cite{ruiz2008} studied a slightly different version with $X$ defined as a fractional integrated Gaussian noise process (ARFIMA). They proved that the first order autocorrelation $cor(|y_t|,|y_{t+1}|)$ is smaller than the second order autocorrelation $cor(y_t^2,y_{t+1}^2)$ when $\rho < 0$. As explained by \cite{cont2005}, it is usually the case in practical applications. If $\rho = 0$, there is no more asymmetry in the model. From the same considerations as in model $\mathcal{M}_3$, the conditional distributions of $Y_t$ and $S_t$ remains unchanged compared to model $\mathcal{M}_6$. 
 
-\begin{align*}
-Y_t | \mathcal{F}_{t^-}            &\sim \mathcal{N}\left(\rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t + z_t) (1-\rho^2)\right) \numberthis \\
-S_t | \mathcal{F}_{t^-}   &\sim S_{t-1} \times \mathcal{N}\left(1 + \rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t + z_t) (1-\rho^2)\right) \numberthis
-\end{align*}
+% \begin{align*}
+% Y_t | \mathcal{F}_{t^-}            &\sim \mathcal{N}\left(\rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t + z_t) (1-\rho^2)\right) \numberthis \\
+% S_t | \mathcal{F}_{t^-}   &\sim S_{t-1} \times \mathcal{N}\left(1 + \rho \beta \exp \left(\frac{x_t + z_t}{2} \right) \epsilon_{X,t}, \beta^2 \exp(x_t + z_t) (1-\rho^2)\right) \numberthis
+% \end{align*}
 
 \chapter{Validation, Estimation and Selection of Stochactic Volatility models}
 
