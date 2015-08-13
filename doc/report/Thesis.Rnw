@@ -728,7 +728,7 @@ The reasonable strategy of \cite{pitt2012} is not viable in practice as it requi
     %\label{fig:three graphs}
 \end{figure}
 
-\section{Particle marginal Metropolis-Hastings Algorithm}
+\section{Particle Marginal Metropolis-Hastings Algorithm}
 \label{section:mcmc_pmmh}
 
 In the classic MCMC scheme, the Metropolis Hastings (MH) algorithm is used to target $p(\theta| \matr{y}) \propto p(\matr{y}|\theta)p(\theta)$ with the ratio
@@ -1037,7 +1037,7 @@ A practical case is considered both on a stock and a spread to see if the result
 \begin{table}[H]
 \centering
 \begin{tabular}{llllllll}
-Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
+Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$ & $\bar{\theta}_{\mathcal{M}7}$\\ 
 \hline
 $\phi$								                  & 0.9991  & 0.9989 & 0.9960  & 0.9981 & 0.9986 & \\
 $\sigma$                                & 0.2395  & 0.1983 & 0.2728  & 0.1694 & 0.2533 & \\
@@ -1104,6 +1104,7 @@ Statistical arbitrage conjectures statistical mis-pricings or price relationship
 In this section, two strategies are presented: Bollinger Bands and Z-Score. The first one models a stochastic mean for the spread and stochastic volatility bands to gauge the spread deviation, whereas the second one assumes a fixed non-zero mean and fixed volatility bands.
 
 \section{Bollinger Bands}
+\label{sec:bollinger_bands}
 Bollinger Bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m(t,\cdot)$ of lag $p$ with two volatility bands $B^+(t,\cdot), B^-(t,\cdot)$ above and below it. The computation of the volatility bands use a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is controlled by a parameter called $\alpha$. The bands will expand and contract as the price becomes volatile or becomes bound into a tight trading pattern. When prices continually touch the upper bound $B^+(t,\cdot)$, the spread is considered to be overbought. Conversely, when they continually touch the lower band, it is oversold. The indicator is calculated by
 \begin{align*}
 m(t,p) &= \frac{1}{p}\sum_{j=1}^p S_{t-j} \text{ (type: SMA)} \numberthis \\
@@ -1332,7 +1333,8 @@ From the candidates of the correlation step, a rigorous testing for cointegratio
 \end{algorithm}
 
 \section{Optimization of the strategy}
-Bollinger bands strategy requires to estimate three parameters: the number of periods $p$ to compute the bands, the type $t$ of moving average (EMA or SMA) used in the mid band and $\alpha$ which controls the interval between the volatility bands. John Bollinger suggests $p = 20, \alpha = 2$ and simple moving average as default values. To get the best out of the strategy, a cross validation is performed on the in-sample set $\mathcal{I}$. The criterion of optimization is the in-sample Sharpe Ratio. The cross validation parameter space is arbitrary set to $\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha = [5,6,...,60] \times \{\text{SMA}, \text{EMA}\} \times [1,1.1,...,2.9,3.0]$. Complex methods of optimization have also been attempted such as Simulated annealing. It turns out that an exhaustive search is a serious alternative because of the efforts invested into the parallelization of the task. The latter provides enhanced visual results and is therefore our recommended choice to reveal the topology of $f(\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha) \rightarrow \mathbb{R}$.
+\label{sec:optimization_strategy}
+Bollinger bands strategy requires to estimate three parameters: the number of periods $p$ to compute the bands, the type $t$ of moving average (EMA or SMA) used in the mid band and $\alpha$ which controls the interval between the volatility bands. John Bollinger suggests $p = 20, \alpha = 2$ and simple moving average as default values. To get the best out of the strategy, a cross validation is performed on the in-sample set $\mathcal{I}$. The criterion of optimization is the in-sample Sharpe Ratio. The cross validation parameter space is denoted  $\Omega_{CV} = \mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha$. Complex methods of optimization have also been attempted such as Simulated annealing. It turns out that an exhaustive search is a serious alternative because of the efforts invested into the parallelization of the task. The latter provides enhanced visual results and is therefore our recommended choice to reveal the topology of $f(\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha) \rightarrow \mathbb{R}$.
  
 \section{Performance Assessment}
 Once the strategy was optimized on $\mathcal{I}$, it can be assessed on the out-sample test $\mathcal{O}$. The performance of the portfolios are examined in terms of cumulative return (CR), variance of returns $(\sigma^2)$, Sharpe Ratio (SR) and Maximum Drawdown (MDD). The maximum drawdown (MDD) is defined as the maximum percentage drop incurred from a peak to a bottom up to time $T$. It is the worst possible scenario up to time $T$.
@@ -1343,7 +1345,7 @@ MDD(T) = \smash{\displaystyle\max_{\tau \in (0,T)}} \left[\smash{\displaystyle\m
 
 The Sharpe Ratio (RP) based on daily returns is defined as
 \begin{equation}
-SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t})^2 }} \text{, where } \bar{R_T} = T^{-1} \sum_{t=1}^T R_t 
+SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t})^2 }} \text{, where } \bar{R_T} = T^{-1} \sum_{t=1}^T R_t \label{sharpe_ratio_def}
 \end{equation}
 
 One of the techniques to assess the performance of a strategy is to compare it to the standard Buy and Hold strategy where the holder buys various assets at time $0$ and sell them at time $T$. \cite{gatev2006} also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs.
@@ -1369,7 +1371,7 @@ Throughout this section, the same spread $(S_t)_{t>0}$ as that of Section \ref{s
     \label{fig:generation_of_the_trajectories}
 \end{figure}
 
-The next step is to compute the rolling volatility for every trajectory. The aggregated function $f_a$ is the sample mean. The standard rolling volatility for the observed spread trajectory $s_{1:T}$ is also computed. From this point, 90\% confidence intervals are derived for every $t \in [1,T]$. Figure \ref{fig:rolling_vol_and_confidence_intervals} shows the results for the spread $S_t$. It turns out that the volatility computed with the standard method is clearly underestimated most of the time.
+The next step is to compute the rolling volatility for every trajectory. The aggregated function $f_a$ is the sample mean and $r\sigma_{SV}(t)$ is the resulting quantity of this trajectories aggregation. The standard rolling volatility on the observed prices $s_{1:T}$ is denoted $r\sigma_C(t)$. From this point, 90\% and 95\% confidence intervals are derived for every $t \in [1,T]$ using Monte Carlo. The results are presented in Figure \ref{fig:rolling_vol_and_confidence_intervals}\footnote{It is worth noting that the time axis has been truncated to improve lisibility. The analysis and the conclusions are carried and made on the whole period $[1,T]$.}. It turns out that $r\sigma_C(t)$ is clearly underestimated most of the time. Only 63.9\% of $r\sigma_C(t)$ is contained inside the 0.90 confidence intervals and 78.3\% inside the 0.95 confidence intervals. Moreover, Figure \ref{fig:diff_vol} summarizes the difference $\delta(t) = r\sigma_{SV}(t) - r\sigma_C(t)$. With $E[\delta] = 0.1035$ (USD), the standard volatility estimator is clearly biased.
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
@@ -1380,46 +1382,57 @@ The next step is to compute the rolling volatility for every trajectory. The agg
     \end{subfigure}
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
+        \includegraphics[width=1\textwidth]{model_vol/5}
+        \caption{$\delta(t) = r\sigma_{SV}(t) - r\sigma_C(t)$}
+        \label{fig:diff_vol}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
         \includegraphics[width=1\textwidth]{model_vol/4}
-        \caption{90 \% Confidence intervals for the generated prices trajectories}
+        \caption{$r\sigma_C(t)$ and 90 \% confidence intervals (MC)}
+        \label{vol_mod_4}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{model_vol/4_2}
+        \caption{$r\sigma_C(t)$ and 95 \% confidence intervals (MC)}
         \label{vol_mod_4}
     \end{subfigure}
     \caption{Generation of the trajectories of the spread process $S_t$}
     \label{fig:rolling_vol_and_confidence_intervals}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[t]{0.49\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{model_vol/5}
-        \caption{Bollinger Bands}
-        \label{vol_mod_5}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.49\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{model_vol/6}
-        \caption{Normalized difference $d(t) = (r\sigma(t)_E - r\sigma(t)_C) / S_t$ between the evaluated $r\sigma(t)_E$ and common $r\sigma(t)_C$ windowed volatilities used in the Bollinger Bands}
-        \label{vol_mod_6}
-    \end{subfigure}
-\end{figure}
+When the rolling volatilies have been estimated, the Bollinger bands can finally be computed. Equation (\ref{bolls_computations}) and (\ref{bolls_computation_sv}) are used to form the bands respectively for the standard and stochastic volatility estimators $r\sigma_C(t)$, $r\sigma_{SV}(t)$.
+\begin{equation}
+\label{bolls_computation_sv}
+B^\pm(t,p,\alpha) = m(t,p) \pm \alpha \cdot r\sigma_{SV}(t,p)
+\end{equation}
+where the notations of Section \ref{sec:bollinger_bands} apply. Figure \ref{fig:bollinger_bands_sma_ema} shows the results for $p=20$ and $\alpha = 2$. The mid band was computed using a simple moving average (SMA) and an exponential moving average (EMA). Not surprisingly, the bands computed with the standard methods are narrower than the ones estimated from stochastic volatility models. It becomes now interesting to see if this volatility can help build more accurate trading signals.
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{model_vol/6}
-        \caption{Bollinger Bands}
-        \label{vol_mod_5}
+        \caption{$(p, \alpha, t) = (20, 2.0,\text{EMA})$}
+        \label{vol_mod_ema}
     \end{subfigure}
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{model_vol/7}
-        \caption{Normalized difference $d(t) = (r\sigma(t)_E - r\sigma(t)_C) / S_t$ between the evaluated $r\sigma(t)_E$ and common $r\sigma(t)_C$ windowed volatilities used in the Bollinger Bands}
-        \label{vol_mod_6}
+        \caption{$(p, \alpha, t) = (20, 2.0,\text{SMA})$}
+        \label{vol_mod_sma}
     \end{subfigure}
+    \caption{Bollinger Bands computed with $r\sigma_C(t)$ (blue) and $r\sigma_{SV}(t)$ (red)}
+    \label{fig:bollinger_bands_sma_ema}
 \end{figure}
 
+\section{Gradient and optimization of the Bollinger bands}
+This section introduces the results of cross validation on xx spreads from the period xx to xx. The dataset is split into two sets $\mathcal{I}$ and $\mathcal{O}$ with a ratio 2:1. The parameters of the Bollinger bands $(p, \alpha, t)$ are tuned in an exhaustive way, as explained in Section \ref{sec:optimization_strategy}. The parameter space is defined as $\Omega_{CV}  = [5,6,...,60] \times \{\text{SMA}, \text{EMA}\} \times [1,1.1,...,2.9,3.0]$ and the topology function $f(\Omega_{CV}) \rightarrow \mathbb{R}$ is the Sharpe Ratio (Definition \ref{sharpe_ratio_def}). The idea is to find regions, not peaks where $f$ has a global maximum. As $f$ is multivariate, the idea is to detect a region where $\nabla F(\rho_{max}, \sigma_{max}, t_{max}) = 0$. The gradient $\nabla F$ is defined by
+\begin{equation}
+\nabla F = \frac{\partial F}{\partial \rho} \vec{i} + \frac{\partial F}{\alpha \rho} \vec{j} + \frac{\partial F}{t \rho} \vec{k}
+\end{equation}
+In a metric space, $M = (\Omega, d)$, a Borel $\sigma$-algebra $\mathcal{V} = \mathcal{B}(\Omega)$ is a region of a point $p$ if there exists an open ball with centre $p$ and radius $r > 0$, such that $B_r(p) = \{x \in \Omega | d(x, p) < r\}$ is contained in $\mathcal{V}$.
 
 \chapter{Conclusion and Future work}
 

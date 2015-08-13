@@ -1,4 +1,4 @@
-function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread, returns_volatility_var, range_plot)
+function [ ] = Volatility_Estimation_Bands_Mean_Zero( spread, returns_volatility_var, range_plot)
     prices = spread.px;
     returns_volatility_sd = sqrt(returns_volatility_var);
     M = 1000; %generate M observations of the process
@@ -44,7 +44,7 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
     plot(Y(:,1), 'LineWidth', 2, 'Color', [1 .5 0]); %trick for legend
     plot(Y(:,2), 'LineWidth', 2, 'Color', [0.956, 0.886, 0.243]);
     plot(movstd_mat(:,mvstd_period+5:end)',  'Color',[0.4,0.4,0.4]);
-    legend('r\sigma_E(t)', 'r\sigma_C(t)', 'Monte Carlo moving std from SV');
+    legend('r\sigma_{SV}(t)', 'r\sigma_C(t)', 'Monte Carlo moving std from SV');
     plot(Y(:,1), 'LineWidth', 2, 'Color', [1 .5 0]);
     plot(Y(:,2), 'LineWidth', 2, 'Color', [0.956, 0.886, 0.243]);
     xlabel('Time (days)');
@@ -57,10 +57,23 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
     hold off;
     
     figure; hold on;
-    plot(Y(:,2), 'LineWidth', 1.3, 'Color', [0,0.7,0.9]);
+    plot(Y(:,2), 'LineWidth', 1, 'Color', [0,0.7,0.9]);
     plot(quantile(movstd_mat(:,mvstd_period+5:end), 0.95)', '--', 'LineWidth', 2);
     plot(quantile(movstd_mat(:,mvstd_period+5:end), 0.05)', '--', 'LineWidth', 2);
     legend('r\sigma_C(t)', 'Monte Carlo Quantile 0.95', 'Monte Carlo Quantile 0.05');
+    xlabel('Time (days)');
+    ylabel('Price (USD)');
+    hold off;
+    
+    if(exist('range_plot', 'var'))
+       xlim([range_plot(1) range_plot(end)]); 
+    end
+    
+    figure; hold on;
+    plot(Y(:,2), 'LineWidth', 1, 'Color', [0,0.7,0.9]);
+    plot(quantile(movstd_mat(:,mvstd_period+5:end), 0.975)', '--', 'LineWidth', 2);
+    plot(quantile(movstd_mat(:,mvstd_period+5:end), 0.025)', '--', 'LineWidth', 2);
+    legend('r\sigma_C(t)', 'Monte Carlo Quantile 0.975', 'Monte Carlo Quantile 0.025');
     xlabel('Time (days)');
     ylabel('Price (USD)');
     hold off;
@@ -74,7 +87,7 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     ma = tsmovavg(prices,'s',mvstd_period,1);
-    d = 1.5;
+    d = 2;
     Y = [ma-d*eval_vol ma prices ma+d*eval_vol];
     Y = [Y ma-d*common_vol ma+d*common_vol]; %concat
 
@@ -88,7 +101,7 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
 %     figure;
       Y = [eval_vol common_vol];
 %     plot(Y(30:end,:), 'LineWidth', 1.5);
-%     legend('r\sigma_E(t)', 'r\sigma_C(t)');
+%     legend('r\sigma_{SV}(t)', 'r\sigma_C(t)');
 %     
 %     if(exist('range_plot', 'var'))
 %        xlim([range_plot(1) range_plot(end)]); 
@@ -97,7 +110,9 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
     figure;
     W = Y(:,1)-Y(:,2);
     bar(W(30:end));
-    legend('r\sigma_E(t) - r\sigma_C(t)');
+    xlabel('Time (days)');
+    ylabel('Price (USD)');
+    legend('r\sigma_{SV}(t) - r\sigma_C(t)');
     if(exist('range_plot', 'var'))
        xlim([range_plot(1) range_plot(end)]); 
     end
@@ -107,11 +122,14 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
     %EMA
     figure; hold on;
     plot(prices, 'Color', [0.4,0.4,0.4], 'LineWidth', 1);
-    plot(mid, 'Color', 'black', 'LineWidth', 1.5);
-    plot(mid-d*common_vol, 'Color', 'blue', 'LineWidth', 1.5);
-    plot(mid+d*common_vol, 'Color', 'blue', 'LineWidth', 1.5);
-    plot(mid-d*eval_vol, 'Color', 'red', 'LineWidth', 1.5);
-    plot(mid+d*eval_vol, 'Color', 'red', 'LineWidth', 1.5);
+    plot(mid, 'Color', 'black', 'LineWidth', 1);
+    plot(mid-d*common_vol, 'Color', 'blue', 'LineWidth', 1);
+    plot(mid-d*eval_vol, 'Color', 'red', 'LineWidth', 1);
+    legend('S_t', 'EMA', 'Std Vol', 'SV Vol','Location','southwest');
+    plot(mid+d*common_vol, 'Color', 'blue', 'LineWidth', 1);
+    plot(mid+d*eval_vol, 'Color', 'red', 'LineWidth', 1);
+    xlabel('Time (days)');
+    ylabel('Price (USD)');
     
     hold off;
     if(exist('range_plot', 'var'))
@@ -122,11 +140,14 @@ function [ normalized_std_diff ] = Volatility_Estimation_Bands_Mean_Zero( spread
     %SMA
     figure; hold on;
     plot(prices, 'Color', [0.4,0.4,0.4], 'LineWidth', 1);
-    plot(ma, 'Color', 'black', 'LineWidth', 1.5);
-    plot(ma-d*common_vol, 'Color', 'blue', 'LineWidth', 1.5);
-    plot(ma+d*common_vol, 'Color', 'blue', 'LineWidth', 1.5);
-    plot(ma-d*eval_vol, 'Color', 'red', 'LineWidth', 1.5);
-    plot(ma+d*eval_vol, 'Color', 'red', 'LineWidth', 1.5);
+    plot(ma, 'Color', 'black', 'LineWidth', 1);
+    plot(ma-d*common_vol, 'Color', 'blue', 'LineWidth', 1);
+    plot(ma-d*eval_vol, 'Color', 'red', 'LineWidth', 1);
+    legend('S_t', 'SMA', 'Std Vol', 'SV Vol','Location','southwest');
+    plot(ma+d*eval_vol, 'Color', 'red', 'LineWidth', 1);
+    plot(ma+d*common_vol, 'Color', 'blue', 'LineWidth', 1);
+    xlabel('Time (days)');
+    ylabel('Price (USD)');
     hold off;
     
     if(exist('range_plot', 'var'))
