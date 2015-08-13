@@ -310,6 +310,15 @@ A spread $(S_t)_{t>0}$ is defined as a linear combination of the components of a
 In practical applications, some constraints are added to this definition. It is now assumed that $\beta_1 = 1$ and $\beta_2,...\beta_n \geq 0$. The values of $\beta$ are computed by considering the linear regression with first differenced variables: $\Delta \matr{X}_1 = f(\Delta \matr{X}_2,...\Delta \matr{X}_n)$ where $\Delta \matr{X}_i \sim I(0)$ because $\matr{X}_i \sim I(1)$. The spread is defined as $\matr{S} = \matr{X}_1 - \sum_{i=2}^n \beta_i \matr{X}_i$. Note that with this construction, not all the spreads are stationary and additional tests must be performed.
 \end{definition}
 
+
+\begin{definition}
+A rolling (or windowed) volatility process of lag $p$, $(r\sigma(t,p))_{t>0}$ is defined as a simple moving average process over the last $p$ values of the volatility of $(S_t)_{t>0}$. Formally it can be written as
+\begin{align*}
+r\sigma(t,p) = \sqrt{\frac{1}{p} \sum_{j=1}^p \left(S_{t-j} - \frac{1}{p}\sum_{u=1}^p S_{t-u} \right)^2}
+\end{align*}
+When $p \rightarrow 1$, $r\sigma(t,p)$ converges to the instant volatility associated to $(S_t)_{t>0}$. \label{windowed_volatility}
+\end{definition}
+
 \chapter{Introduction}
 
 For many years, the finance industry has used the concept of correlation in Statistical Arbitrage to detect opportunities. This widely use of short-term correlation on de-trended non-stationary time series data turned out to be risky because a large amount of valuable information contained in the common trends of the prices was lost. \cite{engle1987} introduced a new concept, known as Cointegration to address this problem. Cointegration is a concept that has been widely used in the field of financial econometrics in the areas of multivariate time series analysis. This concept provides a way to identify the influence of common and stable long-term stochastic trends between assets. The variables are allowed to deviate from their inherent relationships in the short term but they are likely to revert to their long term equilibrium. Spot and Futures prices for a particular asset is an example of a bivariate cointegrated system. \\
@@ -1001,11 +1010,11 @@ p(Y_T)^{-1} &= e^{-120} + e^{-121} + e^{-122} \\
  \log p(Y_T) &= 120 - \log ( 1 + e^{-1} + e^{-2})) \simeq 119.6
 \end{align*}
 
-When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{kass1995} suggests to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.
+When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{kass1995} suggests to use twice the logarithm of the Bayes factor for model comparison $2 \log BF_{\mathcal{M_{AB}}}$, where $\mathcal{M_{AB}}$ is the Bayes Factor of $\mathcal{M_A}$ to $\mathcal{M_B}$. \textbf{The evidence of $\mathcal{M_A}$ over $\mathcal{M_B}$ is based on a rule-of-thumb: 0 to 2 not worth more than a bare mention, 2 to 6 positive, 6 to 10 strong, and greater than 10 as very strong.}
 
 
 \section{Model Selection}
-
+\label{sec:model_selection}
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
@@ -1027,27 +1036,26 @@ A practical case is considered both on a stock and a spread to see if the result
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lllllll}
-Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
+\begin{tabular}{llllllll}
+Parameter        & $\bar{\theta}_{\mathcal{M}1}$ & $\bar{\theta}_{\mathcal{M}2}$ & $\bar{\theta}_{\mathcal{M}3}$ & $\bar{\theta}_{\mathcal{M}4}$ & $\bar{\theta}_{\mathcal{M}5}$ & $\bar{\theta}_{\mathcal{M}6}$ & $\bar{\theta}_{\mathcal{M}6}$\\ 
 \hline
 $\phi$								                  & 0.9991  & 0.9989 & 0.9960  & 0.9981 & 0.9986 & \\
 $\sigma$                                & 0.2395  & 0.1983 & 0.2728  & 0.1694 & 0.2533 & \\
-$\beta$                                 & 0.8783  & 0.3705 & 0.1     & 0.2359 & 0.1625 & 0.1\\
+$\beta$                                 & 0.8783  & 0.3705 & 0.1     & 0.2359 & 0.1625 & 0.1 & 0.6992\\
 $\nu$                                   &         & 7.6850 &         & & &\\
-$\rho$                                  &         &        & -0.4397 & & & \\
+$\rho$                                  &         &        & -0.4397 & & & & -0.4178\\
 $\psi$                                  &         &        &         & 0.0060 & & \\
-$\phi_X$                                &         &        &         & & & 0.9978\\
-$\phi_Z$                                &         &        &         & & & 0.1443\\
-$\sigma_X$                              &         &        &         & & & 0.1162\\
-$\sigma_Z$                              &         &        &         & & & 0.6398\\
-$\mu$                                   &         &        &         & & & 0 \\
-$\log(L)$                               & 2646.3  & 2659.7 & 2660.9  & 2649.2 & 2649.3 & 2663.6\\
-AIC                                     & -5286.6 & -5311.4 & -5313.8 & -5290.4 & -5292.6 & -5319.2\\
-$2 \log \mathcal{BF}(\cdot, \mathcal{M}6)$& 33.6  & 6.9    & 4.5     & 31.5 & 26.1 & 0\\
-$N$                                     & 1000    & 1000   & 1000    & 1000 & & 1000\\
-$T$                                     & 1000    & 1000   & 1000    & 1000& & 1000\\
-Steps                                   & 10000   & 10000  & 10000   & 10000& & 10000\\
-Burn-in                                 & 1000    & 1000   & 1000    & 1000 & & 1000\\
+$\phi_X$                                &         &        &         & & & 0.9978 & 0.9989\\
+$\phi_Z$                                &         &        &         & & & 0.1443 & 0.2477\\
+$\sigma_X$                              &         &        &         & & & 0.1162 & 0.1906\\
+$\sigma_Z$                              &         &        &         & & & 0.6398 & 0.5219\\
+$\log(L)$                               & 2646.3  & 2659.7 & 2660.9  & 2649.2 & 2649.3 & 2663.6 & 2665.9\\
+AIC                                     & -5286.6 & -5311.4 & -5313.8 & -5290.4 & -5292.6 & -5319.2 & -5319.8\\
+$2 \log \mathcal{BF}(\cdot, \mathcal{M}6)$& 33.6  & 6.9    & 4.5     & 31.5  & 26.1 & 0 & 0\\
+$N$                                     & 1000    & 1000   & 1000    & 1000  & 1000 & 1000 & 1000\\
+$T$                                     & 1000    & 1000   & 1000    & 1000  & 1000 & 1000 & 1000\\
+Steps                                   & 10000   & 10000  & 10000   & 10000 & 10000 & 10000 & 10000\\
+Burn-in                                 & 1000    & 1000   & 1000    & 1000  & 1000 & 1000 & 1000\\
 \hline
 \end{tabular}
 \caption{Estimation of the parameters for the SVM model. Data is APPL.}
@@ -1073,7 +1081,7 @@ $\sigma$                                & 0.2238  & 0.1752 & 0.2188  & 0.1694  &
 $\beta$                                 & 0.4419  & 0.5722 & 0.4559  & 0.2359  & 0.1625 & 0.3478 & 0.3690\\
 $\nu$                                   &         & 7.6850 &         &         &         &\\
 $\rho$                                  &         &        & -0.3017 &         &         & & -0.8532\\
-$\psi$                                  &         &        &         & 0.0060  &         & \\
+$\psi$                                  &         &        &         & 0.0852  &         & \\
 $\phi_X$                                &         &        &         &         &         & 0.9995 & 0.9996\\
 $\phi_Z$                                &         &        &         &         &         & 0.1926 & 0.7554\\
 $\sigma_X$                              &         &        &         &         &         & 0.1268 & 0.0725\\
@@ -1092,15 +1100,16 @@ Burn-in                                 & 1000    & 1000   & 1000    & 1000    &
 \end{table}
 
 \chapter{Statistical Arbitrage Strategies}
-Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. Statistical arbitrage is a heavily quantitative and computational approach to equity trading. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. This idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having the same value in local currency. The difference between this long and short position is known as the spread. Once the spread deviates far from its long-run equilibrium, a position is opened and is unwind when the spread reverts. Dealing with spreads instead of non-stationarity stocks is beneficial because stationary series are on average much more reverting. This approach has the advantage of eliminating the market exposure.
+Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought long with the expectation that it will climb towards its outperforming partner, the other is sold short. This hedges risk from whole-market movements. The idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having approximately the same value in local currency. It is important to understand that the quantity to interest is the difference between the two or $n$ assets, better known as the spread. The purpose is not to trade on assets, but on the spread. The operations to buy or sell the spread are assumed to be atomic, i.e. they have a succeed-or-fail property. The common strategy is to evaluate if the spread is either underpriced or overpriced. A typical is to open a position cnce the spread deviates far from its long-run equilibrium, and unwind it when it reverts. Dealing with spreads instead of non-stationarity assets is beneficial because stationary series are on average more reverting. This approach has the advantage of eliminating the market exposure. \\ 
+In this section, two strategies are presented: Bollinger Bands and Z-Score. The first one models a stochastic mean for the spread and stochastic volatility bands to gauge the spread deviation, whereas the second one assumes a fixed non-zero mean and fixed volatility bands.
 
 \section{Bollinger Bands}
-Bollinger Bands is a widely used technical volatility indicator which consists in placing volatility bands $B^+(t,\cdot), B^-(t,\cdot)$ above and below the moving average prices $m(t,\cdot)$. Volatility is based on the standard deviation, which changes as volatility increases and decreases. The bands automatically widen when volatility increases and narrow when volatility decreases. They are calculated by
+Bollinger Bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m(t,\cdot)$ of lag $p$ with two volatility bands $B^+(t,\cdot), B^-(t,\cdot)$ above and below it. The computation of the volatility bands use a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is controlled by a parameter called $\alpha$. The bands will expand and contract as the price becomes volatile or becomes bound into a tight trading pattern. When prices continually touch the upper bound $B^+(t,\cdot)$, the spread is considered to be overbought. Conversely, when they continually touch the lower band, it is oversold. The indicator is calculated by
 \begin{align*}
 m(t,p) &= \frac{1}{p}\sum_{j=1}^p S_{t-j} \text{ (type: SMA)} \numberthis \\
 B^\pm(t,p,\alpha) &= m(t,p) \pm \alpha \underbrace{\sqrt{\frac{1}{p} \sum_{j=1}^p \left(S_{t-j} - m(t,p) \right)^2}}_{r\sigma_B(t,p)} \numberthis \label{bolls_computations}
 \end{align*}
-where $(S_t)_{t \geq 0}$ is the price of the spread, $n$ is the moving average lag and $\alpha$ is the number of standard deviations to shift the Bollinger bands. According to John Bollinger (creator of the strategy in the 1970s), the default values are $p = 20$ and $\alpha = 2$. $m(t,\cdot)$ is the mid band used as a relative mean value. $Boll^+(t,\cdot)$ and $Boll^-(t,\cdot)$ are respectively the upper and lower bands. Their intrinsic purpose is to measure how far the price deviates from its mean. Under the mild assumption that the returns are normally distributed, 95\% of the prices should appear within the bands when $\alpha = 2$. The simple moving average used in the computation of the bands can be replaced by an exponential moving average which gives more weights to new values and may be faster to detect opportunities.
+where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average lag and $\alpha$ is the number of standard deviations to shift the Bollinger bands. According to John Bollinger, the default values are $p = 20$ and $\alpha = 2$. $m(t,\cdot)$ is the mid band used as a relative mean value. $Boll^+(t,\cdot)$ and $Boll^-(t,\cdot)$ are respectively the upper and lower bands. Their intrinsic purpose is to measure how far the price deviates from its mean. Under the mild assumption that the returns are normally distributed, 95\% of the prices should appear within the bands when $\alpha = 2$. The simple moving average used in the computation of the bands can be replaced by an exponential moving average (EMA instead of SMA) which gives more weights to new values and may be faster to detect opportunities. Figure \ref{bollinger_bands_intro} shows different configurations of the Bollinger bands applied to Walt Disney Co NYSE (2002).
 
 
 \begin{figure}[H]
@@ -1133,12 +1142,25 @@ where $(S_t)_{t \geq 0}$ is the price of the spread, $n$ is the moving average l
     \label{bollinger_bands_intro}
 \end{figure}
 
+
+\section{Building trading signals}
+
+A trading rule determines when to open and close a position. With Bollinger bands strategy, the basic rule is
+
+\begin{itemize}
+\item Open a long position when there is an upward crossing between the spread and the lower band. Unwind this position when there is an upward crossing between the spread and the upper band;
+\item Open a short position when there is a downward crossing between the spread and the upper band; Unwind this position when there is a downward crossing between the spread and the lower band.
+\end{itemize}
+Empirical studies showed that this strategy is one of the most profitable with the use of Bollinger Bands. MAKE A PARAGRAPH ON THAT
+
 \section{Estimation of the Bollinger Bands with Stochastic Volatility}
+\label{sec:estimation_bollinger_bands_sv}
 Once the best Stochastic Volatility model has been selected, validated and its parameters estimated, the volatility can be approximated. The main idea behind using these stochastic volatility models is to catch the dynamics of the spread through a better estimation of its hidden volatility. According to Definition \ref{spread_def}, a spread is a particular linear combination of assets where each asset price is one observation of a more general process, over a time interval. For a given first order Markovian process $(\matr{X}_t)_{t>0} \in \mathbb{R}^N$, the returns $y_{1:T}$ modelled by a SV model, are usually of the form $y_t | \matr{x}_t, \theta \sim \mathcal{D} \left( \mu_\theta(t), \sigma_\theta^2(t) \right)$, where $\mathcal{D}$ can represent any suitable distribution such as the normal distribution or the $t$-student distribution. By definition, $Y_t = S_t / S_{t-1} - 1$. We then have
 \begin{equation}
 S_t | S_{t-1}, \matr{x}_t, \theta \sim \mathcal{D} \left(S_{t-1} \mu_\theta(t)+S_{t-1}, S_{t-1}^2 \sigma_\theta^2(t) \right) \numberthis \label{equation_price_vol}
 \end{equation}
 where the volatility $\sigma_\theta^2(t)$ and the mean $\mu_\theta(t)$ are known quantities because they only depend on measured quantities ($\matr{x}_{1:t}$ and $S_{t-1}$) at time $t^-$.
+
 %From this idea, two main approaches are discussed. \\
 
 %The first approach consists in working directly with the returns. This contrasts with the default Bollinger bands strategy where the price series is used to compute the volatility. The idea is to detect large movements in returns and bet for a reversion to the long-range mean. This strategy employs a large quantity of trades because it is highly sensitive to price movements. A simple moving average of lag $p$ on the volatility $\sigma(t)$ is considered to detect such movements
@@ -1147,11 +1169,7 @@ where the volatility $\sigma_\theta^2(t)$ and the mean $\mu_\theta(t)$ are known
 %\end{equation}
 %The mid band is generated from a moving average over the returns. The upper and lower bands are generated by adding and subtracting this rolling %volatility $SMA_\sigma$ to the mid band. \\
 
-\begin{definition}
-A rolling volatility process $(r\sigma(t,p))_{t>0}$ is defined as a moving average process over the last $p$ values of the volatility of $(S_t)_{t>0}$. When $p \rightarrow 1$, $r\sigma(t,p)$ converges to the instant volatility associated to $(S_t)_{t>0}$.
-\end{definition}
-
-In order to estimate the volatility of the spread $(S_t)_{t>0}$, we generate a large number of Monte Carlo paths according to Equation (\ref{equation_price_vol}). Algorithm \ref{rolling_volatility_algo} explains the procedure when the standard stochastic volatility model $\mathcal{M}_1$ is considered. The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands (Equation \ref{bolls_computations}). In the most general case, $N$ paths $\{S_{t,n}\}_{0 < n \leq N, t \in \mathbb{N}}$ are generated from an equation involving $S_t | \mathcal{F}_{t^-}$ such as Equation \ref{equation_price_vol} for $\mathcal{M}_1$. Let $f_a : \mathbb{R}^{+N} \rightarrow \mathbb{R}^+$ be a positive-definite aggregating function. The aggregated rolling volatility of lag $p$ for all the $N$ paths is defined as $r\sigma(t,p) = f_a(r\sigma_1(t, p),...,r\sigma_N(t, p))$. If $f_a$ is simply the sample mean estimator, the equation is simplified to $r\sigma(t,p) = \frac{1}{N}\sum_{i=1}^N r\sigma_i(t, p)$. Depending on the context and on the cross validation phase, $f_a$ can be any measurable function satisfying the conditions above. 
+In order to estimate the volatility of the spread $(S_t)_{t>0}$, we generate a large number of Monte Carlo paths according to Equation (\ref{equation_price_vol}). Algorithm \ref{rolling_volatility_algo} explains the procedure when the standard stochastic volatility model $\mathcal{M}_1$ is considered. The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands (Equation \ref{bolls_computations}). In the most general case, $N$ paths $\{S_{t,n}\}_{0 < n \leq N, t \in \mathbb{N}}$ are generated from an equation involving $S_t | \mathcal{F}_{t^-}$ such as Equation \ref{equation_price_vol} for $\mathcal{M}_1$. Let $f_a : \mathbb{R}^{+N} \rightarrow \mathbb{R}^+$ be a positive-definite aggregating function. The aggregated rolling volatility of lag $p$ for all the $N$ paths is defined as $r\sigma(t,p) = f_a(r\sigma_1(t, p),...,r\sigma_N(t, p))$. If $f_a$ is simply the sample mean estimator, the equation is simplified to $r\sigma(t,p) = \frac{1}{N}\sum_{i=1}^N r\sigma_i(t, p)$. Depending on the context and on the cross validation phase, $f_a$ can be any measurable function satisfying the conditions above.
 
 \begin{algorithm}
 \caption{Rolling volatility computation for model $\mathcal{M}_1$ (Standard SV)}
@@ -1178,14 +1196,20 @@ In order to estimate the volatility of the spread $(S_t)_{t>0}$, we generate a l
 \end{algorithm}
 
 \section{Z-score}
-Another strategy is considered in this section. It is also based on mean-reversion.
-Once the spread $(S_t)_{t \> 0}$ is formed, \cite{caldeira2013} suggests to compute the dimensionless Z-score. Defined as $z_t = (S_t-\mu_S) / \sigma_S$, it measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open/close a position when the Z-score hits a predefined n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. If the Z-score hits a low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position is unwind. A same reasoning is done for short positions. \cite{caldeira2013} suggested the basic trading strategy signals
-\begin{align*}
-\text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
-\text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
-\text{Close short position if } &\leq \Phi^{-1}(q_{CS}) = 0.75\\
-\text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
-\end{align*}
+Z-score is a strategy based on mean-reverting patterns but unlike the Bollinger bands, Z-score assumed a non-zero constant mean. For this reason, Z-score is only suitable for stationary processes such as spreads between assets. Z-score is dimensionless indicator defined as $z_t = (S_t-\mu_S) / \sigma_S$, where $\mu_S$ and $\sigma_S$ are respectively the mean and variance of the spread. $z_t$ measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open/close a position when the Z-score hits a predefined n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. If the Z-score hits a low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position is unwind. A same reasoning is done for short positions. \cite{caldeira2013} suggested the basic trading strategy signals: Open long position if $\leq \Phi^{-1}(q_{OL}) = -2.00$, open short position if $\geq \Phi^{-1}(q_{OS}) = 2.00$, close short position if $\leq \Phi^{-1}(q_{CS}) = 0.75$ and close long position if $\geq \Phi^{-1}(q_{CL}) = -0.50$.
+% \begin{align*}
+% \text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
+% \text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
+% \text{Close short position if } &\leq \Phi^{-1}(q_{CS}) = 0.75\\
+% \text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
+% \end{align*}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 1\textwidth]{zscore/zscore1}
+\caption{Spread $S_t$ (same spread as in Section \ref{sec:model_selection}) and its Z-score $z_t$. The quantiles thresholds are also shown in color.}
+\label{dist_100_r2_quad}
+\end{figure}
 
 Unlike the Bollinger Bands, the Z-score is highly sensitive to stochastic trends because the mean is assumed to be strictly constant due to the nature of the strategy. In other words, it can be dangerous if the spread loses its cointegrated property and becomes divergent. In practical applications and according to the risk policy of the firm, a stop loss threshold is usually set to avoid any huge losses.
 
@@ -1198,7 +1222,7 @@ The sample period spans from January 1990 to March 2014 summing up to 8844 obser
 
 \section{General Framework}
 
-The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in ranking the cointegrated tuples based on the best in-sample Sharpe Ratios $\mathcal{SR}$. The first 20 tuples are used to compose the portfolio. Only two types of transactions are considered: move into a new position, or unwind a previously opened position. At the end of each trading period, all open positions are closed. Throughout the analysis, we consider 0.5\% of transaction costs. This choice was made for pairs trading in \cite{dunis2010}, \cite{dunis2005} and \cite{alexander2002}. For simplicity, no rental costs are considered for short positions but the capital invested in short selling cannot exceed 50\% of the total capital, either invested or in cash. The asset allocation in the portfolio follows a invested weighting scheme with no dynamic rebalancing. Each tuple is given the same weight and if there are no open positions, the money is not invested and remain as cash in the portfolio. For a particular tuple, the number of open positions is limited to only one on the spread. The strategy is self-financing, i.e. profits are reinvested and no deposits or withdrawals are permitted.
+The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in ranking the cointegrated tuples based on the best in-sample Sharpe Ratios $\mathcal{SR}$. The first 20 tuples are used to compose the portfolio. Only two types of transactions are considered: move into a new position, or unwind a previously opened position. At the end of each trading period, all open positions are closed. Throughout the analysis, we consider 0.5\% of transaction costs. This choice was made for pairs trading in \cite{dunis2010}, \cite{dunis2005} and \cite{alexander2002}. For simplicity, no rental costs are considered for short positions but the capital invested in short selling cannot exceed 50\% of the total capital, either invested or in cash. The asset allocation in the portfolio follows a invested weighting scheme with no dynamic rebalancing. Each tuple is given the same weight and if there are no open positions, the money is not invested and remain as cash in the portfolio. For a particular tuple, the number of open positions is limited to only one on the spread. The strategy is self-financing, i.e. profits are reinvested and no deposits or withdrawals are permitted. When a long position is initiated, the first asset is bought with quantity 1 and the remaining assets of the tuple are sold with the respective quantities indicated by the cointegrated vector $\beta$. It is assumed that the trader can buy a portion of an asset. This same position is closed by selling one unit of the first asset and buying the remaining assets, still in the same proportions.
 
 \section{Selection of the cointegrated tuples}
 
@@ -1234,7 +1258,7 @@ r_{x2x1}    & \ddots &   & \vdots  \\
 r_{xnx1}    & \hdots &   & r_{xnxn} \\
 \end{pmatrix} 
 \end{equation}
-One problem arises: the value of the coefficient depends on the ordering of the tuple. To provide convincing evidence of this fact, let's consider a simple example. A regression of $y$ on $x$ and $z$ will in general have a different $R^2$ that will a regression of $z$ on $x$ and $y$. Let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R^2$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R^2$. It means that the ordering inside a tuple has its importance at least from a statistical point of view, as highlighted in Definition \ref{definition_tuple}. This assertion is also true for all cointegrations tests, except for the Johansen test where the ordering does not matter. This notion of ordering is much less obvious from a pure financial point of view. Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock sector when $n=4$. The period spans from Jan 01, 2012 to May 27, 2013. Most distributions exhibit a bell shape and are therefore candidates for a filtering selection based on an arbitrary threshold $R^2_{th}$.
+One problem arises: the value of the coefficient depends on the ordering of the tuple. To provide convincing evidence of this fact, let's consider a simple example. A regression of $y$ on $x$ and $z$ will in general have a different $R^2$ that will a regression of $z$ on $x$ and $y$. Let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R^2$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R^2$. It means that the ordering inside a tuple has its importance at least from a statistical point of view, as highlighted in Definition \ref{definition_tuple}. This assertion is also true for all cointegrations tests, except for the Johansen test where the ordering does not matter. This notion of ordering is much less obvious from a pure financial point of view. Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock sector when $n=4$. The period spans from Jan 01, 2012 to May 27, 2013. Most distributions exhibit a bell shape and are therefore candidates for a filtering selection based on an arbitrary threshold $R^2_{th}$. It is worth noting that for $n=4$, each sector has its own threshold $R^2_{th}$ due to its specific distribution. $R^2_{th}$ is usually selected in such a way that we have approximately 20 cointegrated tuples per period.
 
 \begin{figure}[H]
 \centering
@@ -1244,7 +1268,7 @@ One problem arises: the value of the coefficient depends on the ordering of the 
 \end{figure}
 
 \subsection{Assumption of the Same Sector}
-\cite{chan2009} and \cite{dunis2010} argued that the pairs (and more generally tuples) should belong to the same sector, otherwise the cointegration and the correlation would be purely fortuitous. To check the veracity of this assumption, all the possible cointegrated triples are formed on the whole period of the dataset  - from January, 01 1990 to March, 14 2014 - and the $R^2$ is computed using the methodology exposed in \ref{Complexity_Reduction_with_Correlation}. The cointegrated triples are then sorted according to their $R^2$ from the highest to the lowest value. Each triple is characterized by the sector criteria: \textit{All}, \textit{Partial} or \textit{None}. \textit{All} means the three assets composing the triple belong to the same sector, \textit{Partial} that exactly two belong to the same sector, \textit{None} that all belong to different sectors. As a result, 30418 cointegrated triples were formed. 816 belonged to \textit{All}, 10517 to \textit{Partial} and the remaining 19085 to \textit{None}. Figure \ref{triples_sector_1} shows that for very high $R^2$ on daily returns, almost all the cointegrated triples belong to the same sector. Then for high $R^2$, the proportion of partial triples becomes higher than two other groups until the half of the set. The conclusion is that when the number of selected cointegrating triples or more generally tuples is not very large (less than 500 or 1.5\% here for the whole period), it is reasonable to consider the assumption of the same sector for increased execution speed.
+\cite{chan2009} and \cite{dunis2010} argued that the pairs (and more generally tuples) should belong to the same sector, otherwise the cointegration and the correlation would be purely fortuitous. To check the veracity of this assumption, all the possible cointegrated triples ($n$ = 3) are formed on the whole period of the dataset  - from January, 01 1990 to March, 14 2014 - and the $R^2$ is computed using the methodology exposed in \ref{Complexity_Reduction_with_Correlation}. The cointegrated triples are then sorted according to their $R^2$ from the highest to the lowest value. Each triple is characterized by the sector criteria: \textit{All}, \textit{Partial} or \textit{None}. \textit{All} means the three assets composing the triple belong to the same sector, \textit{Partial} that exactly two belong to the same sector, \textit{None} that all belong to different sectors. As a result, 30418 cointegrated triples were formed. 816 belonged to \textit{All}, 10517 to \textit{Partial} and the remaining 19085 to \textit{None}. Figure \ref{triples_sector_1} shows that for very high $R^2$ on daily returns, almost all the cointegrated triples belong to the same sector. Then for high $R^2$, the proportion of partial triples becomes higher than two other groups until the half of the set. The conclusion is that when the number of selected cointegrating triples or more generally tuples is not very large (less than 500 or 1.5\% here for the whole period), it is reasonable to consider the assumption of the same sector for increased execution speed.
 
 \begin{figure}[H]
     \centering
@@ -1307,19 +1331,6 @@ From the candidates of the correlation step, a rigorous testing for cointegratio
 \end{algorithmic}
 \end{algorithm}
 
-
-\section{Creation of the Trading Signals}
-For cointegrated spreads, the second part of the algorithm creates trading signals based on predefined investment decision rules. A trading rule determines when to open and close a position. With Bollinger bands strategy, the basic rule is
-
-\begin{itemize}
-\item Open a long position when there is an upward crossing between the spread and the lower band;
-\item Unwind (close) this position when there is an upward crossing between the spread and the upper band;
-\item Open a short position when there is a downward crossing between the spread and the upper band;
-\item Unwind this position when there is a downward crossing between the spread and the lower band.
-\end{itemize}
-Empirical studies showed that this strategy is one of the most profitable with the use of Bollinger Bands. When a long position is initiated, the first asset is bought with quantity 1 and the remaining assets of the tuple are sold with the respective quantities indicated by the cointegrated vector $\beta$. It is assumed that the trader can buy a portion of an asset. This same position is closed by selling one unit of the first asset and buying the remaining assets, still in the same proportions.
-
-
 \section{Optimization of the strategy}
 Bollinger bands strategy requires to estimate three parameters: the number of periods $p$ to compute the bands, the type $t$ of moving average (EMA or SMA) used in the mid band and $\alpha$ which controls the interval between the volatility bands. John Bollinger suggests $p = 20, \alpha = 2$ and simple moving average as default values. To get the best out of the strategy, a cross validation is performed on the in-sample set $\mathcal{I}$. The criterion of optimization is the in-sample Sharpe Ratio. The cross validation parameter space is arbitrary set to $\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha = [5,6,...,60] \times \{\text{SMA}, \text{EMA}\} \times [1,1.1,...,2.9,3.0]$. Complex methods of optimization have also been attempted such as Simulated annealing. It turns out that an exhaustive search is a serious alternative because of the efforts invested into the parallelization of the task. The latter provides enhanced visual results and is therefore our recommended choice to reveal the topology of $f(\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha) \rightarrow \mathbb{R}$.
  
@@ -1338,9 +1349,9 @@ SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t}
 One of the techniques to assess the performance of a strategy is to compare it to the standard Buy and Hold strategy where the holder buys various assets at time $0$ and sell them at time $T$. \cite{gatev2006} also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs.
 
 \chapter{Results}
-\section{Volatility Modelling}
-
-\begin{figure}
+\section{Volatility Modelling of the spread}
+Throughout this section, the same spread $(S_t)_{t>0}$ as that of Section \ref{sec:model_selection} is considered. This analysis is not restricted to this particular spread and is valid for any stationary spread and stochastic volatility models. This sections focused on the main points described in Section \ref{sec:estimation_bollinger_bands_sv}. The model $\mathcal{M}_7$ is used to estimate the conditional variance $S_t | S_{t-1}, \matr{x}_t, \theta$. From there and from Equation (\ref{equation_price_vol}), $M = 1000$ Monte Carlo trajectories are generated. Figure \ref{fig:generation_of_the_trajectories} shows the generation of the trajectories according to the estimated conditional variance.
+\begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
@@ -1354,6 +1365,13 @@ One of the techniques to assess the performance of a strategy is to compare it t
         \caption{Conditional variance of $S_t | S_{t-1}, \matr{x}_t, \theta$ with model $\mathcal{M}_7$}
         \label{vol_mod_2}
     \end{subfigure}
+    \caption{Generation of the trajectories of the spread process $S_t$}
+    \label{fig:generation_of_the_trajectories}
+\end{figure}
+
+The next step is to compute the rolling volatility for every trajectory. The aggregated function $f_a$ is the sample mean. The standard rolling volatility for the observed spread trajectory $s_{1:T}$ is also computed. From this point, 90\% confidence intervals are derived for every $t \in [1,T]$. Figure \ref{fig:rolling_vol_and_confidence_intervals} shows the results for the spread $S_t$. It turns out that the volatility computed with the standard method is clearly underestimated most of the time.
+\begin{figure}[H]
+    \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{model_vol/3}
@@ -1366,6 +1384,12 @@ One of the techniques to assess the performance of a strategy is to compare it t
         \caption{90 \% Confidence intervals for the generated prices trajectories}
         \label{vol_mod_4}
     \end{subfigure}
+    \caption{Generation of the trajectories of the spread process $S_t$}
+    \label{fig:rolling_vol_and_confidence_intervals}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{model_vol/5}
@@ -1378,9 +1402,24 @@ One of the techniques to assess the performance of a strategy is to compare it t
         \caption{Normalized difference $d(t) = (r\sigma(t)_E - r\sigma(t)_C) / S_t$ between the evaluated $r\sigma(t)_E$ and common $r\sigma(t)_C$ windowed volatilities used in the Bollinger Bands}
         \label{vol_mod_6}
     \end{subfigure}
-    \caption{}
-    %\label{fig:three graphs}
 \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{model_vol/6}
+        \caption{Bollinger Bands}
+        \label{vol_mod_5}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{model_vol/7}
+        \caption{Normalized difference $d(t) = (r\sigma(t)_E - r\sigma(t)_C) / S_t$ between the evaluated $r\sigma(t)_E$ and common $r\sigma(t)_C$ windowed volatilities used in the Bollinger Bands}
+        \label{vol_mod_6}
+    \end{subfigure}
+\end{figure}
+
 
 \chapter{Conclusion and Future work}
 
@@ -1504,133 +1543,134 @@ Trading framework gathering strategies (Bollinger Bands, Z Score).
 Test folder. Non regression and validation tests.
 \end{itemize}
 
-The Particle MCMC framework, implemented for this thesis, is a highly extensible, multithreaded and customizable framework designed to estimate parameters in non linear state space models.
-The source code is provided under the MIT license and is available on Github. Contributions are welcome. To define a new PMCMC scheme, the user must inherit from the base abstract class and implement the basic functions. The user must define each of its MC chains as protected member variables, define its priors and proposals distributions and finally link a Particle Filter to the class. The convention used for Particle Filter is to return the marginal likelihood and the estimated hidden states.
+The Particle MCMC framework, implemented for this thesis, is a highly extensible, multithreaded and customizable framework designed to estimate parameters in non linear state space models. The source code is provided under the MIT license and is available on Github. Contributions are welcome. \\
 
+To define a new PMCMC scheme, the user must inherit from the base abstract class and implement the basic functions. The user must define each of its MC chains as protected member variables, define its priors and proposals distributions and finally link a Particle Filter to the class. The convention used for Particle Filter is to return the marginal likelihood and the estimated hidden states.
 
-\section{SVL}
-
-Again by the Cholesky decomposition, $y_t$ can be written as
-
-\begin{equation}
-y_t | x_t = \rho \beta \exp(x_t / 2) \epsilon_{X,t} + \beta \exp(x_t / 2) \sqrt{1-\rho^2} Z
-\end{equation}
-The only random quantity here is $Z \sim \mathcal{N}(0,1)$. Both factors on the right hand side are measurable at time $t^-$. Therefore, $y_t|x_t$ is normally distributed
-
-\begin{equation}
-y_t | x_t \sim \mathcal{N}\left(\mathcal{A} = \rho \beta \exp(x_t / 2) \epsilon_{X,t}, \mathcal{B} = \beta^2 \exp(x_t) (1-\rho^2)\right)
-\end{equation}
-Using the fact that any AR(1) admits an infinite MA representation,
-\begin{align*}
-x_t &= \phi x_{t-1} + \sigma \epsilon_{X,t} \\ 
-  &= \phi(\phi x_{t-2} +\sigma \epsilon_{X,t-1}) + \sigma \epsilon_{X,t} \\
-    &= \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j} \numberthis
-\end{align*}
-and using this new representation into $\mathcal{A}$ gives
-\begin{align*}
-\mathcal{A} &= \rho \beta \exp(x_t / 2) \epsilon_{X,t} \\
-			&= \rho \beta \exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \\
-			&= \rho \beta \exp \left( \frac{\phi}{2} x_{t-1}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \numberthis
-\end{align*}
-At time $t-1$, only $\mathcal{C} = \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t}$ is random. Because $\epsilon_{X,t}$ is independent from $x_{t-1}$,
-%%mean(exp(2*rnorm(1000000)))
-%%exp(4^2/8)
-\begin{align*}
-E[\mathcal{A}] &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right)\right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
-			   &= \rho \beta E\left[\prod_{j=1}^\infty \exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
-			   &= \rho \beta \prod_{j=1}^\infty E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right]  E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \numberthis
-\end{align*}
-
-\begin{align*}
-E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left(\frac{-x^2}{2} + \frac{\sigma \phi^j}{2} x \right) dx \\
-																			 &= \left[ \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) erf \left( \frac{2x- \sigma\phi^j}{2 \sqrt{2}} \right) \right]^{+\infty}_{-\infty} \\
-																			 &= \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) (1 - (-1)) \\
-																			 &= \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \numberthis
-\end{align*}
-
-
-
-\begin{align*}
-E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left( \frac{-x^2}{2} + \frac{\sigma}{2} x \right) dx \\
-																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) \left[ erf \left(\frac{2x-\sigma}{2\sqrt{2}} \right) - \frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \right]^{+\infty}_{-\infty} \\
-																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) (1 - (-1)) \\
-																				  &= \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \numberthis
-\end{align*}
-Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^{-x^2} \rightarrow 0 \text{ }(x \rightarrow \infty)$. Therefore, 
-\begin{align*}
-	E[\mathcal{A}] &= \rho \beta \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
-				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \\
-				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \sum_{j=1}^\infty \phi^{2j} \right) \\
-				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \left(\frac{1}{1-\phi^{2}} - 1\right)\right) \\
-           &= \rho \beta \frac{\sigma}{2} \exp \left( \frac{\sigma^2}{8} \frac{1}{1-\phi^{2}} \right) \numberthis
-\end{align*}
-
-%http://www.wolframalpha.com/input/?i=1%2Fsqrt%282*pi%29+exp%28-x%5E2%2F2%2Bs*x%29
-\begin{align*}
-	E[\mathcal{B}] &= \beta^2 \exp(x_t) (1-\rho^2)\\
-				   &= \beta^2 (1-\rho^2) E \left[ \exp \left( \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j}\right) \right]\\
-				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty E\left[\exp \left( \sigma \phi^j \epsilon_{X, t-j} \right)  \right] \\
-				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \frac{1}{\sqrt{2\pi}}\int^{+\infty}_{-\infty} \exp \left (\sigma \phi^j x - \frac{x^2}{2} \right) dx \\
-				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \left[\frac{1}{2} \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) erf \left(\frac{x - \sigma\phi^j}{\sqrt{2}}\right)\right]^{+\infty}_{-\infty} \\
-				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) \\
-				   &= \beta^2 (1-\rho^2) \exp \left( \sum_{j=0}^\infty \frac{(\sigma \phi^j)^2}{2} \right) \\
-				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \sum_{j=0}^\infty \phi^{2j} \right) \\
-				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \frac{1}{1-\phi^{2}}\right) \numberthis
-\end{align*}
-
-\section{TFSVL}
-
-The MA($\infty$) representation of $X_t$ and $Z_t$ are respectively
-\begin{align*}
-X_t &= \sigma_X \sum_{j=0}^\infty \phi_X^j \epsilon_{X, t-j} \numberthis\\
-Z_t &= \sigma_Z \sum_{j=0}^\infty \phi_Z^j \epsilon_{X, t-j} \numberthis
-\end{align*}
-
-
-We use the fact that $X_t$ and $Z_t$ are independent for each $t > 0$ i.e. $E[X_t Z_t] = E[X_t] E[Z_t]$.
-
-From the law of total expectation, $E(Y) = E_Y\left[ E_{Y|X,Z}[Y | X, Z] \right]$. This assertion holds because $(X_t)_{t>0}$ and $(Z_t)_{t>0}$ are AR(1) processes and by their stationary property, $E[|X|],E[|Z|] < \infty$. $Y$ is any random variable, not necessarily integrable but belonging to the same probability space.
-\begin{align*}
-E\left[ Y_t \right] &= E\left[ E[Y_t | x_t, z_t] \right] \\
-                                  &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \prod_{i=1}^\infty E\left[\exp \left( \frac{\sigma_X}{2} \phi_X^i \epsilon_{X, t-i} \right)  \right]  \prod_{j=0}^\infty E\left[\exp \left( \frac{\sigma_Z}{2} \phi_Z^j \epsilon_{X, t-j} \right)  \right] \\
-                  &= \frac{\sigma_X}{2} \exp \left(\frac{\sigma_X^2}{8}\right) \exp \left( \frac{\sigma_X^2}{8} \left(\frac{1}{1-\phi_X^{2}} - 1\right)\right) \exp \left( \frac{\sigma_Z^2}{8} \left(\frac{1}{1-\phi_Z^{2}}\right)\right) \numberthis \\
-\end{align*}
-
-
-Similarly, the law of total variance is used to compute the unconditional variance of the stochastic process $(Y_t)_{t>0}$. It is assumed that Var($Y) < \infty$ which is the case in practice as the returns are finite almost surely. By definition,
-
-\begin{equation}
-\var(Y) = \underbrace{E_{X,Z}(Var[Y|X,Z])}_{(1)} + \underbrace{\var_{X,Z}(E[Y|X,Z])}_{(2)}
-\end{equation}
-
-
-The term (1) is computed using the same logic as seen for model $\mathcal{M}_3$ with the independence of $X_t$ and $Z_t$ for every $t > 0$.
-\begin{align*}
-E_{X,Z}\left[ \var[Y_t | x_t, z_t] \right] &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right) \numberthis
-\end{align*}
-
-
-The term (2) is rewritten as
-\begin{align*}
-\var_{X,Z} \left[ E[Y_t | x_t, z_t] \right] &= \rho^2 \beta^2 \var \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \\
-                                                  &= \rho^2 \beta^2 \left( E \left[ \exp \left(x_t + z_t\right) \right] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2 \right) \numberthis
-\end{align*}
-
-
-Recall from the calculus for model $\mathcal{M}_3$, $E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] = \exp \left(\frac{(\sigma\phi^j)^2}{8} \right)$. By a trivial substitution, $\sigma' = 2 \sigma$, $E\left[\exp \left( \sigma' \phi^j \epsilon_{X, t-j} \right) \right] = \exp \left(\frac{(\sigma'\phi^j)^2}{2} \right)$. Therefore,
-
-\begin{align*}
-(2) &= \rho^2 \beta^2 \left( E [ \exp (x_t) ] E [ \exp (z_t) ] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
-                                                  &= \rho^2 \beta^2 \left( \prod_{j=0}^\infty \exp \left(\frac{(\sigma_X\phi_X^j)^2}{2} \right) \prod_{j=0}^\infty \exp \left(\frac{(\sigma_Z\phi_Z^j)^2}{8} \right) - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
-                                                  &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
-                                                  &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - E \left[ \left( \exp \left(\frac{x_t}{2}\right) \right)\right]^2 E \left[ \left( \exp \left(\frac{z_t}{2}\right) \right)\right]^2\right) \\
-                                                  &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right) \numberthis
-\end{align*}
-
-Finally by adding (1) and (2),
-\begin{multline}
-Var(Y) = \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right) \\ + \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right)
-\end{multline}
+% 
+% \section{SVL}
+% 
+% Again by the Cholesky decomposition, $y_t$ can be written as
+% 
+% \begin{equation}
+% y_t | x_t = \rho \beta \exp(x_t / 2) \epsilon_{X,t} + \beta \exp(x_t / 2) \sqrt{1-\rho^2} Z
+% \end{equation}
+% The only random quantity here is $Z \sim \mathcal{N}(0,1)$. Both factors on the right hand side are measurable at time $t^-$. Therefore, $y_t|x_t$ is normally distributed
+% 
+% \begin{equation}
+% y_t | x_t \sim \mathcal{N}\left(\mathcal{A} = \rho \beta \exp(x_t / 2) \epsilon_{X,t}, \mathcal{B} = \beta^2 \exp(x_t) (1-\rho^2)\right)
+% \end{equation}
+% Using the fact that any AR(1) admits an infinite MA representation,
+% \begin{align*}
+% x_t &= \phi x_{t-1} + \sigma \epsilon_{X,t} \\ 
+%   &= \phi(\phi x_{t-2} +\sigma \epsilon_{X,t-1}) + \sigma \epsilon_{X,t} \\
+%     &= \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j} \numberthis
+% \end{align*}
+% and using this new representation into $\mathcal{A}$ gives
+% \begin{align*}
+% \mathcal{A} &= \rho \beta \exp(x_t / 2) \epsilon_{X,t} \\
+% 			&= \rho \beta \exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \\
+% 			&= \rho \beta \exp \left( \frac{\phi}{2} x_{t-1}\right) \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \numberthis
+% \end{align*}
+% At time $t-1$, only $\mathcal{C} = \exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t}$ is random. Because $\epsilon_{X,t}$ is independent from $x_{t-1}$,
+% %%mean(exp(2*rnorm(1000000)))
+% %%exp(4^2/8)
+% \begin{align*}
+% E[\mathcal{A}] &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \sum_{j=1}^\infty \phi^j \epsilon_{X, t-j}\right)\right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
+% 			   &= \rho \beta E\left[\prod_{j=1}^\infty \exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right] E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
+% 			   &= \rho \beta \prod_{j=1}^\infty E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right)  \right]  E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \numberthis
+% \end{align*}
+% 
+% \begin{align*}
+% E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left(\frac{-x^2}{2} + \frac{\sigma \phi^j}{2} x \right) dx \\
+% 																			 &= \left[ \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) erf \left( \frac{2x- \sigma\phi^j}{2 \sqrt{2}} \right) \right]^{+\infty}_{-\infty} \\
+% 																			 &= \frac{1}{2} \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) (1 - (-1)) \\
+% 																			 &= \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \numberthis
+% \end{align*}
+% 
+% 
+% 
+% \begin{align*}
+% E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] &= \frac{1}{\sqrt{2\pi}} \int^{+\infty}_{-\infty} \exp \left( \frac{-x^2}{2} + \frac{\sigma}{2} x \right) dx \\
+% 																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) \left[ erf \left(\frac{2x-\sigma}{2\sqrt{2}} \right) - \frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \right]^{+\infty}_{-\infty} \\
+% 																				  &= \frac{\sigma}{4} \exp \left(\frac{\sigma^2}{8}\right) (1 - (-1)) \\
+% 																				  &= \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \numberthis
+% \end{align*}
+% Because $\frac{1}{\sqrt{2\pi}}\exp \left(\frac{1}{2} x(\sigma-x) \right) \sim e^{-x^2} \rightarrow 0 \text{ }(x \rightarrow \infty)$. Therefore, 
+% \begin{align*}
+% 	E[\mathcal{A}] &= \rho \beta \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \\
+% 				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \prod_{j=1}^\infty \exp \left(\frac{(\sigma\phi^j)^2}{8} \right) \\
+% 				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \sum_{j=1}^\infty \phi^{2j} \right) \\
+% 				   &= \rho \beta \frac{\sigma}{2} \exp \left(\frac{\sigma^2}{8}\right) \exp \left( \frac{\sigma^2}{8} \left(\frac{1}{1-\phi^{2}} - 1\right)\right) \\
+%            &= \rho \beta \frac{\sigma}{2} \exp \left( \frac{\sigma^2}{8} \frac{1}{1-\phi^{2}} \right) \numberthis
+% \end{align*}
+% 
+% %http://www.wolframalpha.com/input/?i=1%2Fsqrt%282*pi%29+exp%28-x%5E2%2F2%2Bs*x%29
+% \begin{align*}
+% 	E[\mathcal{B}] &= \beta^2 \exp(x_t) (1-\rho^2)\\
+% 				   &= \beta^2 (1-\rho^2) E \left[ \exp \left( \sigma \sum_{j=0}^\infty \phi^j \epsilon_{X, t-j}\right) \right]\\
+% 				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty E\left[\exp \left( \sigma \phi^j \epsilon_{X, t-j} \right)  \right] \\
+% 				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \frac{1}{\sqrt{2\pi}}\int^{+\infty}_{-\infty} \exp \left (\sigma \phi^j x - \frac{x^2}{2} \right) dx \\
+% 				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \left[\frac{1}{2} \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) erf \left(\frac{x - \sigma\phi^j}{\sqrt{2}}\right)\right]^{+\infty}_{-\infty} \\
+% 				   &= \beta^2 (1-\rho^2) \prod_{j=0}^\infty \exp \left(\frac{(\sigma \phi^j)^2}{2} \right) \\
+% 				   &= \beta^2 (1-\rho^2) \exp \left( \sum_{j=0}^\infty \frac{(\sigma \phi^j)^2}{2} \right) \\
+% 				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \sum_{j=0}^\infty \phi^{2j} \right) \\
+% 				   &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma^2}{2} \frac{1}{1-\phi^{2}}\right) \numberthis
+% \end{align*}
+% 
+% \section{TFSVL}
+% 
+% The MA($\infty$) representation of $X_t$ and $Z_t$ are respectively
+% \begin{align*}
+% X_t &= \sigma_X \sum_{j=0}^\infty \phi_X^j \epsilon_{X, t-j} \numberthis\\
+% Z_t &= \sigma_Z \sum_{j=0}^\infty \phi_Z^j \epsilon_{X, t-j} \numberthis
+% \end{align*}
+% 
+% 
+% We use the fact that $X_t$ and $Z_t$ are independent for each $t > 0$ i.e. $E[X_t Z_t] = E[X_t] E[Z_t]$.
+% 
+% From the law of total expectation, $E(Y) = E_Y\left[ E_{Y|X,Z}[Y | X, Z] \right]$. This assertion holds because $(X_t)_{t>0}$ and $(Z_t)_{t>0}$ are AR(1) processes and by their stationary property, $E[|X|],E[|Z|] < \infty$. $Y$ is any random variable, not necessarily integrable but belonging to the same probability space.
+% \begin{align*}
+% E\left[ Y_t \right] &= E\left[ E[Y_t | x_t, z_t] \right] \\
+%                                   &= \rho \beta E\left[\exp \left( \frac{\sigma}{2} \epsilon_{X,t} \right) \epsilon_{X,t} \right] \prod_{i=1}^\infty E\left[\exp \left( \frac{\sigma_X}{2} \phi_X^i \epsilon_{X, t-i} \right)  \right]  \prod_{j=0}^\infty E\left[\exp \left( \frac{\sigma_Z}{2} \phi_Z^j \epsilon_{X, t-j} \right)  \right] \\
+%                   &= \frac{\sigma_X}{2} \exp \left(\frac{\sigma_X^2}{8}\right) \exp \left( \frac{\sigma_X^2}{8} \left(\frac{1}{1-\phi_X^{2}} - 1\right)\right) \exp \left( \frac{\sigma_Z^2}{8} \left(\frac{1}{1-\phi_Z^{2}}\right)\right) \numberthis \\
+% \end{align*}
+% 
+% 
+% Similarly, the law of total variance is used to compute the unconditional variance of the stochastic process $(Y_t)_{t>0}$. It is assumed that Var($Y) < \infty$ which is the case in practice as the returns are finite almost surely. By definition,
+% 
+% \begin{equation}
+% \var(Y) = \underbrace{E_{X,Z}(Var[Y|X,Z])}_{(1)} + \underbrace{\var_{X,Z}(E[Y|X,Z])}_{(2)}
+% \end{equation}
+% 
+% 
+% The term (1) is computed using the same logic as seen for model $\mathcal{M}_3$ with the independence of $X_t$ and $Z_t$ for every $t > 0$.
+% \begin{align*}
+% E_{X,Z}\left[ \var[Y_t | x_t, z_t] \right] &= \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right) \numberthis
+% \end{align*}
+% 
+% 
+% The term (2) is rewritten as
+% \begin{align*}
+% \var_{X,Z} \left[ E[Y_t | x_t, z_t] \right] &= \rho^2 \beta^2 \var \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \\
+%                                                   &= \rho^2 \beta^2 \left( E \left[ \exp \left(x_t + z_t\right) \right] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2 \right) \numberthis
+% \end{align*}
+% 
+% 
+% Recall from the calculus for model $\mathcal{M}_3$, $E\left[\exp \left( \frac{\sigma}{2} \phi^j \epsilon_{X, t-j} \right) \right] = \exp \left(\frac{(\sigma\phi^j)^2}{8} \right)$. By a trivial substitution, $\sigma' = 2 \sigma$, $E\left[\exp \left( \sigma' \phi^j \epsilon_{X, t-j} \right) \right] = \exp \left(\frac{(\sigma'\phi^j)^2}{2} \right)$. Therefore,
+% 
+% \begin{align*}
+% (2) &= \rho^2 \beta^2 \left( E [ \exp (x_t) ] E [ \exp (z_t) ] - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
+%                                                   &= \rho^2 \beta^2 \left( \prod_{j=0}^\infty \exp \left(\frac{(\sigma_X\phi_X^j)^2}{2} \right) \prod_{j=0}^\infty \exp \left(\frac{(\sigma_Z\phi_Z^j)^2}{8} \right) - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
+%                                                   &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - E \left[ \left( \exp \left(\frac{x_t + z_t}{2}\right) \right) \right]^2\right) \\
+%                                                   &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - E \left[ \left( \exp \left(\frac{x_t}{2}\right) \right)\right]^2 E \left[ \left( \exp \left(\frac{z_t}{2}\right) \right)\right]^2\right) \\
+%                                                   &= \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right) \numberthis
+% \end{align*}
+% 
+% Finally by adding (1) and (2),
+% \begin{multline}
+% Var(Y) = \rho^2 \beta^2 \left( \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}} \right) - \exp \left( \frac{\sigma_X^2}{4} \frac{1}{1-\phi_X^{2}} \right) \exp \left( \frac{\sigma_Z^2}{4} \frac{1}{1-\phi_Z^{2}}\right) \right) \\ + \beta^2 (1-\rho^2) \exp \left( \frac{\sigma_X^2}{2} \frac{1}{1-\phi_X^{2}}\right) \exp \left( \frac{\sigma_Z^2}{2} \frac{1}{1-\phi_Z^{2}}\right)
+% \end{multline}
 
 
 % \section{Heston}

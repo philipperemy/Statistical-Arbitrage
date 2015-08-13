@@ -58,7 +58,7 @@ boll_minus = ma - 2*real_vol;
 sum((boll_minus < appl_prices) & (appl_prices < boll_plus))
 Y = [boll_plus boll_minus appl_prices];
 
-std_1 = movingstd(appl_prices, 3);
+std_1 = movingstd(appl_prices, 3, 'backward');
 plot([real_vol std_1]);
 %as period->0, we find the same volatility measure
 
@@ -86,21 +86,21 @@ Y = [boll_plus_3 boll_minus_3 appl_prices];
 %%%%Second method - use generated process
 movstd_mat = zeros(N,T);
 for n = 1:N
-    movstd_mat(n,:) = movingstd(generated_processes(n,:), 20);
+    movstd_mat(n,:) = movingstd(generated_processes(n,:), 20, 'backward');
 end
 
 plot(movstd_mat');
 figure;
-plot(movingstd(appl_prices, 20));
-plot([mean(movstd_mat, 1)' movingstd(appl_prices, 20)]);
-plot([quantile(movstd_mat, 0.9, 1)' movingstd(appl_prices, 20)]);
+plot(movingstd(appl_prices, 20, 'backward'));
+plot([mean(movstd_mat, 1)' movingstd(appl_prices, 20, 'backward')]);
+plot([quantile(movstd_mat, 0.9, 1)' movingstd(appl_prices, 20, 'backward')]);
 
 plot(mean(movstd_mat, 1));
 hold on;
-plot(movingstd(appl_prices, 20));
+plot(movingstd(appl_prices, 20, 'backward'));
 
 std_eval = mean(movstd_mat, 1)';
-std_real = movingstd(appl_prices, 20);
+std_real = movingstd(appl_prices, 20, 'backward');
 ma = tsmovavg(appl_prices,'s',20,1);
 d = 1.5;
 Y = [ma-d*std_eval ma appl_prices ma+d*std_eval];
