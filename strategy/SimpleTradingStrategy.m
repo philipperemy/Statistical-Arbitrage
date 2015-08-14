@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, disp)
+function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, spread_vol, disp)
     
     try
         spr = Spread.px;
@@ -9,8 +9,12 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
     spr = spr(start_idx:end_idx);
     T = length(spr);
     
-	[mid, uppr, lowr] = bollinger(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd);
-    
+    if(spread_vol ~= 0)
+        [mid, uppr, lowr] = Compute_Bollinger_Bands_SV(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd, spread_vol);
+    else
+        [mid, uppr, lowr] = bollinger(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd);
+    end
+	
     %beg = 100;
     beg = 20;
     [ spr_uppr_trends ] = CrossingPointsCalculator(spr - uppr, beg, T);

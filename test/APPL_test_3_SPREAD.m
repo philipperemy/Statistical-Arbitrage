@@ -198,6 +198,17 @@ cor     = -0.853284;
 [log_p_y_given_theta_two_factors_lev, estimated_states_lev, estimated_states2_lev] = BootstrapParticleFilter_TwoFactorsCor(st.y, rho1, sigma1, rho2, sigma2, beta, cor, 10000, pmcmc.p_y_given_x);
 vol_two_factors_leverage = beta^2*exp(estimated_states_lev+estimated_states2_lev);
 
+%Figure
+beg = 10; close all;
+figure; plot(estimated_states_lev(beg:end), 'Color', 'blue'); legend('X');
+figure;
+plot(estimated_states2_lev(beg:end),'Color', 'blue'); legend('Z');
+figure;
+plot(estimated_states_lev(beg:end)+estimated_states2_lev(beg:end),'Color', 'blue'); legend('X+Z');
+figure;
+plot(vol_two_factors_leverage(beg:end),'Color', 'blue'); legend('Volatility on returns');
+%EndFigure
+
 %%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,13 +304,13 @@ Y = sqrt([vol_two_factors' returns_volatility_var' ret_svl_vol' vol_two_factors_
 
 
 %%%%%%%%%%% STANDARD SV %%%%%%%%%%%
-diff_sv = Volatility_Estimation_Bands_Mean_Zero(spread, returns_volatility_var);
+Volatility_Estimation_Bands_Mean_Zero(spread, returns_volatility_var);
 close all;
 %%%%%%%%% TWO FACTORS SV (EASIER THAN TFSVL) %%%%%%%%%%%
-diff_tfsv = Volatility_Estimation_Bands_Mean_Zero(spread, vol_two_factors);
+Volatility_Estimation_Bands_Mean_Zero(spread, vol_two_factors);
 close all;
 %%%%%%%%% TWO FACTORS SVL %%%%%%%%%%%
-diff_tfsvl = Volatility_Estimation_Bands_Mean_Zero(spread, vol_two_factors_leverage);
+Volatility_Estimation_Bands_Mean_Zero(spread, vol_two_factors_leverage);
 close all;
 Y = [diff_sv diff_tfsv diff_tfsvl];
 plot(Y(25:400, :));
