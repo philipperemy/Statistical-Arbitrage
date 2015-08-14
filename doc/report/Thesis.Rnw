@@ -1549,14 +1549,17 @@ Maximum Drawdown  												& 3.80\% \\
 
 \section{Implementation}
 
+All the source code (algorithms, scripts) has been written in Octave using MATLAB 2015a. Since it is open source, it is available to everyone although you have to follow the licenses as defined in the LICENSE file.
+
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
 \hline
 \multicolumn{1}{|l}{Statistics}     & \multicolumn{1}{l|}{} \\ \hline
 Repository URL 					   &  \url{https://github.com/philipperemy/Statistical-Arbitrage} \\
-Number of commits   				 &  117 \\
+Number of commits   			 &  117 \\
 Number of files   				 &  195 (MATLAB extension: .m) \\
+Codebase   				         &  8727 Lines\\
 Author          &  Philippe Remy \\
 First commit & May, 19 2015 \\
 \hline
@@ -1565,7 +1568,7 @@ First commit & May, 19 2015 \\
 \label{Statistics_repository}
 \end{table}
 
-\subsection{Structure}
+\section{Structure}
 
 \begin{itemize}
 \item \texttt{coint/} \\
@@ -1594,6 +1597,8 @@ Trading framework gathering strategies (Bollinger Bands, Z Score).
 Test folder. Non regression and validation tests.
 \end{itemize}
 
+\section{How to get started} 
+The codebase has thousands of lines of code. Therefore, getting started is not easy.
 The Particle MCMC framework, implemented for this thesis, is a highly extensible, multithreaded and customizable framework designed to estimate parameters in non linear state space models. The source code is provided under the MIT license and is available on Github. Contributions are welcome. \\
 
 To define a new PMCMC scheme, the user must inherit from the base abstract class and implement the basic functions. The user must define each of its MC chains as protected member variables, define its priors and proposals distributions and finally link a Particle Filter to the class. The convention used for Particle Filter is to return the marginal likelihood and the estimated hidden states.
