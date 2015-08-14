@@ -1,4 +1,4 @@
-function [  ] = Plot_Draw_Surf( X, Y, Z )
+function [ RET ] = Plot_Draw_Surf( X, Y, Z, colorBar )
 
     Q = Z;
     [max_X, max_Y] = size(Z);
@@ -61,7 +61,16 @@ function [  ] = Plot_Draw_Surf( X, Y, Z )
     real_max = max(max(Z));
     coeff_distorsion = real_max / new_max;
     surf(X,Y,Q*coeff_distorsion);
-    colorbar;
+    
+    RET = Q*coeff_distorsion;
+    
+    xlabel('Alpha (\alpha)');
+    ylabel('Lag (p)');
+    zlabel('Sharpe (SR)');
+    
+    if(exist('colorBar','var'))
+        colorbar;
+    end;
     colormap(parula(20));
     %     colormap(cool);
 %     colorbar;

@@ -49,3 +49,15 @@ for i = 1:20:length(spreads)
        a = 2; 
     end
 end
+
+%id = 1, balance = 18971.869859, sharpe = 1.476030, wsize = 71.000000, nstd = 1.500000 mean = -5.900054, std = 2.572778, rev = 11.058333, mse = 41.425024
+ZZ = Plot_Draw_Surf(X,Y,Z);
+[px,py] = gradient(ZZ);
+figure; quiver(px,py);
+quiver(px,py);
+set(gca,'XTick', 1:2:length(nstd_range));
+set(gca,'XTickLabel', nstd_range(1:2:length(nstd_range)));
+
+set(gca,'YTick', 1:9:length(wsize_range));
+set(gca,'YTickLabel', wsize_range(1:9:length(wsize_range)));
+
