@@ -7,3 +7,5 @@
 *.pdf
 *.lot
 *.db
+*.bbl
+doc/report/Thesis.lof

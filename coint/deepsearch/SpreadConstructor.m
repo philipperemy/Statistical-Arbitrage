@@ -19,7 +19,7 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
     end
 
     %first test for a unit root. Specificity of JCI test is that order is not important.
-    [~,p_val_jci,~,~,~] = jcitest([s1_px, s2_px, s3_px], 'lags', 0);
+    [~,p_val_jci,~,~,~] = jcitest([s1_px, s2_px, s3_px], 'lags', 0:5);
 
     pval_r0 = p_val_jci.r0(1);
     pval_r1 = p_val_jci.r1(1);
@@ -70,15 +70,11 @@ function [ res, spread, pvals_jci ] = SpreadConstructor( stock_ids, stock_prices
 %        opt_lag = opt_lag - 1; 
 %     end
 %     
-%     [~, p_value_adf] = adftest(spr, 'model','ARD','lags', 0:opt_lag);
-%     if(any(p_value_adf > P_VAL_THRES))
-%         return;
-%     end
+    [~, p_value_adf] = adftest(spr, 'model','ARD','lags', 0:5);
+    if(any(p_value_adf > P_VAL_THRES))
+        return;
+    end
 % 
-%     %Test for Random Walk
-%      if(~vratiotest(spr))
-%         return; 
-%      end
      
     %PP test for a unit root
     if(~pptest(spr, 'model', 'ARD', 'lags', 0))

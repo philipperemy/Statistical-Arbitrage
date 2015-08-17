@@ -570,17 +570,18 @@ IS is used to draw a number of independent samples from $\pi(\matr{X})$ to obtai
 
 \For{t from 1 to T}
 	\For{i from 1 to N}
-		\State Calculate weights $\displaystyle{w_t^{(i)} = w_{t-1}^{(i)} \frac{p(y_t|x_t^{(i)}) p(x_t^{(i)}|x_{t-1}^{(i)})}{\pi \left(x_t^{(i)}|x_{0:t-1}^{(i)}, y_{1:t} \right)}}$
-		\State Compute the normalized importance weights $\displaystyle{w_k^{(i)} = \frac{w_k^{(i)}}{\sum_{j=1}^N w_k^{(j)}}}$
-		\State Compute an estimation of ESS as $\displaystyle{N_{eff} = \left( \sum_{i=1}^N \left(w_t^{(i)} \right)^2 \right)^{-1}}$
+	  \State Draw sample from the proposal distribution $x_t^{(i)} \sim \pi \left(x_t|x_{0:t-1}^{(i)}, y_{1:t} \right)$
+		\State Calculate weight $\displaystyle{\hat{w}_t^{(i)} = w_{t-1}^{(i)} \frac{p(y_t|x_t^{(i)}) p(x_t^{(i)}|x_{t-1}^{(i)})}{\pi \left(x_t^{(i)}|x_{0:t-1}^{(i)}, y_{1:t} \right)}}$
+		\State Compute the normalized importance weight $\displaystyle{w_t^{(i)} = \frac{\hat{w}_t^{(i)}}{\sum_{j=1}^N \hat{w}_t^{(j)}}}$
 	\EndFor{end}
-		\If{$N_{eff} < N/3$} //perform resampling
+	\State Compute an estimation of ESS as $N_{eff} = 1 / \left(  \sum_{i=1}^N \left(w_t^{(i)} \right)^2 \right)$
+	\If{$N_{eff} < N_{thr}$} //perform resampling
 		  \For{i from 1 to N}
-		    \State Sample $j \in [1,N]$ with probabilities proportional to $\{w_{t-1}^{(1)},..., w_{t-1}^{(N)}\}$
-		    \State Replace the current particle $i$ with this new one. $x_t^{(i)} \gets x_t^{(j)}$.
-		    \State Re initialize the weight $w_k^{(i)} = 1/N$
+		    \State Sample $j \in [1,N]$ with probabilities proportional to $\{w_{t}^{(1)},..., w_{t}^{(N)}\}$
+		    \State Replace the current particle $i$ with this new one. $x_t^{(i)} \gets x_t^{(j)}$
+		    \State Re initialize the weight $w_t^{(i)} = 1/N$
 		  \EndFor{end}
-		\EndIf
+		\EndIf{end}
 	\State $x^*_t = \sum_{i=1}^N x_t^{(i)}.w_t^{(i)}$
 	\State Set $\hat{p}(y_{1:t}) = \hat{p}(y_{1:t-1}) \left(\frac{1}{N} \sum_{i=1}^N w_t^{(i)} \right)$
 \EndFor{end}
@@ -592,12 +593,39 @@ IS is used to draw a number of independent samples from $\pi(\matr{X})$ to obtai
 
 \subsection{Bootstrap Particle Filter}
 
-Particle filters with transition prior probability distribution $p_\theta(\matr{X}_t | \matr{X}_{t-1})$ as importance function $\pi(\matr{X})$ are commonly known as bootstrap filter (Algorithm \ref{bootstrap_filter}). This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(\matr{x}_k| \matr{x}_{0:k-1}, \matr{y}_{0:k}) = p(\matr{x}_k|\matr{x}_{k-1})$ and the weights formula is now
+\begin{algorithm}
+\caption{Bootstrap Particle Filtering Algorithm (SIR)}\label{bootstrap_filter_algo}
+\begin{algorithmic}[1]
+\Procedure{Input}{$y_{1:T}$, $\theta$, N}
+\For{i from 1 to N}
+	\State Sample $x_1^{(i)}$ independently from $p(x_1)$
+	\State Calculate weights $w_1^{(i)} = p(y_1 | x_1^{(i)})$
+\EndFor{end}
+\State $x^*_1 = \sum_{i=1}^N x_1^{(i)}.w_1^{(i)}$
+\State Set $\hat{p}(y_1) = \frac{1}{N} \sum_{i=1}^N w_1^{(i)}$
+
+\For{t from 1 to T}
+	\For{i from 1 to N}
+		\State Sample $j \in [1,N]$ with probabilities proportional to $\{w_{t-1}^{(1)},..., w_{t-1}^{(N)}\}$
+    \State Replace the current particle $i$ with this new one. $x_t^{(i)} \gets x_t^{(j)}$
+		\State Sample $x_t^{(i)}$ from $p(x_t|x_{t-1})$
+		\State Calculate weights $w_t^{(i)} = p(y_t|x_t^{(i)})$
+	\EndFor{end}
+	\State $x^*_t = \sum_{i=1}^N x_t^{(i)}.w_t^{(i)}$
+	\State Set $\hat{p}(y_{1:t}) = \hat{p}(y_{1:t-1}) \left(\frac{1}{N} \sum_{i=1}^N w_t^{(i)} \right)$
+\EndFor{end}
+\\
+\Return ($x^*_{1:T}$, $\hat{p}(y_{1:T})$)
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Particle filters with transition prior probability distribution $p_\theta(\matr{X}_t | \matr{X}_{t-1})$ as importance function $\pi(\matr{X})$ are commonly known as bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(\matr{x}_k| \matr{x}_{0:k-1}, \matr{y}_{0:k}) = p(\matr{x}_k|\matr{x}_{k-1})$ and the weights formula is now
 \begin{equation}
 w_k^{(i)} = w_{k-1}^{(i)} \frac{p(\matr{y}_k|\matr{x}_k^{(i)})p(\matr{x}_k^{(i)}|\matr{x}^{(i)}_{k-1})}{\pi(\matr{x}_k^{(i)}|\matr{x}^{(i)}_{0:k-1},\matr{y}_{0:k})}= w_{k-1}^{(i)} p(\matr{y}_k|\matr{x}_k^{(i)})
 \end{equation}
-
-It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(\matr{x}_{t+1}|\matr{y}_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $\matr{y}_t$
+Algorithm \ref{bootstrap_filter_algo} presents the bootstrap filter algorithm with a resampling at each step. It is the most common sequential monte carlo and provides good results overall. \\
+It is clear from our understanding of importance resampling that these weights are appropriate for representing a sample from $p(\matr{x}_{t+1}|\matr{y}_{1:t+1})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $\matr{y}_t$ by
 
 \begin{equation}
  \hat{p}^N_{\theta}(\matr{y}_t | \matr{y}_{1:t-1}) = \frac{1}{N} \sum_{k=1}^N w_t^k
@@ -611,11 +639,11 @@ and the conditional marginal estimator of $y_{1:T}$ over all the state space is
 Again, from the importance resampling scheme, it should be reasonably clear that $\hat{p}^N_{\theta}(\matr{y}_{1:T})$ is a consistent estimator of $p_{\theta}(\matr{y}_{1:T})$. It is much less obvious, but nevertheless true that this estimator is also unbiased, according to \cite{delmoral2004}. This result is the cornerstone of Particle MCMC models. As $T$ is usually large, it is preferred to work with the log likelihoods
 \begin{align*}
 \log p_{\theta}(\matr{y}_{1:T}) &= \log p_\theta(\matr{y}_1) + \sum_{t=2}^T \log p_\theta(\matr{y}_t | \matr{y}_{1:T-1}) \numberthis \\
-\log \hat{p}^N_\theta(\matr{y}_{1:T}) &= \log \hat{p}^N_\theta(\matr{y}_1) + \sum_{t=2}^T \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{k} \right) \numberthis
+\log \hat{p}^N_\theta(\matr{y}_{1:T}) &= \sum_{t=1}^T \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{k} \right) \numberthis
 \end{align*}
 
 \section{Resampling phase}
-Sequential Monte Carlo (Particle filtering) can be decomposed in two main steps: sequential importance sampling (SIS) and resampling. The main drawback of SIS is that it becomes very unstable as $T$ increases due to the discrepancy between the weights, a phenomenon known as weight degeneracy. To stabilize the algorithm and gain some accuracy, it is necessary to perform resampling sufficiently often. This step is also time-critical as it is on the critical path of the Component-Wise PMCMC algorithm. Benchmarks highlighted that it can represent up to half of the time spent in the filter with the Bootstrap scheme. Many different methods exist in the literature: multinomial, stratified, systematic and residuals resampling are such examples. In practical applications, \cite{douc2005} found that they provide comparable results. Despite the lack of complete theoretical analysis of its behaviour, multinomial resampling is probably the most used algorithm because almost all software products offer a default implementation of this method. We will focus on multinomial and stratified resampling in this section. The proposed mathematical framework is taken from \cite{douc2005}. \\
+As exposed before, Sequential Monte Carlo can be decomposed in two main steps: sequential importance sampling (SIS) and resampling. The main drawback of SIS is that it becomes very unstable as $T$ increases due to the discrepancy between the weights, a phenomenon known as weight degeneracy. To stabilize the algorithm and gain some accuracy, it is necessary to perform resampling sufficiently often. This step is also time-critical as it is on the critical path of the \textit{Particle Markov Chain Monte Carlo} algorithm. We ran benchmarks and it turned out that it can represent more than half of the time spent in the bootstrap filter. Many different methods exist in the literature: multinomial, stratified, systematic and residuals resampling are such examples. In practical applications, \cite{douc2005} found that they provide comparable results. Despite the lack of complete theoretical analysis of its behaviour, multinomial resampling is probably the most used algorithm because almost all software products offer a default implementation of this method. In this section, we focus on multinomial and stratified resampling. The mathematical framework is taken from \cite{douc2005}. \\
 
 Denote by $\left( \xi_i, \omega_i \right)_{1 \leq i \leq n, t > 0}$ the set of particle positions and associated weights at time $t$. The filtration $(\mathcal{F}_t)_{t > 0}$ is used to model the information known of the particles and the weights up to time $t$. The weights are assumed to be normalized, i.e. $\forall t > 0, \sum_{i=1}^n \omega_i = 1$. Otherwise, consider $\omega_i \leftarrow \omega_i \text{ /} \sum_{j=1}^n \omega_j$. The resampling phase consists in selecting new particle positions and weights $\left( \widetilde{\xi_i}, \widetilde{\omega_i} \right)_{1 \leq i \leq n}$ at time $t+1$ such that the discrepancy between the resampled weights $\widetilde{\omega_i}$ is reduced. There are many possible ways to resample. Two methods are discussed in this section: multinomial and stratified resampling. \\
 
@@ -677,7 +705,7 @@ Finally,
 which closes the proof.
 \end{proof}
 
-From a mathematical point of view, the stratified resampling is pertinent. A benchmark study consisting in resampling 1000 weights a large number of times was performed and the results are promising according to Table \ref{resampling_method_table}. The stratified resampling offers the best balance in terms of speed and intrinsic variance. For those reasons, it is the default resampling method used inside the particle filters.
+From a pure mathematical point of view, the stratified resampling should be preferred. A benchmark study consisting in resampling 1000 weights a large number of times was performed and the results are interesting according to Table \ref{resampling_method_table}. The stratified resampling offers the best balance in terms of speed and intrinsic variance. For those reasons, it is the default resampling method used inside the particle filters.
 
 \begin{table}[H]
 \centering
@@ -1015,7 +1043,8 @@ When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{
 
 
 \section{Model Selection}
-It is interesting to see how models perform in practical applications. When it seems pretty obvious that using a leverage can be pertinent according to stylized facts, it seems less evident that the mean of the returns exhibits a stochastic mean proportional to its volatility. The best model is selected on a sample composed of several cointegrated spreads on different periods. The computationally intensive facet of the calibration makes it difficult to test every model for every spread. A sample of 20 spreads is considered beforehand. The conclusion is fairly clear on the sample at hand. It turns out that $\mathcal{M}_7$ outperforms all the other models in every situation, in terms of marginal likelihood and AIC. On average, the Kass Factor of $\mathcal{M}_7$ over $\mathcal{M}_6$ is between 2 and 6, showing a positive evidence. The $\mathcal{M}_2$ and $\mathcal{M}_3$ model are respectively ranked third and fourth. This section also introduces an example with detailed explanations about this procedure, for a particular spread and a particular stock.
+\label{sec:model_selection}
+It is interesting to see how models perform in practical applications. When it seems pretty obvious that using a leverage can be pertinent according to stylized facts, it seems less evident that the mean of the returns exhibits a stochastic mean proportional to its volatility. The best model is selected on a sample composed of several cointegrated spreads on different periods. The computationally intensive property makes it difficult to test every model for every spread. A sample of 10 spreads is considered beforehand across different sectors such as Energy, Information Technology and Financials. The conclusion is fairly clear on the sample at hand. It turns out that $\mathcal{M}_7$ outperforms all the other models in every situation, in terms of marginal likelihood and AIC. On average, the Kass Factor of $\mathcal{M}_7$ over $\mathcal{M}_6$ is between 2 and 6, showing a positive evidence. The $\mathcal{M}_2$ and $\mathcal{M}_3$ model are respectively ranked third and fourth. This section also introduces an example with detailed explanations about this procedure, for a particular spread and a particular stock.
 \label{sec:model_selection}
 \begin{figure}[H]
     \centering
@@ -1119,13 +1148,13 @@ In this section, two strategies are presented: Bollinger Bands and Z-Score. The 
 
 \section{Bollinger Bands}
 \label{sec:bollinger_bands}
-Bollinger Bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m(t,\cdot)$ of lag $p$ with two volatility bands $B^+(t,\cdot), B^-(t,\cdot)$ above and below it. The computation of the volatility bands use a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is controlled by a parameter called $\alpha$. The bands will expand and contract as the price becomes volatile or becomes bound into a tight trading pattern. When prices continually touch the upper bound $B^+(t,\cdot)$, the spread is considered to be overbought. Conversely, when they continually touch the lower band, it is oversold. The indicator is calculated by
+Bollinger Bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m(t,\cdot)$ of lag $p$ with two volatility bands $B^+(t,\cdot), B^-(t,\cdot)$, above and below it. The computation of the volatility bands involves a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is proportional to a parameter called $\alpha$. The bands will expand and contract as the price becomes volatile or becomes bound into a tight trading pattern. When prices continually touch the upper bound $B^+(t,\cdot)$, the spread is considered to be overbought. Conversely, when K continually touch the lower band, it is oversold. The indicator is calculated by
 \begin{align*}
-m(t,p) &= \frac{1}{p}\sum_{j=1}^p S_{t-j} \text{ (type: SMA)} \numberthis \\
+m_{SMA}(t,p) &= \frac{1}{p}\sum_{j=1}^p S_{t-j} \numberthis \\
+m_{EMA}(t,p) &= k \times S_t + (1-k) \times m_{EMA}(t-1,p) \text{, } k = 2/(p+1)\numberthis \\
 B^\pm(t,p,\alpha) &= m(t,p) \pm \alpha \underbrace{\sqrt{\frac{1}{p} \sum_{j=1}^p \left(S_{t-j} - m(t,p) \right)^2}}_{r\sigma_B(t,p)} \numberthis \label{bolls_computations}
 \end{align*}
-where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average lag and $\alpha$ is the number of standard deviations to shift the Bollinger bands. According to John Bollinger, the default values are $p = 20$ and $\alpha = 2$. $m(t,\cdot)$ is the mid band used as a relative mean value. $Boll^+(t,\cdot)$ and $Boll^-(t,\cdot)$ are respectively the upper and lower bands. Their intrinsic purpose is to measure how far the price deviates from its mean. Under the mild assumption that the returns are normally distributed, 95\% of the prices should appear within the bands when $\alpha = 2$. The simple moving average used in the computation of the bands can be replaced by an exponential moving average (EMA instead of SMA) which gives more weights to new values and may be faster to detect opportunities. Figure \ref{bollinger_bands_intro} shows different configurations of the Bollinger bands applied to Walt Disney Co NYSE (2002).
-
+where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average lag and $\alpha$ is the number of standard deviations to shift the Bollinger bands. According to John Bollinger, the default values are $p = 20$ and $\alpha = 2$. $m_\theta(t)$ is the mid band used as a relative mean value. The exponential moving average (EMA) gives more weights to new values and may be faster to detect opportunities. $B^+_\theta(t)$ and $B^-_\theta(t)$ are respectively the upper and lower bands. Their intrinsic purpose is to measure how far the price deviates from its mean. Under the mild assumption that the returns are normally distributed and independent, approximately 95\% of the prices should appear within the bands when $\alpha = 2$. Figures \ref{bollinger_bands_intro} and \ref{bollinger_bands_intro_2} show different configurations of the Bollinger bands applied to Walt Disney Co NYSE for the year 2002.
 
 \begin{figure}[H]
     \centering
@@ -1141,6 +1170,12 @@ where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average l
         \caption{$(p, \alpha) = (20,2.0)$}
         \label{bollinger2}
     \end{subfigure}
+    \caption{Bollinger bands strategy applied to Walt Disney Co NYSE for the year 2002. Lag is 20 days. $B^+_\theta$ is red, $B^-_\theta$ yellow and $m_\theta$ navy blue}
+    \label{bollinger_bands_intro}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{bollinger/3}
@@ -1153,56 +1188,54 @@ where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average l
         \caption{$(p, \alpha) = (40,2.5)$}
         \label{bollinger4}
     \end{subfigure}
-    \caption{Example of Bollinger bands strategy applied to Walt Disney Co NYSE (2002). $B^+$ is red, $B^-$ yellow and $m$ navy blue.}
-    \label{bollinger_bands_intro}
+    \caption{Example of Bollinger bands strategy applied to Walt Disney Co NYSE for the year 2002. Lag is 40 days. $B^+_\theta$ is red, $B^-_\theta$ yellow and $m_\theta$ navy blue.}
+    \label{bollinger_bands_intro_2}
 \end{figure}
 
 
-\section{Building trading signals}
+\section{Building trading signals with the bands}
 
-A trading rule determines when to open and close a position. With Bollinger bands strategy, the basic rule is
+A trading rule determines the correct timing when to open and close a position. With the Bollinger bands strategy, the rule is:
 
 \begin{itemize}
-\item Open a long position when there is an upward crossing between the spread and the lower band. Unwind this position when there is an upward crossing between the spread and the upper band;
-\item Open a short position when there is a downward crossing between the spread and the upper band; Unwind this position when there is a downward crossing between the spread and the lower band.
+\item LONG - Open a long position when there is an upward crossing between the spread and the lower band. Unwind this position when there is an upward crossing between the spread and the upper band;
+\item SHORT - Open a short position when there is a downward crossing between the spread and the upper band; Unwind this position when there is a downward crossing between the spread and the lower band.
 \end{itemize}
-Empirical studies showed that this strategy is one of the most profitable with the use of Bollinger Bands. MAKE A PARAGRAPH ON THAT
 
 \section{Estimation of the Bollinger Bands with Stochastic Volatility}
 \label{sec:estimation_bollinger_bands_sv}
-Once the best Stochastic Volatility model has been selected, validated and its parameters estimated, the volatility can be approximated. The main idea behind using these stochastic volatility models is to catch the dynamics of the spread through a better estimation of its hidden volatility. According to Definition \ref{spread_def}, a spread is a particular linear combination of assets where each asset price is one observation of a more general process, over a time interval. For a given first order Markovian process $(\matr{X}_t)_{t>0} \in \mathbb{R}^N$, the returns $y_{1:T}$ modelled by a SV model, are usually of the form $y_t | \matr{x}_t, \theta \sim \mathcal{D} \left( \mu_\theta(t), \sigma_\theta^2(t) \right)$, where $\mathcal{D}$ can represent any suitable distribution such as the normal distribution or the $t$-student distribution. By definition, $Y_t = S_t / S_{t-1} - 1$. We then have
+Once the best Stochastic Volatility model has been selected ($\mathcal{M}_7$ according to Section \ref{sec:model_selection}), validated and its parameters estimated, the volatility of the spread can be approximated. The main idea behind using these stochastic volatility models is to catch the dynamics of the spread through a better estimation of its hidden volatility. According to Definition \ref{spread_def}, a spread is a particular linear combination of assets where each asset price is one observation of a more general process, over a time interval. For a given first order Markovian $N$-process $(\matr{X}_t)_{t>0}$, the returns $y_{1:T}$ modelled by a SV model, are usually of the form $y_t | \matr{x}_t, \theta \sim \mathcal{D} \left( \mu_\theta(t), \sigma_\theta^2(t) \right)$, where $\mathcal{D}$ can represent any suitable distribution in a location-scale family (Definition \ref{location_scale_family}).
+
+\begin{definition}
+\label{location_scale_family}
+Let $X$ be a random variable taking values in $\mathbb{R}$. For $a \in \mathbb{R}$ and $b > 0$, if $Y = a + b X$ is equal in distribution to $X$, the random variables $X$ and $Y$ belong to the same location-scale family. Examples are the Normal, Cauchy, Uniform, Laplace, GEV and Student $t$ distributions.
+\end{definition}
+
+By definition, $Y_t = S_t / S_{t-1} - 1$. We then have
 \begin{equation}
 S_t | S_{t-1}, \matr{x}_t, \theta \sim \mathcal{D} \left(S_{t-1} \mu_\theta(t)+S_{t-1}, S_{t-1}^2 \sigma_\theta^2(t) \right) \numberthis \label{equation_price_vol}
 \end{equation}
 where the volatility $\sigma_\theta^2(t)$ and the mean $\mu_\theta(t)$ are known quantities because they only depend on measured quantities ($\matr{x}_{1:t}$ and $S_{t-1}$) at time $t^-$.
 
-%From this idea, two main approaches are discussed. \\
-
-%The first approach consists in working directly with the returns. This contrasts with the default Bollinger bands strategy where the price series is used to compute the volatility. The idea is to detect large movements in returns and bet for a reversion to the long-range mean. This strategy employs a large quantity of trades because it is highly sensitive to price movements. A simple moving average of lag $p$ on the volatility $\sigma(t)$ is considered to detect such movements
-%\begin{equation}
-%SMA_\sigma(t, p) = \frac{1}{p} \sum_{i=0}^{p-1}\sigma(t-i)
-%\end{equation}
-%The mid band is generated from a moving average over the returns. The upper and lower bands are generated by adding and subtracting this rolling %volatility $SMA_\sigma$ to the mid band. \\
-
-In order to estimate the volatility of the spread $(S_t)_{t>0}$, we generate a large number of Monte Carlo paths according to Equation (\ref{equation_price_vol}). Algorithm \ref{rolling_volatility_algo} explains the procedure when the standard stochastic volatility model $\mathcal{M}_1$ is considered. The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands (Equation \ref{bolls_computations}). In the most general case, $N$ paths $\{S_{t,n}\}_{0 < n \leq N, t \in \mathbb{N}}$ are generated from an equation involving $S_t | \mathcal{F}_{t^-}$ such as Equation \ref{equation_price_vol} for $\mathcal{M}_1$. Let $f_a : \mathbb{R}^{+N} \rightarrow \mathbb{R}^+$ be a positive-definite aggregating function. The aggregated rolling volatility of lag $p$ for all the $N$ paths is defined as $r\sigma(t,p) = f_a(r\sigma_1(t, p),...,r\sigma_N(t, p))$. If $f_a$ is simply the sample mean estimator, the equation is simplified to $r\sigma(t,p) = \frac{1}{N}\sum_{i=1}^N r\sigma_i(t, p)$. Depending on the context and on the cross validation phase, $f_a$ can be any measurable function satisfying the conditions above.
+In order to estimate the volatility of the spread $(S_t)_{t>0}$, we generate a large number of Monte Carlo paths according to Equation (\ref{equation_price_vol}). Algorithm \ref{rolling_volatility_algo} explains the procedure when the two factors stochastic volatility with leverage model $\mathcal{M}_7$ is considered. The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands (Equation \ref{bolls_computations}). In the most general case, $M$ paths $\{S_{t,n}\}_{0 < n \leq M, t \in \mathbb{N}}$ are generated from Equation (\ref{equation_price_vol}). Let $f_a : \mathbb{R}^{+M} \rightarrow \mathbb{R}^+$ be a positive-definite aggregating function. The aggregated rolling volatility of lag $p$ for all the $M$ paths is defined as $r\sigma(t,p) = f_a(r\sigma_1(t, p),...,r\sigma_M(t, p))$ for $t >0$. If $f_a$ is simply the sample mean estimator, the equation is simplified to $r\sigma(t,p) = \frac{1}{M}\sum_{i=1}^M r\sigma_i(t, p)$. Depending on the context and on the cross validation phase, $f_a$ can be any measurable function satisfying the conditions above.
 
 \begin{algorithm}
-\caption{Rolling volatility computation for model $\mathcal{M}_1$ (Standard SV)}
+\caption{Rolling volatility computation for model $\mathcal{M}_7$ (TFSVL)}
 \label{rolling_volatility_algo}
 \begin{algorithmic}[1]
-\Procedure{Input}{$(x_t)_{t>0}$, $(S_t)_{t>0}$, $\theta = \beta$, $N$, $f_a = n^{-1} \sum_{i=1}^N \cdot$}
+\Procedure{Input}{$x_{1:T}, z_{1:T}, S_{1:T}$, $\theta = \beta$, $M$, $f_a = n^{-1} \sum_{i=1}^M \cdot$}
 
 \For{t from 1 to T}
-	\For{i from 1 to N}
-		\State Sample the $t^{th}$ value of the $i^{th}$ path, $S_{ti} \sim \mathcal{N}(S_{t-1}, S_{t-1}^2 \beta^2 \exp(x_t))$
+	\For{i from 1 to M}
+		\State Sample the $t^{th}$ value of the $i^{th}$ path, $S_{ti} \sim \mathcal{M}(S_{t-1}, S_{t-1}^2 \beta^2 \exp(x_t + z_t))$
 	\EndFor{end}
 \EndFor{end}
-\For{i from 1 to N}
+\For{i from 1 to M}
 	\State Compute the default rolling volatility $(r\sigma_i(t))_{t>0}$ for the $i^{th}$ path, $(S_{ti})_{t>0}$
 \EndFor{end}
 
 \For{t from 1 to T}
-	\State $\displaystyle{r\sigma(t) = n^{-1} \sum_{i=1}^N r\sigma_i(t)}$
+	\State $\displaystyle{r\sigma(t) = n^{-1} \sum_{i=1}^M r\sigma_i(t)}$
 \EndFor{end}
 \\
 \Return $(r\sigma(t))_{t>0}$
@@ -1211,33 +1244,29 @@ In order to estimate the volatility of the spread $(S_t)_{t>0}$, we generate a l
 \end{algorithm}
 
 \section{Z-score}
-Z-score is a strategy based on mean-reverting patterns but unlike the Bollinger bands, Z-score assumed a non-zero constant mean. For this reason, Z-score is only suitable for stationary processes such as spreads between assets. Z-score is dimensionless indicator defined as $z_t = (S_t-\mu_S) / \sigma_S$, where $\mu_S$ and $\sigma_S$ are respectively the mean and variance of the spread. $z_t$ measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open/close a position when the Z-score hits a predefined n-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. If the Z-score hits a low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position is unwind. A same reasoning is done for short positions. \cite{caldeira2013} suggested the basic trading strategy signals: Open long position if $\leq \Phi^{-1}(q_{OL}) = -2.00$, open short position if $\geq \Phi^{-1}(q_{OS}) = 2.00$, close short position if $\leq \Phi^{-1}(q_{CS}) = 0.75$ and close long position if $\geq \Phi^{-1}(q_{CL}) = -0.50$.
-% \begin{align*}
-% \text{Open long position if } &\leq \Phi^{-1}(q_{OL}) = -2.00\\
-% \text{Open short position if } &\geq \Phi^{-1}(q_{OS}) = 2.00\\
-% \text{Close short position if } &\leq \Phi^{-1}(q_{CS}) = 0.75\\
-% \text{Close long position if } &\geq \Phi^{-1}(q_{CL}) = -0.50
-% \end{align*}
+Z-score is a strategy based on mean-reverting patterns but unlike the Bollinger bands, Z-score assumed a non-zero constant mean. For this reason, Z-score is only suitable for stationary processes such as spreads. Z-score is dimensionless indicator defined as $z_t = (S_t-\mu_S) / \sigma_S$, where $\mu_S$ and $\sigma_S$ are respectively the unconditional mean and variance of the spread. $z_t$ measures the distance to the long-term mean in units of long-term standard deviation. The basic rule is to open/close a position when the Z-score hits a predefined $n$-quantile of the standard normal distribution $\Phi^{-1}(q_n)$. If the Z-score hits a low threshold, it means that the spread is underpriced and a long position should be opened. When the spread reverts to its mean, the position is unwound. A same reasoning is done for short positions. \cite{caldeira2013} suggested the basic trading strategy signals: Open long position if $z_t \leq \Phi^{-1}(q_{OL}) = -2.00$, open short position if $z_t \geq \Phi^{-1}(q_{OS}) = 2.00$, close short position if $z_t \leq \Phi^{-1}(q_{CS}) = 0.75$ and close long position if $z_t \geq \Phi^{-1}(q_{CL}) = -0.50$. Figure \ref{zscore_graphical_strat} shows the spread $S_t$, the Z-score $z_t$ and the thresholds of the strategy.
+
 
 \begin{figure}[H]
 \centering
 \includegraphics[width = 1\textwidth]{zscore/zscore1}
-\caption{Spread $S_t$ (same spread as in Section \ref{sec:model_selection}) and its Z-score $z_t$. The quantiles thresholds are also shown in color.}
-\label{dist_100_r2_quad}
+\caption{Spread $S_t$ (defined in Section \ref{sec:model_selection}) and its Z-score $z_t$. From top to bottom: $\Phi^{-1}(q_{OS}), \Phi^{-1}(q_{CS}), \Phi^{-1}(q_{CL}), \Phi^{-1}(q_{OL})$.}
+\label{zscore_graphical_strat}
 \end{figure}
 
 Unlike the Bollinger Bands, the Z-score is highly sensitive to stochastic trends because the mean is assumed to be strictly constant due to the nature of the strategy. In other words, it can be dangerous if the spread loses its cointegrated property and becomes divergent. In practical applications and according to the risk policy of the firm, a stop loss threshold is usually set to avoid any huge losses.
 
-\chapter{Procedure}
-A typical Statistical Arbitrage strategy is made of four parts: presentation of the data, selection of the suitable tuples satisfying some criteria such as cointegration, build trading signals based on predefined investment decision rules and finally assess the performance of the strategy.
+\chapter{Algorithmic Trading Simulation with Model $\mathcal{M}_7$}
+Algorithmic trading uses algorithms to drive trading decisions in electronic financial markets. The workflow implemented involves: Preparing the dataset and performing a selection of the suitable tuples satisfying some criteria such as cointegration; Building trading signals for each of the two strategies; Applying parallel for time-efficient backtesting and parameter identification via cross validation; Calculating profit and loss and conducting risk analysis to assess the performance of the strategy.
 
 \section{Presentation of the dataset}
-The sample period spans from January 1990 to March 2014 summing up to 8844 observations. The data consists of daily closing prices of the 1232 most liquid stocks traded on the US markets (NASDAQ, NYSE). This characteristic is important for the strategies, since it greatly diminishes the slippage effect, reduces the transaction costs and permits to unwind any position without impacting the market too much. The data was adjusted for dividends and splits, avoiding false trading signals generated by these events, as pointed out by \cite{broussard2012}. The whole sample period is divided into sets of length two years. Each set is split into two sets: the in-sample set denoted $\mathcal{I}$ and the out-of-sample $\mathcal{O}$with a 2:1 ratio. Detection of cointegrated tuples, selection of the best tuples and tuning of the Bollinger bands parameters $(n,t,\alpha)$ is done on $\mathcal{I}$. The purpose of $\mathcal{O}$ is to assess the performance of the strategy on unseen data with the parameters computed in the training period. This technique is known as cross validation and is used to avoid overfitting during the calibration. 
+The sample period spans from January 1990 to March 2014 summing up to 8844 observations. The data consists of daily closing prices of the 1232 most liquid stocks traded on the US markets (NASDAQ, NYSE). This characteristic is important for the strategies, since it greatly diminishes the slippage effect, reduces the transaction costs and permits to unwind any position without impacting the market too much. The data was adjusted for dividends and splits, avoiding false trading signals generated by these events, as pointed out by \cite{broussard2012}. The whole sample period is divided into sets of length two years. Each set is split into two sets: the in-sample set denoted $\mathcal{I}$ and the out-of-sample $\mathcal{O}$ with a 2:1 ratio. Detection of cointegrated tuples, selection of the best tuples and tuning of the Bollinger bands parameters $(p,t,\alpha)$ is done on $\mathcal{I}$. The purpose of $\mathcal{O}$ is to assess the performance of the strategy on unseen data with the parameters computed in the training period. This technique is known as cross validation and is used to avoid overfitting during the calibration. 
 
 
 \section{General Framework}
 
-The first motivation of considering a portfolio approach is to lower the volatility associated to each tuple trading by smoothing the net value over time. The approach consists in ranking the cointegrated tuples based on the best in-sample Sharpe Ratios $\mathcal{SR}$. The first 20 tuples are used to compose the portfolio. Only two types of transactions are considered: move into a new position, or unwind a previously opened position. At the end of each trading period, all open positions are closed. Throughout the analysis, we consider 0.5\% of transaction costs. This choice was made for pairs trading in \cite{dunis2010}, \cite{dunis2005} and \cite{alexander2002}. For simplicity, no rental costs are considered for short positions but the capital invested in short selling cannot exceed 50\% of the total capital, either invested or in cash. The asset allocation in the portfolio follows a invested weighting scheme with no dynamic rebalancing. Each tuple is given the same weight and if there are no open positions, the money is not invested and remain as cash in the portfolio. For a particular tuple, the number of open positions is limited to only one on the spread. The strategy is self-financing, i.e. profits are reinvested and no deposits or withdrawals are permitted. When a long position is initiated, the first asset is bought with quantity 1 and the remaining assets of the tuple are sold with the respective quantities indicated by the cointegrated vector $\beta$. It is assumed that the trader can buy a portion of an asset. This same position is closed by selling one unit of the first asset and buying the remaining assets, still in the same proportions.
+The approach consists in ranking the cointegrated tuples based on the best in-sample Sharpe Ratios $\mathcal{SR}$. The first 10 tuples are used to compose the portfolio. The first motivation of considering a portfolio is to lower the volatility associated to each tuple trading by smoothing the net value over time. Only two types of transactions are considered: move into a new position, or unwind a previously opened position. At the end of each trading period, all open positions are closed. Throughout the analysis, we consider 5 point basis of transaction costs. This choice was made for pairs trading in \cite{dunis2010}, \cite{dunis2005} and \cite{alexander2002}. For simplicity, no rental costs are considered for short positions but the capital invested in short selling cannot exceed 50\% of the total capital, either invested or in cash. The asset allocation in the portfolio follows a invested weighting scheme with no dynamic rebalancing. Each tuple is given the same weight and if there are no open positions, the money is not invested and remain as cash in the portfolio. For a particular tuple, the number of open positions is limited to only one per spread. The strategy is self-financing, i.e. profits are reinvested and no deposits or withdrawals are permitted. When a long position is initiated, the first asset is bought with quantity 1 and the remaining assets of the tuple are sold with the respective quantities indicated by the cointegrated vector $\beta$. This same position is closed by selling one unit of the first asset and buying the remaining assets, still in the same proportions. It is assumed that the trader can buy a portion of an asset. \\
+The first part of the algorithmic trading part is presented in the next section.
 
 \section{Selection of the cointegrated tuples}
 
@@ -1245,7 +1274,7 @@ It is common in pair trading to require that the tuples belong to the same secto
 
 \subsection{Complexity Reduction with Correlation}
 \label{Complexity_Reduction_with_Correlation}
-In the general case, cointegration usually implies correlation but correlation usually doesn't imply cointegration. Spurious regression is a very good example where the reverse is not true. The idea is to filter the uncorrelated tuples to limit the number of candidates for cointegration. This assertion holds because a correlation test can be performed much faster than a cointegration test (Table \ref{time_spent_test_bivariate}).
+In the general case, cointegration usually implies correlation but correlation usually doesn't imply cointegration. Spurious regression is a very good example where the reverse is not true. The idea is to filter the uncorrelated tuples to limit the number of candidates for cointegration. This assertion holds because a correlation test is performed much faster than a cointegration test (Table \ref{time_spent_test_bivariate}).
 
 \begin{table}[H]
 \centering
@@ -1263,24 +1292,50 @@ Phillips-Perron                &  3.04 ms\\
 \label{time_spent_test_bivariate}
 \end{table}
 
-When it comes to pairs trading, a simple correlation test is enough. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $x_n$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$ where $R_{xx}^{-1}$ is the inverse of the matrix
+When it comes to pairs trading, a simple correlation test is enough. When $n \geq 3$, it is preferred to use the multiple correlation coefficient, better known as $R^2$. It can be computed using the vector $c = (r_{x1y}, r_{x2y},...,r_{xNy})^T$ of correlation $r_{xny}$ between the predictor variables $(x_n)_{n \in [1,N]}$ and the target variable $y$, and the correlation matrix $R_{xx}$ of inter-correlations (Equation \ref{rxx}) between predictor variables. It is given by $R^2 = c^T R_{xx}^{-1}c$.
 
 \begin{equation}
 R_{xx} =\begin{pmatrix}
 r_{x1x1}    & r_{x1x2} & ...  & r_{x1xn}  \\
 r_{x2x1}    & \ddots &   & \vdots  \\
 \vdots       &   & \ddots &   \\
-r_{xnx1}    & \hdots &   & r_{xnxn} \\
+r_{xnx1}    & \hdots &   & r_{xnxn} \label{rxx} \\
 \end{pmatrix} 
 \end{equation}
-One problem arises: the value of the coefficient depends on the ordering of the tuple. To provide convincing evidence of this fact, let's consider a simple example. A regression of $y$ on $x$ and $z$ will in general have a different $R^2$ that will a regression of $z$ on $x$ and $y$. Let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R^2$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R^2$. It means that the ordering inside a tuple has its importance at least from a statistical point of view, as highlighted in Definition \ref{definition_tuple}. This assertion is also true for all cointegrations tests, except for the Johansen test where the ordering does not matter. This notion of ordering is much less obvious from a pure financial point of view. Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock sector when $n=4$. The period spans from Jan 01, 2012 to May 27, 2013. Most distributions exhibit a bell shape and are therefore candidates for a filtering selection based on an arbitrary threshold $R^2_{th}$. It is worth noting that for $n=4$, each sector has its own threshold $R^2_{th}$ due to its specific distribution. $R^2_{th}$ is usually selected in such a way that we have approximately 20 cointegrated tuples per period.
+It is worth noting that $R^2$ is order-dependent. To provide convincing evidence of this fact, let's consider a simple example. A regression of $y$ on $x$ and $z$ will in general have a different $R^2$ that will a regression of $z$ on $x$ and $y$. Let $z$ be uncorrelated with both $x$ and $y$ while $x$ and $y$ are linearly related to each other. A regression of $z$ on $y$ and $x$ will yield a $R^2$ of zero, while a regression of $y$ on $x$ and $z$ will yield a strictly positive $R^2$. It means that the ordering inside a tuple has its importance at least from a statistical point of view, as highlighted in Definition \ref{definition_tuple}. This assertion is also true for most cointegrations tests. This notion of ordering is much less obvious from a pure financial point of view. \\
+
+An example is presented with $n=4$. Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock sector for quadruples. The period spans from Jan 01, 2012 to May 27, 2013. Most distributions exhibit a bell shape with thin right tails and are therefore candidates for a filtering selection based on an arbitrary threshold $R^2_{th}$. It is worth noting that for $n=4$, each sector has its own threshold $R^2_{th}$. $R^2_{th}$ is usually selected in such a way that we have approximately 20 cointegrated tuples per period.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width = 0.9\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
-\caption{Distribution of $100 \times R^2$ for the quadruples (not all are cointegrated). Period is from Jan 01, 2012 to May 27, 2013}
+\includegraphics[width = 0.62\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
+\caption{Density of $100 \times R^2$ for the quadruples (not all are cointegrated). Period is from Jan 01, 2012 to May 27, 2013}
 \label{dist_100_r2_quad}
 \end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\hline
+\multicolumn{1}{|l|}{Sector name}     & \multicolumn{1}{|l|}{Count before filtering} & \multicolumn{1}{|l|}{Measure $R_{thr}^2$} & \multicolumn{1}{l|}{Count after filtering} \\ \hline
+Consumer Discretionary						 &  165986922 & 0.95 & 15936 \\
+Consumer Staples                   &  3025246 & 0.54 & 1074\\
+Energy                             &  4651592 & 0.70 & 1536\\
+Financials                         &  69777874 & 0.77 & 2730\\
+Health Care                        &  7567468 & 0.56 & 2982\\
+Industrials                        &  36063822 & 0.70 & 1338\\
+Information Technology             & 44043326 & 0.72 & 1080\\
+Materials                          & 1972014 & 0.66 & 2070\\
+N.A                                & 23232 & 0.21 & 1080\\
+Telecommunication Services         & 360 & 0.00 & 360\\
+Utilities                          & 760164 & 0.72 & 1290\\
+\hline
+\end{tabular}
+\caption{Correlation filtering on the quadruples from Jan 01, 2012 to May 27, 2013}
+\label{corr_quad}
+\end{table}
+Table \ref{corr_quad} shows the number of quadruples before and after the filtering. $R^2_{thr}$ has been selected in such a way that roughly between 1000 and 10000 quadruples are selected for each sector for cointegration tests. \\
+In this case, the assumption of the same sector is almost inevitable but it becomes interesting to question it for triples trading, which is the purpose of the next section.
 
 \subsection{Assumption of the Same Sector}
 \cite{chan2009} and \cite{dunis2010} argued that the pairs (and more generally tuples) should belong to the same sector, otherwise the cointegration and the correlation would be purely fortuitous. To check the veracity of this assumption, all the possible cointegrated triples ($n$ = 3) are formed on the whole period of the dataset  - from January, 01 1990 to March, 14 2014 - and the $R^2$ is computed using the methodology exposed in \ref{Complexity_Reduction_with_Correlation}. The cointegrated triples are then sorted according to their $R^2$ from the highest to the lowest value. Each triple is characterized by the sector criteria: \textit{All}, \textit{Partial} or \textit{None}. \textit{All} means the three assets composing the triple belong to the same sector, \textit{Partial} that exactly two belong to the same sector, \textit{None} that all belong to different sectors. As a result, 30418 cointegrated triples were formed. 816 belonged to \textit{All}, 10517 to \textit{Partial} and the remaining 19085 to \textit{None}. Figure \ref{triples_sector_1} shows that for very high $R^2$ on daily returns, almost all the cointegrated triples belong to the same sector. Then for high $R^2$, the proportion of partial triples becomes higher than two other groups until the half of the set. The conclusion is that when the number of selected cointegrating triples or more generally tuples is not very large (less than 500 or 1.5\% here for the whole period), it is reasonable to consider the assumption of the same sector for increased execution speed.
@@ -1348,7 +1403,7 @@ From the candidates of the correlation step, a rigorous testing for cointegratio
 
 \section{Optimization of the strategy}
 \label{sec:optimization_strategy}
-Bollinger bands strategy requires to estimate three parameters: the number of periods $p$ to compute the bands, the type $t$ of moving average (EMA or SMA) used in the mid band and $\alpha$ which controls the interval between the volatility bands. John Bollinger suggests $p = 20, \alpha = 2$ and simple moving average as default values. To get the best out of the strategy, a cross validation is performed on the in-sample set $\mathcal{I}$. The criterion of optimization is the in-sample Sharpe Ratio. The cross validation parameter space is denoted  $\Omega_{CV} = \mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha$. Complex methods of optimization have also been attempted such as Simulated annealing. It turns out that an exhaustive search is a serious alternative because of the efforts invested into the parallelization of the task. The latter provides enhanced visual results and is therefore our recommended choice to reveal the topology of $f(\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha) \rightarrow \mathbb{R}$.
+Bollinger bands strategy requires to estimate three parameters: the number of periods $p$ to compute the bands, the type $t$ of moving average (EMA or SMA) used in the mid band and $\alpha$ which controls the interval between the volatility bands. John Bollinger suggests $p = 20, \alpha = 2$ and simple moving average as default values. To get the best out of the strategy, a cross validation is performed on the in-sample set $\mathcal{I}$. The criterion of optimization is the in-sample Sharpe Ratio $\mathcal{SR}$. The cross validation parameter space is denoted  $\Omega_{CV} = \mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha$. Complex methods of optimization have also been attempted such as Simulated Annealing. It turns out that an exhaustive search is a serious alternative because of the efforts invested into the parallelization of the task. The exhaustive search provides enhanced visual results and is therefore our recommended choice to reveal the topology of $f(\mathcal{P}_n \times \mathcal{P}_t \times \mathcal{P}_\alpha) \rightarrow \mathbb{R}$.
  
 \section{Performance Assessment}
 Once the strategy was optimized on $\mathcal{I}$, it can be assessed on the out-sample test $\mathcal{O}$. The performance of the portfolios are examined in terms of cumulative return (CR), variance of returns $(\sigma^2)$, Sharpe Ratio (SR) and Maximum Drawdown (MDD). The maximum drawdown (MDD) is defined as the maximum percentage drop incurred from a peak to a bottom up to time $T$. It is the worst possible scenario up to time $T$.
@@ -1364,8 +1419,9 @@ SR =  \sqrt{252 }  . \frac{\bar{R_t}}{\sqrt{T^{-1} \sum_{t=1}^T (R_t - \bar{R_t}
 
 One of the techniques to assess the performance of a strategy is to compare it to the standard Buy and Hold strategy where the holder buys various assets at time $0$ and sell them at time $T$. \cite{gatev2006} also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs.
 
-\chapter{Results}
-\section{Volatility Modelling of the spread}
+\chapter{Comparison of the strategies}
+This chapter is structured in three main parts. Firstly, an example is examined to show some interesting facts about volatility modelling. Next, the cross validation of the Bollinger bands parameters is presented in further details. Finally, the Bollinger bands with and without the complex volatility estimation are compared. Also, the Z-score and the Buy and Hold strategies are considered as a benchmark.
+\section{Volatility Modelling of the spread using $\mathcal{M}_7$}
 Throughout this section, the same spread $(S_t)_{t>0}$ as that of Section \ref{sec:model_selection} is considered. This analysis is not restricted to this particular spread and is valid for any stationary spread and stochastic volatility models. This sections focused on the main points described in Section \ref{sec:estimation_bollinger_bands_sv}. The model $\mathcal{M}_7$ is used to estimate the conditional variance $S_t | S_{t-1}, \matr{x}_t, \theta$. From there and from Equation (\ref{equation_price_vol}), $M = 1000$ Monte Carlo trajectories are generated. Figure \ref{fig:generation_of_the_trajectories} shows the generation of the trajectories according to the estimated conditional variance.
 \begin{figure}[H]
     \centering

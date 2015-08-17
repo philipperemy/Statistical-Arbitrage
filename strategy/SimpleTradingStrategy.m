@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, spread_vol, disp)
+function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, spread_vol, disp, considerTrdCost)
     
     try
         spr = Spread.px;
@@ -63,7 +63,14 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
         
         if(spr_lowr_trends(i) == DOWN && pos_sell)
 			pos_sell = false; %unwind pos
-			pl(i) = (last_px_sell - spr(i)) * order_sell.spr_qty;
+            
+            if(considerTrdCost == 1)
+                transactionCost = ( order_sell.spr_qty * last_px_sell * (5/10000) );
+            else
+                transactionCost = 0;
+            end
+            
+			pl(i) = ( (last_px_sell - spr(i)) * order_sell.spr_qty ) - transactionCost;
 			if(disp) fprintf('[%i] unwind SELL at price %f, diff %f\n', i, spr(i), pl(i)); end;
 			continue;
         end
@@ -78,7 +85,14 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
 
         if(spr_uppr_trends(i) == UP && pos_buy)
 			pos_buy = false;
-			pl(i) = (spr(i) - last_px_buy) * order_buy.spr_qty;
+            
+            if(considerTrdCost == 1)
+                transactionCost = ( order_buy.spr_qty * last_px_buy * (5/10000) );
+            else
+                transactionCost = 0;
+            end
+            
+			pl(i) = ( (spr(i) - last_px_buy) * order_buy.spr_qty ) - transactionCost;
 			if(disp) fprintf('[%i] unwind BUY at price %f diff %f\n', i, spr(i), pl(i)); end;
 			continue;
         end
