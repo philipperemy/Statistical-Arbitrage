@@ -1,7 +1,7 @@
 function [ mid, uppr, lowr ] = Compute_Bollinger_Bands_SV(data, wsize, wts, nstd, returns_volatility_var)
     %wts is not used. Not yet.
     returns_volatility_sd = sqrt(returns_volatility_var);
-    M = 1000;
+    M = 100;%for speed. MC param
     T = length(data);
     generated_processes = zeros(M, T);
     vol_returns = zeros(T,1);
@@ -16,7 +16,13 @@ function [ mid, uppr, lowr ] = Compute_Bollinger_Bands_SV(data, wsize, wts, nstd
     end
 
     sv_vol = mean(movstd_mat, 1)';
-    mid    = tsmovavg(data,'s',wsize,1);
+    
+    if(wts == 1)
+        [mid,~,~] = bollinger(data, wsize, wts, nstd);
+    else
+         mid = tsmovavg(data,'s',wsize,1);
+    end
+    
     uppr   = mid+nstd*sv_vol;
     lowr   = mid-nstd*sv_vol;
 end
