@@ -1,5 +1,9 @@
 function [ mid, uppr, lowr ] = Compute_Bollinger_Bands_SV(data, wsize, wts, nstd, returns_volatility_var)
     %wts is not used. Not yet.
+    
+    %CAN BE HIGHLY OPTIMIZED
+    %GENERATED PROCESSES CAN BE DONE BEFOREHAND
+    
     returns_volatility_sd = sqrt(returns_volatility_var);
     M = 100;%for speed. MC param
     T = length(data);
