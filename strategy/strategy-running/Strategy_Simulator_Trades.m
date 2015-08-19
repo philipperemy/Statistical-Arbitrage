@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost )
+function [ pl, balance_cum ] = Strategy_Simulator_Trades( pp, beg, T, balance_init, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost )
 
     UP 					= 1;
     DOWN 				= -1;
@@ -19,13 +19,6 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
     for i = beg:T
         
         balance = balance + pl(i-1);
-        if(pos_sell)
-            pl(i) = (spr(i-1) - spr(i)) * order_sell.spr_qty;
-        end
-        
-        if(pos_buy)
-            pl(i) =  (spr(i) - spr(i-1)) * order_buy.spr_qty;
-        end
         
         if(sell_open(i) == DOWN && ~pos_sell)
             if(disp) fprintf('[%i] Initiating SELL at price %f\n', i, spr(i)); end;
@@ -44,8 +37,8 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
             end
             
             pos_sell = false; %unwind pos
-			pl(i) = pl(i) - transactionCost;
-			if(disp) fprintf('[%i] unwind SELL at price %f, bought at %f\n', i, spr(i), last_px_sell); end;
+			pl(i) = ( (last_px_sell - spr(i)) * order_sell.spr_qty ) - transactionCost;
+			if(disp) fprintf('[%i] unwind SELL at price %f, diff %f\n', i, spr(i), pl(i)); end;
 			continue;
         end
         
@@ -66,8 +59,8 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
                 transactionCost = 0;
             end
             
-			pl(i) = pl(i) - transactionCost;
-			if(disp) fprintf('[%i] unwind BUY at price %f, bought at %f\n', i, spr(i), last_px_buy); end;
+			pl(i) = ( (spr(i) - last_px_buy) * order_buy.spr_qty ) - transactionCost;
+			if(disp) fprintf('[%i] unwind BUY at price %f diff %f\n', i, spr(i), pl(i)); end;
 			continue;
         end
     end

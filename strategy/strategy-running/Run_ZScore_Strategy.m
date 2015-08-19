@@ -1,3 +1,6 @@
+clear;clc;
+load('spreads_6575_7306.mat');
+
 addpath('../../helpers/');
 addpath('../../coint/deepsearch');
 addpath('../../coint/impl');
@@ -19,7 +22,7 @@ for i = 1:spread_count
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, 1, T, zscore_conf, 0, 1 );
+	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, 1, T, zscore_conf, 0, 1, @Strategy_Simulator );
 	vol 		= std(pl);
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
@@ -42,9 +45,8 @@ for i = spreads_ids
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, T, length(Spread.px), zscore_conf, 0, 1 );
+	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, T, length(Spread.px), zscore_conf, 0, 1, @Strategy_Simulator );
 	vol 		= std(pl);
-	sharpe 		= profit / vol;
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
 

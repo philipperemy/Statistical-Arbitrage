@@ -1,3 +1,6 @@
+clear;clc;
+load('spreads_6575_7306.mat');
+
 addpath('../../helpers/');
 addpath('../../coint/deepsearch');
 addpath('../../coint/impl');
@@ -18,9 +21,8 @@ for i = 1:spread_count
     fprintf('i = %d\n', i);
     Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-    [pl, cum_pro]= SimpleTradingStrategy( pp, Spread, 1, T, boll_conf, spread_vol, 0, 1 );
+    [pl, cum_pro]= SimpleTradingStrategy( pp, Spread, 1, T, boll_conf, spread_vol, 0, 1, @Strategy_Simulator );
     vol          = std(pl);
-    sharpe = profit / vol;
     real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
 
@@ -32,7 +34,7 @@ for i = 1:spread_count
 end
 
 sorted_mat  = Rank_Results(mat, 3, 50);
-spreads_ids = sorted_mat(end-10:end,5)';
+spreads_ids = sorted_mat(end-19:end,5)';
 
 mat_t 		 = zeros(length(spreads_ids) , 5 );
 fprintf('testing\n');
@@ -43,9 +45,8 @@ for i = spreads_ids
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategy( pp, Spread, T, length(Spread.px), boll_conf, spread_vol, 0, 1 );
+	[pl, cum_pro]= SimpleTradingStrategy( pp, Spread, T, length(Spread.px), boll_conf, spread_vol, 0, 1, @Strategy_Simulator );
 	vol 		= std(pl);
-	sharpe 		= profit / vol;
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
 
@@ -59,6 +60,7 @@ for i = spreads_ids
 end
 portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
 
+%Sometimes you can just remove the end if it's too bad.s
 PerformanceAssessment(portfolio_cumsum, spx, 10000)
 
 Spreads_PMCMC = spreads(spreads_ids);
