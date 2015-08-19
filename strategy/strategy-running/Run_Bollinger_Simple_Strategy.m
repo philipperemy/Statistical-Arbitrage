@@ -1,5 +1,6 @@
 clear;clc;
 load('spreads_6575_7306.mat');
+load('spx_6575_7306.mat');
 
 addpath('../../helpers/');
 addpath('../../coint/deepsearch');
