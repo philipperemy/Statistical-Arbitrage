@@ -1,7 +1,7 @@
-%not perfect
+
 function [log_p_y_given_theta, estimated_states, estimated_states2] = BootstrapParticleFilter_TwoFactorsCor(y, rho1, sigma1, rho2, sigma2, beta, cor, N, p_y_given_x)
     
-    fprintf('rho1 = %f, sigma1 = %f, rho2 = %f, sigma2 = %f, beta = %f, cor = %f\n', rho1, sigma1, rho2, sigma2, beta, cor);
+    %fprintf('rho1 = %f, sigma1 = %f, rho2 = %f, sigma2 = %f, beta = %f, cor = %f\n', rho1, sigma1, rho2, sigma2, beta, cor);
     T                       = length(y);
     p1                      = zeros(N, T);
     p2                      = zeros(N, T);

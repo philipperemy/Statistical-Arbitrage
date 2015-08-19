@@ -11,17 +11,17 @@ format longg;
 
 spread_count = length(spreads);
 mat 		 = zeros(spread_count , 5 );
-%zscore_conf  = struct('sell_open', 2, 'sell_close', 0.75, 'buy_open', -2, 'buy_close', -0.5);
-zscore_conf  = struct('sell_open', 1, 'sell_close', -1, 'buy_open', -1, 'buy_close', 1);
-
+boll_conf    = struct('wsize', 20, 'wts', 1, 'nstd', 2);
+spread_vol   = 0;
 %train
 for i = 1:spread_count
     fprintf('i = %d\n', i);
-	Spread 		= spreads(i);
+    Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, 1, T, zscore_conf, 0, 1 );
-	vol 		= std(pl);
-	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
+    [pl, cum_pro]= SimpleTradingStrategy( pp, Spread, 1, T, boll_conf, spread_vol, 0, 1 );
+    vol          = std(pl);
+    sharpe = profit / vol;
+    real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
 
 	mat(i,1) 	= cum_pro(end);
@@ -31,18 +31,19 @@ for i = 1:spread_count
     mat(i,5)    = i;
 end
 
-sorted_mat       = Rank_Results( mat, 3, 50);
-spreads_ids      = sorted_mat(end-10:end,5)';
+sorted_mat  = Rank_Results(mat, 3, 50);
+spreads_ids = sorted_mat(end-10:end,5)';
 
 mat_t 		 = zeros(length(spreads_ids) , 5 );
 fprintf('testing\n');
 c = 1;
+
 portfolio_cumsum = zeros(1);
 for i = spreads_ids
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, T, length(Spread.px), zscore_conf, 0, 1 );
+	[pl, cum_pro]= SimpleTradingStrategy( pp, Spread, T, length(Spread.px), boll_conf, spread_vol, 0, 1 );
 	vol 		= std(pl);
 	sharpe 		= profit / vol;
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
@@ -57,4 +58,8 @@ for i = spreads_ids
     c = c + 1;
 end
 portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
+
 PerformanceAssessment(portfolio_cumsum, spx, 10000)
+
+Spreads_PMCMC = spreads(spreads_ids);
+
