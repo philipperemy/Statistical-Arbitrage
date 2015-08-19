@@ -25,10 +25,16 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
 
     spreads_count = 0;
     for i = i_range
+        spreads_count_y = 0;
         fprintf('i = %i\n', i);
         for j = (i+1):stocks_count
             for k = (j+1):stocks_count
 
+                %%%For better results
+                if(spreads_count_y > 10)
+                    continue;
+                end
+                
                 if(isequal(m_support(:,k), m_support(:,j)) && isequal(m_support(:,k), m_support(:,i)))
 
                     stock_1 = GetPrice(pp, i);
@@ -47,6 +53,7 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
                             
                             if( h )
                                 spreads_count = spreads_count + 1;
+                                spreads_count_y = spreads_count_y + 1;
                                 spreads(spreads_count) = spread;
 
                                 ret_1 = diff(log(stock_1));
@@ -63,7 +70,7 @@ function [ spreads ] = SpreadFinder( pp, corr_thres, i_range, disp, filename )
                             
                                 if(write_file) fprintf(f, s); end;
                                 if(disp) fprintf(s); end;
-                            
+                                if(disp) fprintf('count = %d\n', spreads_count); end;
                             end
                         end
                     catch ex

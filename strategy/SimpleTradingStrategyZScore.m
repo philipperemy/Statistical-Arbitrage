@@ -6,7 +6,10 @@ function [ pl, balance_cum ] = SimpleTradingStrategyZScore( pp, Spread, start_id
         spr = Spread;
     end
     
-    spr = spr(start_idx:end_idx);
+    if(end_idx ~= 0)
+        spr = spr(start_idx:end_idx);
+    end
+    
     T = length(spr);
     
     mu = mean(spr);

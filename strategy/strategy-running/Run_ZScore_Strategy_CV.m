@@ -2,6 +2,7 @@ addpath('../../helpers/');
 addpath('../../coint/deepsearch');
 addpath('../../coint/impl');
 addpath('..');
+spx_data = csvread('../../data/spx.csv');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% LOAD A SPREAD MODULE %%%%

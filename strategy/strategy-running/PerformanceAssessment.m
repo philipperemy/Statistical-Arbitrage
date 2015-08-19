@@ -25,6 +25,8 @@ function [ s ] = PerformanceAssessment( pl_strat_cum, spx, initial_bet )
     len = length(pl_spx_cum);
     flat_init_bet_cum = repmat(initial_bet, len, 1);
 
+    diff_pl_strat_cum = diff_pl_strat_cum';
+    pl_strat_cum = pl_strat_cum';
     plot([pl_risk_free_cum pl_spx_cum pl_strat_cum flat_init_bet_cum]);
     figure;
     
