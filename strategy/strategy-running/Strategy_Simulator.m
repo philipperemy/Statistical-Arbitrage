@@ -1,26 +1,5 @@
-function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, spread_vol, disp, considerTrdCost)
-    
-    try
-        spr = Spread.px;
-    catch
-        spr = Spread;
-    end
-    
-    spr = spr(start_idx:end_idx);
-    T = length(spr);
-    
-    if(spread_vol ~= 0)
-        [mid, uppr, lowr] = Compute_Bollinger_Bands_SV(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd, spread_vol);
-    else
-        [mid, uppr, lowr] = bollinger(spr, boll_conf.wsize, boll_conf.wts, boll_conf.nstd);
-    end
-	
-    %beg = 100;
-    beg = 20;
-    [ spr_uppr_trends ] = CrossingPointsCalculator(spr - uppr, beg, T);
-    [ spr_mid_trends  ] = CrossingPointsCalculator(spr - mid , beg, T);
-    [ spr_lowr_trends ] = CrossingPointsCalculator(spr - lowr, beg, T);
-    
+function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost )
+
     UP 					= 1;
     DOWN 				= -1;
 	
@@ -34,26 +13,14 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
     last_px_buy 		= 0;
     
     pl 					= zeros(1,T);
-    
-    balance_init 		= 10000;
     balance 			= balance_init;
-	
 	max_ss_per			= 0.5; %max short selling percentage of outstanding capital
     
-    %BUG: if two positions are open at the same time, the balance is like
-    %20000, more than the 10000 initial.
-	for i = beg:T
+    for i = beg:T
         
         balance = balance + pl(i-1);
         
-        % Strategy is:
-        % SELL-1  : DOWN between Uppr and Spr
-        % SELL-2  : DOWN between Spr  and Low  (unwind)
-        % BUY-1   : UP between   Lowr and Spr
-        % BUY-2   : UP between   Spr and  Uppr (unwind)
-        % Only two positions BUY/SELL can be initiated at a time
-        
-        if(spr_uppr_trends(i) == DOWN && ~pos_sell)
+        if(sell_open(i) == DOWN && ~pos_sell)
             if(disp) fprintf('[%i] Initiating SELL at price %f\n', i, spr(i)); end;
             order_sell = SpreadBuildOrder( pp, Spread, SELL, balance, max_ss_per, i, disp );
             pos_sell = true; %init pos
@@ -61,7 +28,7 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
 			continue;
         end
         
-        if(spr_lowr_trends(i) == DOWN && pos_sell)
+        if(sell_close(i) == DOWN && pos_sell)
             
             if(considerTrdCost == 1)
                 transactionCost = ( order_sell.spr_qty * last_px_sell * (5/10000) );
@@ -75,7 +42,7 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
 			continue;
         end
         
-        if(spr_lowr_trends(i) == UP && ~pos_buy)
+        if(buy_open(i) == UP && ~pos_buy)
 			if(disp) fprintf('[%i] Initiating BUY at price %f\n', i, spr(i)); end;
 			order_buy = SpreadBuildOrder( pp, Spread, BUY, balance, max_ss_per, i, disp );
 			pos_buy = true;
@@ -83,7 +50,7 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
 			continue;
         end
 
-        if(spr_uppr_trends(i) == UP && pos_buy)
+        if(buy_close(i) == UP && pos_buy)
 			pos_buy = false;
             
             if(considerTrdCost == 1)
@@ -98,6 +65,30 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
         end
     end
     
+    %close position at the end
+    if(pos_buy)
+        if(considerTrdCost == 1)
+            transactionCost = ( order_buy.spr_qty * last_px_buy * (5/10000) );
+        else
+            transactionCost = 0;
+        end
+        
+        pl(i) = ((spr(i) - last_px_buy) * order_buy.spr_qty) - transactionCost;
+        if(disp) fprintf('[%i] unwind BUY at price %f diff %f\n', i, spr(i), pl(i)); end;
+    end
+    
+    if(pos_sell)
+        if(considerTrdCost == 1)
+            transactionCost = ( order_sell.spr_qty * last_px_sell * (5/10000) );
+        else
+            transactionCost = 0;
+        end
+
+        pl(i) = ((last_px_sell - spr(i)) * order_sell.spr_qty) - transactionCost;
+        if(disp) fprintf('[%i] unwind SELL at price %f, diff %f\n', i, spr(i), pl(i)); end;
+    end
+    
     balance_cum = cumsum(pl) + balance_init;
 
 end
+
