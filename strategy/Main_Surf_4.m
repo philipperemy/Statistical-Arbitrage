@@ -5,6 +5,7 @@ addpath('../pmcmc/');
 addpath('../models/');
 addpath('../likelihoods/');
 addpath('./surf/');
+addpath('strategy-running/');
 addpath('../coint/deepsearch/');
 load('../data/spx.mat');
 
@@ -39,7 +40,7 @@ W = sortrows(A, 3);
 
 wsize           = W(end,1);
 nstd            = W(end,2);
-[~, balance_cum]= SimpleTradingStrategy( pp, Spread, 1, length(Spread.px), struct('wsize', wsize, 'wts', wts, 'nstd', nstd), vol_tfsvl, 0, 1 );
+[~, balance_cum]= SimpleTradingStrategy( pp, Spread, 1, length(Spread.px), struct('wsize', wsize, 'wts', wts, 'nstd', nstd), vol_tfsvl, 0, 1, @Strategy_Simulator, 10000 );
 
 close all;
 figure;
