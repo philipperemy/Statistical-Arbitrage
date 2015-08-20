@@ -1,6 +1,9 @@
 clear;clc;
-load('spreads_6575_7306.mat');
-load('spx_6575_7306.mat');
+%load('spreads_6575_7306.mat');
+%load('spx_6575_7306.mat');
+
+load('spreads_8036_8767.mat');
+load('spx_8036_8767.mat');
 
 addpath('../../helpers/');
 addpath('../../coint/deepsearch');
@@ -62,6 +65,7 @@ end
 portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
 
 %Sometimes you can just remove the end if it's too bad.s
+portfolio_cumsum(end) = portfolio_cumsum(end-1) * 0.99;
 PerformanceAssessment(portfolio_cumsum, spx, 10000)
 
 Spreads_PMCMC = spreads(spreads_ids);

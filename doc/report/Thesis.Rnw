@@ -1209,7 +1209,7 @@ Z-score is a strategy based on mean-reverting patterns but unlike the Bollinger 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width = 1\textwidth]{zscore/zscore1}
+\includegraphics[width = 0.8\textwidth]{zscore/zscore1}
 \caption{Spread $S_t$ (defined in section \ref{sec:model_selection}) and its Z-score $z_t$. From top to bottom: $\Phi^{-1}(q_{OS}), \Phi^{-1}(q_{CS}), \Phi^{-1}(q_{CL}), \Phi^{-1}(q_{OL})$.}
 \label{zscore_graphical_strat}
 \end{figure}

@@ -16,6 +16,8 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
     balance 			= balance_init;
 	max_ss_per			= 0.5; %max short selling percentage of outstanding capital
     
+    cash_balance        = balance;
+    
     for i = beg:T
         
         balance = balance + pl(i-1);
@@ -29,9 +31,10 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
         
         if(sell_open(i) == DOWN && ~pos_sell)
             if(disp) fprintf('[%i] Initiating SELL at price %f\n', i, spr(i)); end;
-            order_sell = SpreadBuildOrder( pp, Spread, SELL, balance, max_ss_per, i, disp );
+            order_sell = SpreadBuildOrder( pp, Spread, SELL, cash_balance, max_ss_per, i, disp );
             pos_sell = true; %init pos
             last_px_sell = spr(i);
+            cash_balance = cash_balance - order_sell.spr_qty * last_px_sell;
 			continue;
         end
         
@@ -43,6 +46,8 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
                 transactionCost = 0;
             end
             
+            cash_balance = cash_balance + order_sell.spr_qty * last_px_sell; %get back your bet
+            cash_balance = cash_balance + (last_px_sell - spr(i))*order_sell.spr_qty - transactionCost; %add or diff
             pos_sell = false; %unwind pos
 			pl(i) = pl(i) - transactionCost;
 			if(disp) fprintf('[%i] unwind SELL at price %f, bought at %f\n', i, spr(i), last_px_sell); end;
@@ -51,9 +56,10 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
         
         if(buy_open(i) == UP && ~pos_buy)
 			if(disp) fprintf('[%i] Initiating BUY at price %f\n', i, spr(i)); end;
-			order_buy = SpreadBuildOrder( pp, Spread, BUY, balance, max_ss_per, i, disp );
+			order_buy = SpreadBuildOrder( pp, Spread, BUY, cash_balance, max_ss_per, i, disp );
 			pos_buy = true;
 			last_px_buy = spr(i);
+            cash_balance = cash_balance - order_buy.spr_qty * last_px_buy;
 			continue;
         end
 
@@ -66,6 +72,8 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
                 transactionCost = 0;
             end
             
+            cash_balance = cash_balance + order_buy.spr_qty * last_px_buy; %get back your bet
+            cash_balance = cash_balance + (spr(i)-last_px_buy)*order_buy.spr_qty - transactionCost; %add or diff
 			pl(i) = pl(i) - transactionCost;
 			if(disp) fprintf('[%i] unwind BUY at price %f, bought at %f\n', i, spr(i), last_px_buy); end;
 			continue;
