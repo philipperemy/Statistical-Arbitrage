@@ -305,9 +305,7 @@ Markov Chain Monte Carlo (MCMC) methods are well known techniques for sampling f
 The GARCH model and the Stochastic Volatility model are competing but non-nested models to describe unobserved volatility in asset returns. The former models the evolution of volatility deterministically. After the publications of \cite{engle1986}, these models have been generalized in numerous ways and applied to a vast amount of real-world problems. As an alternative, \cite{taylor1982} proposed in his seminal work to model the volatility probabilistically, i.e., through a state space model where the logarithm of the squared volatilities - the latent states - follow an autoregressive process of order one. This specification became known as the stochastic volatility (SV) model. Even though several papers such as \cite{kim1998} provide early evidence in favour of using SV, these have found comparably little use in applied work. The main discrepancy relied in the incapability of estimating the parameters of the SV models. It becomes now possible with techniques such as \textit{Particle Markov Chain Monte Carlo}. \cite{kastner2014} analysed exchanges rates from EUR to USD and showed that a standard SV performs better than a vanilla GARCH(1,1) in terms of predictive accuracy. \cite{chan2015} compare a number of GARCH and SV models on commodity markets. SV models generally compared favourably to their GARCH counterparts. The SV models have been retained as the default models for all the reasons specified above. \\
 
 
-This thesis focuses on the development and the estimation of stochastic volatility models to output an accurate estimate of the volatility of the co-integrated prices. This volatility is later used as part of a trading strategy based on the Bollinger bands, a widely known technical trading indicator created in 1980. In a nutshell, it consists of a set of three curves drawn in relation to securities prices. The middle band represents the trend which is used for the upper and the lower bands. The interval between the upper and lower bands is determined by the recent volatility of the security prices. The purpose is to give systematic trading decisions by evaluating if the price is either high, low or in the range. This strategy is suitable for cointegration since it is based on the mean-reverting pattern of the security. Also, we investigate the risk and return of a portfolio consisting of various cointegrated tuples. For further discussions based on mean-reverting stationary spreads and illustrative numerical examples, the reader is referred to \cite{vidyamurthy2004}.  It is well known that those common strategies are popular among many hedge funds. However, there is not a significant amount of academic literature devoted to it due to its proprietary nature. For a review of some of the existing academic models, see \cite{gatev2006}, \cite{perlin2009} and \cite{broussard2012}. \\
-
-The remainder of this thesis is organized as follows. In section 2, cointegration theory is presented in greater details. section 3 and 4 the state-space models and how to estimate the parameters using \textit{Particle Markov Chain Monte Carlo}. In section 5, the standard stochastic volatility and its extensions are presented. In section 4, the trading strategies are described. In section 5, the data and the results obtained are discussed. In section 6, a conclusion based on the empirical results is presented, along with suggestions of future research.
+This thesis focuses on the development and the estimation of stochastic volatility models to output an accurate estimate of the volatility of the co-integrated prices. This volatility is later used as part of a trading strategy based on the Bollinger bands, a widely known technical trading indicator created in 1980. In a nutshell, it consists of a set of three curves drawn in relation to securities prices. The middle band represents the trend which is used for the upper and the lower bands. The interval between the upper and lower bands is determined by the recent volatility of the security prices. The purpose is to give systematic trading decisions by evaluating if the price is either high, low or in the range. This strategy is suitable for cointegration since it is based on the mean-reverting pattern of the security. Also, we investigate the risk and return of a portfolio consisting of various cointegrated tuples. For further discussions based on mean-reverting stationary spreads and illustrative numerical examples, the reader is referred to \cite{vidyamurthy2004}.  It is well known that those common strategies are popular among many hedge funds. However, there is not a significant amount of academic literature devoted to it due to its proprietary nature. For a review of some of the existing academic models, see \cite{gatev2006}, \cite{perlin2009} and \cite{broussard2012}.
 
 \section{Some technical definitions}
 
@@ -338,12 +336,15 @@ When $p \rightarrow 1$, $r\sigma(t,p)$ converges to the instant volatility assoc
 \end{definition}
 
 \section{Overview}
-What I've done so far.
+The remainder of this thesis is organized as follows. In section 2, cointegration theory is presented in greater details. Section 3 introduces the state-space models and the stochastic volatility models. Section 4 explains how to estimate the parameters of such models using \textit{Particle Markov Chain Monte Carlo}. In section 5, the best stochastic volatility is selected based on real world data. The trading strategies are described in section 6. Section 7 and 8 presents the outcome of the simulations and aims at comparing them. Finally, a conclusion based on the empirical results is presented, along with suggestions of future research.
 
 \section{Presentation of the Data}
+\subsection{US Equities}
 \label{sec:presentation_data}
-The sample period spans from January 1990 to March 2014 summing up to 8844 observations. The data consists of daily closing prices of the 1232 most liquid stocks traded on the US markets (NASDAQ, NYSE). This characteristic is important for the strategies, since it greatly diminishes the slippage effect, reduces the transaction costs and permits to unwind any position without impacting the market too much. The data was adjusted for dividends and splits, avoiding false trading signals generated by these events, as pointed out by \cite{broussard2012}.
+The Equity dataset $\mathcal{EQTY}_{daily}$ consists of daily closing prices of the 1232 most liquid stocks traded on the US markets (NASDAQ, NYSE). The sample period spans from January 1990 to March 2014 summing up to 8844 observations. This characteristic is important for the strategies, since it greatly diminishes the slippage effect, reduces the transaction costs and permits to unwind any position without impacting the market too much. The data was adjusted for dividends and splits, avoiding false trading signals generated by these events, as pointed out by \cite{broussard2012}.
 
+\subsection{Foreign Exchange Rates}
+The dataset $\mathcal{FX}_{daily}$ is composed of daily prices (FX Spot) for the pairs : AUDUSD, GBP USD, CADUSD, EURUSD, NZDUSD, ZARUSD, CHFUSD. The period spans from Jan, 01 1999 to Jan, 01 2013 summing up to 5116 observations.
 
 \chapter{Cointegration}
 
@@ -654,7 +655,7 @@ In the final extension, we consider the two factors stochastic volatility with a
 \section{Introduction}
 Many problems involve making inference on unknown parameters of complex models which have a sequential, if not explicitly temporal, basis. \\
 
-\textit{Sequential Monte Carlo} (SMC) are a collection of simulation-based techniques for computing a recursive series of posterior distributions over such complex models. SMC methods are very flexible, relatively easy to implement, parallelisable and application a very wide variety of settings. Since computing power has become so readily available, and due to certain recent advanced in applied statistics, these methods have recently become a mainstay of advanced reasearch methods in this field. section \ref{section:smc} explains the SMC methods, also known as Particle Filtering. \\
+\textit{Sequential Monte Carlo} (SMC) are a collection of simulation-based techniques for computing a recursive series of posterior distributions over such complex models. SMC methods are very flexible, relatively easy to implement, parallelisable and application a very wide variety of settings. Since computing power has become so readily available, and due to certain recent advanced in applied statistics, these methods have recently become a mainstay of advanced reasearch methods in this field. Section \ref{section:smc} explains the SMC methods, also known as Particle Filtering. \\
 
 \textit{Particle Markov Chain Monte Carlo} (Particle MCMC) are powerful techniques for estimating parameters of a complex model where classical methods such as maximum likelihood estimation are limited. This is the case for state-space models which incorporate latent variables. Particle MCMC embeds a particle filter of size $N$ within an MCMC scheme. The standard version uses a particle filter to provide an estimate of the intractable marginal likelihood $p(\matr{y}_{1:T}|\theta)$, and MCMC moves to propose new values for the parameter $\theta$. This concept is presented in more details in Section\ref{section:mcmc_pmmh}.
 
@@ -1624,7 +1625,7 @@ Test folder. Non regression and validation tests.
 The codebase has thousands of lines of code. Therefore, getting started is not easy.
 The Particle MCMC framework, implemented for this thesis, is a highly extensible, multithreaded and customizable framework designed to estimate parameters in non linear state space models. The source code is provided under the MIT license and is available on Github. Contributions are welcome. \\
 
-To define a new PMCMC scheme, the user must inherit from the base abstract class and implement the basic functions. The user must define each of its MC chains as protected member variables, define its priors and proposals distributions and finally link a Particle Filter to the class. The convention used for Particle Filter is to return the marginal likelihood and the estimated hidden states.
+To define a new PMCMC scheme, the user must inherit from the base abstract class and implement the basic functions. The user must define each of its MC chains as protected member variables, define its priors and proposals distributions and finally link a Particle Filter to the class. The convention used for Particle Filter classes is to return the marginal likelihood and the estimated hidden states.
 
 \section{Proofs}
 \label{app:proof}
@@ -1664,6 +1665,57 @@ Finally,
 \end{equation}
 which closes the proof.
 \end{proof}
+
+\section{Cointegration on Foreign Exchange Rates (FX)}
+
+\subsection{Daily prices}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llllll}
+Currency 1      & Currency 2 & Currency 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ \\ 
+\hline
+01-Jan-1999 &- 01-Jan-2001 \\
+\hline
+CADUSD & AUDUSD & EURUSD & 1.000000& -0.169999& 0.041106 \\
+CADUSD & AUDUSD & CHFUSD & 1.000000& -0.168860& 0.050292 \\
+CADUSD & EURUSD & NZDUSD & 1.000000& 0.042766& -0.136377 \\
+CADUSD & EURUSD & CHFUSD & 1.000000& -0.060119& 0.070569 \\
+CADUSD & NZDUSD & CHFUSD & 1.000000& -0.137284& 0.055910 \\
+\hline
+01-Jan-2001 &- 01-Jan-2003 \\
+\hline
+EURUSD & AUDUSD & GBPUSD & 1.000000& -0.243406& -0.858606 \\
+EURUSD & GBPUSD & CADUSD & 1.000000& -0.942491& -0.167773 \\
+CHFUSD & GBPUSD & CADUSD & 1.000000& -0.773401& -0.197333 \\
+EURUSD & GBPUSD & NZDUSD & 1.000000& -0.843365& -0.251468 \\
+EURUSD & GBPUSD & CHFUSD & 1.000000& -0.508161& -0.566663 \\
+CHFUSD & GBPUSD & NZDUSD & 1.000000& -0.706983& -0.182011 \\
+CHFUSD & CADUSD & EURUSD & 1.000000& -0.045434& -0.871733 \\
+\hline
+01-Jan-2003 &- 01-Jan-2005 \\
+\hline
+01-Jan-2005 &- 01-Jan-2007 \\
+\hline
+EURUSD & AUDUSD & GBPUSD & 1.000000& -0.225093& -0.672751 \\
+EURUSD & GBPUSD & ZARUSD & 1.000000& -0.738529& -0.102339 \\
+\hline
+01-Jan-2007 &- 01-Jan-2009 \\
+\hline
+01-Jan-2009 &- 01-Jan-2011 \\
+\hline
+01-Jan-2011 &- 01-Jan-2013 \\
+\hline
+GBPUSD & AUDUSD & CADUSD & 1.000000& -0.308276& -0.168456 \\
+GBPUSD & CADUSD & NZDUSD & 1.000000& -0.268217& -0.227796 \\
+GBPUSD & CADUSD & ZARUSD & 1.000000& -0.276975& -0.172995 \\
+GBPUSD & CADUSD & CHFUSD & 1.000000& -0.432923& -0.177363 \\
+\hline
+\end{tabular}
+\caption{Cointegration on FX Rates between Jan, 1 1999 and Jan, 1 2013}
+\label{coint_fx}
+\end{table}
+
 
 
 % 

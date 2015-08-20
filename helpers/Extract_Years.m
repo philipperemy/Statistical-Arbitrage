@@ -9,7 +9,11 @@ function [ techids ] = Extract_Years(pp, twobytwo)
     end
     
     if(exist('twobytwo', 'var') && twobytwo)
-       techids = techids([1 2*(1:1:floor(length(techids)/2))+1]); %select period of two years 
+        seq_twobytwo = [1 2*(1:1:floor(length(techids)/2))+1];
+        if(seq_twobytwo(end) > length(techids))
+            seq_twobytwo(end) = [];
+        end
+       techids = techids(seq_twobytwo); %select period of two years 
     end
 end
 
