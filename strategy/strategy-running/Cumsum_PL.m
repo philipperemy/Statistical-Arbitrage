@@ -1,4 +1,4 @@
-function [ portfolio_cumsum ] = Cumsum_PL( pp, spreads, start_idx, end_idx, spread_ids, zscore_conf )
+function [ portfolio_cumsum ] = Cumsum_PL( pp, spreads, start_idx, end_idx, spread_ids, zscore_conf, initial_bet )
     portfolio_cumsum = zeros(1, length(spreads(spread_ids(1)).px));
     for id = spread_ids
         [~,cumsum_pl] = SimpleTradingStrategyZScore( pp, spreads(id), 1, 0, zscore_conf, 0, 1 );
@@ -11,6 +11,6 @@ function [ portfolio_cumsum ] = Cumsum_PL( pp, spreads, start_idx, end_idx, spre
     end
     
     portfolio_cumsum = portfolio_cumsum(start_idx:end_idx);
-    portfolio_cumsum = cumsum(diff(portfolio_cumsum)) + 10000;
+    portfolio_cumsum = cumsum(diff(portfolio_cumsum)) + initial_bet;
 end
 

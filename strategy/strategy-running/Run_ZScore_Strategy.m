@@ -13,6 +13,7 @@ format longg;
 %%%% LOAD A SPREAD MODULE %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+initial_bet  = 10000;
 spread_count = length(spreads);
 mat 		 = zeros(spread_count , 5 );
 %zscore_conf  = struct('sell_open', 2, 'sell_close', 0.75, 'buy_open', -2, 'buy_close', -0.5);
@@ -23,7 +24,7 @@ for i = 1:spread_count
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, 1, T, zscore_conf, 0, 1, @Strategy_Simulator );
+	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, 1, T, zscore_conf, 0, 1, @Strategy_Simulator, initial_bet );
 	vol 		= std(pl);
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
@@ -46,7 +47,7 @@ for i = spreads_ids
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, T, length(Spread.px), zscore_conf, 0, 1, @Strategy_Simulator );
+	[pl, cum_pro]= SimpleTradingStrategyZScore( pp, Spread, T, length(Spread.px), zscore_conf, 0, 1, @Strategy_Simulator, initial_bet );
 	vol 		= std(pl);
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
@@ -60,4 +61,4 @@ for i = spreads_ids
     c = c + 1;
 end
 portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
-PerformanceAssessment(portfolio_cumsum, spx, 10000)
+PerformanceAssessment(portfolio_cumsum, spx, initial_bet)

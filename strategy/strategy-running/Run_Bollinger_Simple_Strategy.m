@@ -1,9 +1,12 @@
 clear;clc;
-%load('spreads_6575_7306.mat');
-%load('spx_6575_7306.mat');
+load('spreads_6575_7306.mat');
+load('spx_6575_7306.mat');
 
-load('spreads_8036_8767.mat');
-load('spx_8036_8767.mat');
+% % load('spreads_7306_8036.mat');
+% % load('spx_7306_8036.mat');
+% 
+% load('spreads_8036_8767.mat');
+% load('spx_8036_8767.mat');
 
 addpath('../../helpers/');
 addpath('../../coint/deepsearch');
@@ -16,6 +19,9 @@ format longg;
 %%%% LOAD A SPREAD MODULE %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%portfolio = [portfolio portfolio_cumsum];
+initial_bet  = 10000;
+
 spread_count = length(spreads);
 mat 		 = zeros(spread_count , 5 );
 boll_conf    = struct('wsize', 20, 'wts', 1, 'nstd', 2);
@@ -25,7 +31,7 @@ for i = 1:spread_count
     fprintf('i = %d\n', i);
     Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-    [pl, cum_pro]= SimpleTradingStrategy( pp, Spread, 1, T, boll_conf, spread_vol, 0, 1, @Strategy_Simulator );
+    [pl, cum_pro]= SimpleTradingStrategy( pp, Spread, 1, T, boll_conf, spread_vol, 0, 1, @Strategy_Simulator, initial_bet );
     vol          = std(pl);
     real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
@@ -49,7 +55,7 @@ for i = spreads_ids
     fprintf('i = %d\n', i);
 	Spread 		= spreads(i);
     T           = ceil((1/3)* length(Spread.px));
-	[pl, cum_pro]= SimpleTradingStrategy( pp, Spread, T, length(Spread.px), boll_conf, spread_vol, 0, 1, @Strategy_Simulator );
+	[pl, cum_pro]= SimpleTradingStrategy( pp, Spread, T, length(Spread.px), boll_conf, spread_vol, 0, 1, @Strategy_Simulator, initial_bet );
 	vol 		= std(pl);
 	real_sharpe = (mean(pl)/std(pl))*sqrt(252);
 	trades 		= sum(pl ~= 0);
@@ -64,9 +70,8 @@ for i = spreads_ids
 end
 portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
 
-%Sometimes you can just remove the end if it's too bad.s
-portfolio_cumsum(end) = portfolio_cumsum(end-1) * 0.99;
-PerformanceAssessment(portfolio_cumsum, spx, 10000)
+%Sometimes you can just remove the end if it's too bad.
+PerformanceAssessment(portfolio_cumsum, spx(T:end), initial_bet)
 
 Spreads_PMCMC = spreads(spreads_ids);
 
