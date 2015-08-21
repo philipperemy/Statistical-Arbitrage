@@ -73,7 +73,7 @@ classdef ParticleMarkovChainMonteCarlo < handle
                                break; 
                             end
                             
-                            if(c == 100) %before it was 50
+                            if(c == 200) %before it was 50
                                fprintf('stuck in an infinite loop...\n');
                                return;
                             end
