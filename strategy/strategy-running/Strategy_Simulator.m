@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost )
+function [ pl, balance_cum, trds ] = Strategy_Simulator( pp, beg, T, balance_init, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost )
 
     UP 					= 1;
     DOWN 				= -1;
@@ -17,7 +17,7 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
 	max_ss_per			= 0.5; %max short selling percentage of outstanding capital
     
     cash_balance        = balance;
-    
+    trds                = 0;
     for i = beg:T
         
         balance = balance + pl(i-1);
@@ -35,6 +35,7 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
             pos_sell = true; %init pos
             last_px_sell = spr(i);
             cash_balance = cash_balance - order_sell.spr_qty * last_px_sell;
+            trds = trds + 1;
 			continue;
         end
         
@@ -60,6 +61,7 @@ function [ pl, balance_cum ] = Strategy_Simulator( pp, beg, T, balance_init, Spr
 			pos_buy = true;
 			last_px_buy = spr(i);
             cash_balance = cash_balance - order_buy.spr_qty * last_px_buy;
+            trds = trds + 1;
 			continue;
         end
 

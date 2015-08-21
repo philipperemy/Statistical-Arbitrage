@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, spread_vol, disp, considerTrdCost, strat_simulator, initial_bet)
+function [ pl, balance_cum, trds ] = SimpleTradingStrategy( pp, Spread, start_idx, end_idx, boll_conf, spread_vol, disp, considerTrdCost, strat_simulator, initial_bet)
     
     try
         spr = Spread.px;
@@ -23,6 +23,6 @@ function [ pl, balance_cum ] = SimpleTradingStrategy( pp, Spread, start_idx, end
     %[ spr_mid_trends  ] = CrossingPointsCalculator(spr - mid , beg, T);
     [ spr_lowr_trends ] = CrossingPointsCalculator(spr - lowr, beg, T);
     
-    [ pl, balance_cum ] = strat_simulator( pp, beg, T, initial_bet, Spread, spr, spr_uppr_trends, spr_lowr_trends, spr_lowr_trends, spr_uppr_trends, disp, considerTrdCost );
+    [ pl, balance_cum, trds ] = strat_simulator( pp, beg, T, initial_bet, Spread, spr, spr_uppr_trends, spr_lowr_trends, spr_lowr_trends, spr_uppr_trends, disp, considerTrdCost );
 
 end
