@@ -1,4 +1,4 @@
-function [ pl, balance_cum ] = SimpleTradingStrategyZScore( pp, Spread, start_idx, end_idx, zscore_conf, disp, considerTrdCost, strat_simulator)
+function [ pl, balance_cum, trds ] = SimpleTradingStrategyZScore( pp, Spread, start_idx, end_idx, zscore_conf, disp, considerTrdCost, strat_simulator, initial_bet)
     
     try
         spr = Spread.px;
@@ -21,5 +21,5 @@ function [ pl, balance_cum ] = SimpleTradingStrategyZScore( pp, Spread, start_id
     [ buy_open ]    = CrossingPointsCalculator(spr_n - zscore_conf.buy_open, 2, T);
     [ buy_close  ]  = CrossingPointsCalculator(spr_n - zscore_conf.buy_close , 2, T);
     
-    [ pl, balance_cum ] = strat_simulator( pp, 2, T, initial_bet, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost );
+    [ pl, balance_cum, trds ] = strat_simulator( pp, 2, T, initial_bet, Spread, spr, sell_open, sell_close, buy_open, buy_close, disp, considerTrdCost );
 end

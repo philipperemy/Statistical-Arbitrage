@@ -1,5 +1,6 @@
 function [ s ] = PerformanceAssessment( pl_strat_cum, spx, initial_bet )
 
+    %SPX IS WRONG!
     T_strat = length(pl_strat_cum);
     T_spx = length(spx);
     T_min = min(T_spx, T_strat);

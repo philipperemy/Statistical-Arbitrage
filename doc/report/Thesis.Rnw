@@ -1504,6 +1504,63 @@ SEE  & SHLD  & UNM  & 1.00 & -0.21 & -0.28 & 3.75 & 1.80 & 16396.51 & 0.09 & 12 
 SYY  & PNC  & PRU  & 1.00 & -0.04 & -0.13 & 3.90 & 1.07 & 27394.60 & 0.29 & 10 \\
 \hline
 \end{tabular}
+\caption{Simple Bollinger Bands}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\hline
+Summary Statistics of the triple strategy  			& Bollinger & Z-score & Bollinger (SV) & SPX\\
+\hline Jan, 01 2008 - Dec, 31 2009 \\
+\hline
+\# of observations in the sample								    & 505       &505      && 505\\
+\# of observations in the training window						& 169       &169      && 169\\
+\# of days in the trading period								    & 336       &336      && 336\\
+\# of triples in the trading period   							& 20        &20       && N.A.\\
+\# of cointegrated spreads to analyze 				      & 5967      &5967     && N.A.\\
+Average annualized return 										      & 60.11 \%  &78.06 \% && 12.92 \%\\
+Annualized Sharpe Ratio 										        & 2.57      &3.07     && 0.41\\
+Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     && 0.36\\
+Largest daily return 											          & 5.81\%    &8.31 \%  && 10.78 \%\\
+Lowest daily return 											          & -5.53\%   &-4.23\%  && -8.92 \%\\
+Cumulative profit on the trading period             & 79.38\%   &103.88 \%&& 17.26 \% \\
+Correlation with the market returns 							  & 0.0637    &-0.0302  && 1\\
+Skewness of the returns														  & 0.489     &1.006    && 0.133\\
+Kurtosis of the returns														  & 6.973     &11.863   && 6.421 \\
+Maximum Drawdown  												          & 8.44\%    &6.32 \%  && 32.73 \%\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllllllllll}
+\hline
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & SRI & SRO & Net Ret. & MDD & Trd\\ \hline
+HPQ  & HSP  & ITW  & 1.00 & -0.15 & -0.60 & 3.71 & 0.05 & 11105.64 & 0.57 & 4 \\
+SUNE  & AIG  & AIZ  & 1.00 & -0.06 & -0.53 & 3.73 & 0.94 & 14008.95 & 0.16 & 3 \\
+KO  & KMX  & VIAB  & 1.00 & -0.05 & -0.26 & 3.75 & 0.63 & 14000.93 & 0.18 & 5 \\
+FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
+FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
+JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
+JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
+WY  & RTN  & SLM  & 1.00 & -0.60 & -0.18 & 3.87 & 1.36 & 23280.39 & 0.31 & 4 \\
+L  & KIM  & R  & 1.00 & -0.31 & -0.24 & 3.88 & 0.09 & 11723.15 & 0.77 & 2 \\
+ETFC  & AYE  & BCR  & 1.00 & -0.80 & -0.51 & 3.90 & 1.11 & 18337.12 & 0.22 & 4 \\
+HSH  & HRS  & OKE  & 1.00 & -0.16 & -0.41 & 3.91 & 0.74 & 15225.56 & 0.23 & 4 \\
+EMR  & EIX  & FCX  & 1.00 & -0.52 & -0.26 & 3.91 & 1.20 & 20795.44 & 0.30 & 7 \\
+MHFI  & MET  & NEE  & 1.00 & -0.25 & -0.56 & 3.94 & 0.64 & 18726.76 & 0.35 & 5 \\
+L  & KSU  & MDLZ  & 1.00 & -0.44 & -0.67 & 3.95 & 0.32 & 12355.60 & 0.27 & 2 \\
+SLB  & CEG  & CF  & 1.00 & -0.24 & -0.44 & 3.97 & 1.08 & 30520.06 & 0.98 & 3 \\
+NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
+NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
+PNR  & HLS  & HNZ  & 1.00 & -0.28 & -0.66 & 4.15 & 0.66 & 14050.95 & 0.20 & 4 \\
+LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
+LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
+\hline
+\end{tabular}
+\caption{ZScore}
 \end{table}
 
 \begin{table}[H]

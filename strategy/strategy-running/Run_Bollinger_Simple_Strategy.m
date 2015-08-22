@@ -99,3 +99,5 @@ for i = 1:length(pp.tickers)
        disp(s);
    end
 end
+
+portfolio_cumsum_b = portfolio_cumsum;
