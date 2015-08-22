@@ -47,7 +47,7 @@ sorted_mat  = Rank_Results(mat, 3, 50);
 spreads_ids = sorted_mat(end-19:end,5)';
 
 mat_t 		 = zeros(length(spreads_ids) , 5 );
-fprintf('testing\n'); strgsub
+fprintf('testing\n');
 c = 1;
 portfolio_cumsum = zeros(1);
 for i = spreads_ids
@@ -84,7 +84,7 @@ for i = spreads_ids
    net = mat_t(c,1);
 
    sri = mat(i,3);
-   s = sprintf('%s & %s & %s & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %i \\\\', char(CleanName(pp.tickers(spread.tuple(1)))), char(CleanName(pp.tickers(spread.tuple(2)))), char(CleanName(pp.tickers(spread.tuple(3)))),...
+   s = sprintf('%d, %s & %s & %s & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %i \\\\', i, char(CleanName(pp.tickers(spread.tuple(1)))), char(CleanName(pp.tickers(spread.tuple(2)))), char(CleanName(pp.tickers(spread.tuple(3)))),...
        spread.beta(1), spread.beta(2), spread.beta(3), sri, sro, net, mdd, tr);
    tuples(end+1) = spread.tuple(1);
    tuples(end+1) = spread.tuple(2);
