@@ -1471,18 +1471,11 @@ where the notations of section \ref{sec:bollinger_bands} apply. Figure \ref{fig:
 \end{figure}
 
 \section{Impact of SV Modelling on Triple Trading}
-This section presents the results of the comparisons between Bollinger Bands strategies with and without Stochastic Volatility modelling. The aim is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practice. In the first part, the tuning of the parameters is discarded and the default parameters $(p=20, \alpha = 2, t = \text{SMA})$ recommended by John Bollinger are considered. The cross validation phase could add a bias to the results because we aim to compare the strategies for a fixed $\theta$. The default parameters are widely used in practice among traders and it is pertinent to base the comparison for those values. Later, a cross validation phase is performed to maximize the performance of the best strategy and it is tested against the ZScore and the Buy and Hold strategies. \\
+This section presents the results of the comparisons between Bollinger Bands strategies with and without Stochastic Volatility modelling. The aim is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practice. In the first part, the tuning of the parameters is discarded and the default parameters $\theta = (p=20, \alpha = 2, t = \text{SMA})$ recommended by John Bollinger are considered. The cross validation phase could add a bias to the results because we aim to compare the two Bollinger Bands strategies for a fixed $\theta$. The default parameters are widely used in practice among traders and it is pertinent to base the comparison for those values. Later, a cross validation phase is performed to maximize the performance of the best strategy and it is tested against the ZScore and the Buy and Hold strategies. It is also worth noting that we do not require the stocks to belong to the same sector when building a triple. \\
 
-For each $(\mathcal{I}_i)_{1 \leq i \leq 12}$, the cointegrated triples are formed and the 20 best triples are selected based on the $\mathcal{SR}$ criteria on $\mathcal{I}_i$. The model calibration is performed on $\mathcal{I}_i$ for those selected triples. Then, both strategies are tested on the corresponding out-sample set $\mathcal{O}_i$ with the most commonly used parameters and the results are confronted. \\
+For each $(\mathcal{I}_i)_{1 \leq i \leq 12}$, the cointegrated triples are formed, the models are calibrated and 20 tradable triples are selected based on the $\mathcal{SR}$ criteria. Then, both strategies are tested on the corresponding out-sample set $\mathcal{O}_i$ with the same models parameters. Finally, the results are confronted. \\
 
-Table 1 shows the triples used in the strategy from the beginning of 2008 to the end of 2009, especially where the financial crisis of 2008 happened. The formation of the triples is not restricted to the same sector. Of the possible candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}.
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[width = 1\textwidth]{perf_valuation_1.png}
-\caption{Portfolios valuations on period Jan, 01 2008 - Dec, 31 2009 for the different strategies}
-\label{fig:1}
-\end{figure}
+Table 1 shows the 20 tradable triples used in the strategy without SV modelling, for the period Jan, 01 2008 - Dec, 31 2009. Of the possible candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}.
 
 \begin{table}[H]
 \centering
@@ -1624,6 +1617,13 @@ UNM UN Equity & UNUM GROUP & Financials \\
 \end{tabular}
 \end{table}
 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width = 0.8\textwidth]{perf_valuation_1.png}
+\caption{Portfolios valuations on period Jan, 01 2008 - Dec, 31 2009 for the different strategies}
+\label{fig:1}
+\end{figure}
 
 
 \section{Gradient and optimization of the Bollinger bands}
