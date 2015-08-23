@@ -458,7 +458,7 @@ $H_1(r)$ seems to be definitely the most relevant model to use for spreads becau
 It seems that the existence of more than one cointegrating vectors (i.e. the long-run relationship) is not necessarily a good sign, since there is uncertainty as to which relationship the variables will obey in the long and short run. The dynamics may be unstable.
 
 \section{Testing for Unit Roots in Stochastic Processes}
-
+\label{sec:unit_root_testing}
 % PP TEST doc very interesting
 Before testing for a unit root, i.e. if the series is $I(1)$, the time series must be transformed to its linear form. Usually, assets prices have an exponential growth and logarithm should be applied accordingly to satisfy this prerequisite. Once the data is transformed, we must choose the most pertinent model to use in the Augmented Dickey Fuller and Philipps-Perron tests. There are three basic models for economic data $(Y_t)_{t>0}$ with linear growth characteristics
 %http://uk.mathworks.com/help/econ/adftest.html#inputs
@@ -892,7 +892,7 @@ Due to the unbiasedness property of $\hat{p}^N_{\theta^\star}(\matr{y}_{1:T})$, 
 the efficiency can deteriorate exponentially when $N$ is below the optimal. \cite{pitt2012} showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant, as it is a function of the parameters as well as a decreasing function of $N$. \cite{pitt2012} suggests that a reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{1:T}]$ from an initial short run of the PMCMC scheme with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance of the log-likelihood Var$(\log p_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from \cite{pitt2012}, their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well. \\
 An analysis was carried out to measure the variations of the variance across the parameter space and for different values of $N$. The state-space model $\mathcal{M}_2$ is used to generate an artificial dataset with $(\rho,\sigma,\nu) = (0.91,1,3)$. The bootstrap filter is called repeatedly to estimate its intrinsic variance. Figure (\ref{tuning_n_rho_varying}) shows the behavior of the filter's variance $\var(\log \hat{p}_N(y|\theta))$ when $\rho$ varies over its domain of definition. It gives a hint that the variance is not likely to oscillate in big proportions when the model parameters $\theta$ change. \\
 
-The reasonable strategy of \cite{pitt2012} is not viable in practice as it requires to have a good estimate of $\bar{\theta}$ which is often difficult to achieve with a short run of PMCMC due to the burn-in phase. It is much more relevant to derive a general rule on how to choose $N$ optimal, provided that such a rule exists. A test is conducted on an artificial dataset where the true value $\theta_{tr} = \bar{\theta}$ is known. It is composed of $T=1000$ daily returns, generated from model $\mathcal{M}_2$. For a given value of $N$, the bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods Var$(\log p_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. From Figure (\ref{est_var_pn_theta_n}), the optimal of $N$ seems to be around 1000. The process is repeated for several values of $T$ to detect a general rule. Figure \ref{n_opt_function_t} shows the results for $T \in [0, 2000]$ and $N \in [0, 2500]$. A linear trend can easily be identified. To reinforce this belief, a linear regression $N = a T + b$ is performed. Both the values $b \simeq 0 (3)$ and $a \simeq 1 (1.2)$ suggest that the rule $T = N$ seems to hold, at least for $T < 2000$.
+The reasonable strategy of \cite{pitt2012} is not viable in practice as it requires to have a good estimate of $\bar{\theta}$ which is often difficult to achieve with a short run of PMCMC due to the burn-in phase. It is much more relevant to derive a general rule on how to choose $N$ optimal, provided that such a rule exists. We conduct a test on synthetic data where the true value $\theta_{tr} = \bar{\theta}$ is known. It is composed of $T=1000$ daily returns, generated from model $\mathcal{M}_2$. For a given value of $N$, the bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods Var$(\log p_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. From Figure (\ref{est_var_pn_theta_n}), the optimal of $N$ seems to be around 1000. The process is repeated for several values of $T$ to detect a general rule. Figure \ref{n_opt_function_t} shows the results for $T \in [0, 2000]$ and $N \in [0, 2500]$. A linear trend can easily be identified. To reinforce this belief, a linear regression $N = a T + b$ is performed. Both the values $b \simeq 0 (3)$ and $a \simeq 1 (1.2)$ suggest that the rule $T = N$ seems to hold, at least for $T < 2000$.
 
 %https://www.sharelatex.com/blog/2013/08/07/thesis-series-pt3.html
 %http://tex.stackexchange.com/questions/42968/reduction-of-space-between-two-sub-figures
@@ -1323,7 +1323,7 @@ In this case, the assumption of the same sector is almost inevitable but it beco
         \caption{Distribution of the cointegrated triples sorted by $R^2$ from highest to lowest and regarding their belonging to sectors. Period is from 01-Jan-1990 to 14-Mar-2014.}
         \label{triples_sector_1}
     \end{subfigure}
-    \caption{}
+    \caption{Distributions of the cointegrated triples}
     %\label{fig:three graphs}
 \end{figure}
 
@@ -1353,7 +1353,8 @@ From the candidates of the correlation step, a rigorous testing for cointegratio
   \For{j from 1 to N} //Order is important in a tuple
     \State Regress $\Delta \matr{X}_j = f((\Delta \matr{X}_i)_{i \neq j})$
     \State Form the spread $\matr{S} = \beta'\matr{X} = \matr{X}_j - \sum_{i\neq j} \beta_i \matr{X}_i$
-    \State $h_1$ = Test $\matr{S} \sim I(1)$ with an Augmented Dickey-Fuller test
+    \State Determine the optimal lag $p$ for the ADF test (Section \ref{sec:unit_root_testing})
+    \State $h_1$ = Test $\matr{S} \sim I(1)$ with an Augmented Dickey-Fuller test with lags $[0,p]$
     \State $h_2$ = Test $\matr{S} \sim RW(\cdot)$ with variance ratio test for random walk
     \If{$h_1 = 1$ \textbf{and} $h_2 = 1$}
       \State $\matr{S}$ is a spread candidate for trading. Add to list $\mathcal{L}(\matr{S})$. 
@@ -1390,11 +1391,11 @@ SR            &=  \frac{\hat{\mu}}{\hat{\sigma}} \text{ where, } \\
 \end{align*}
 
 
-One of the techniques to assess the performance of a strategy is to compare it to the standard Buy and Hold strategy where the holder buys various assets at time $0$ and sell them at time $T$. \cite{gatev2006} also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs.
+One of the techniques to assess the performance of a strategy is to compare it to the standard Buy and Hold strategy where the holder buys the stock index at time $0$ and sell them at time $T$. \cite{gatev2006} also considered a bootstrap approach to generate random trading signals to assess the performance of a strategy over pure randomness. This approach is not discussed here since such a strategy has a negative expectation because of the trading costs.
 
-\chapter{Results}
+\chapter{Empirical Analysis}
 This chapter is structured in three main parts. Firstly, an example is examined to show some interesting facts about volatility modelling. Next, the cross validation of the Bollinger bands parameters is presented in further details. Finally, the Bollinger bands with and without the complex volatility estimation are compared. Also, the Z-score and the Buy and Hold strategies are considered as a benchmark.
-\section{Volatility Modelling of the spread using $\mathcal{M}_7$}
+\section{Volatility Modelling of the spread using model $\mathcal{M}_7$}
 Throughout this section, the same spread $(S_t)_{t>0}$ as that of section \ref{sec:model_selection} is considered. This analysis is not restricted to this particular spread and is valid for any stationary spread and stochastic volatility models. This sections focused on the main points described in section \ref{sec:estimation_bollinger_bands_sv}. The model $\mathcal{M}_7$ is used to estimate the conditional variance $S_t | S_{t-1}, \matr{x}_t, \theta$. From there and from Equation (\ref{equation_price_vol}), $M = 1000$ Monte Carlo trajectories are generated. Figure \ref{fig:generation_of_the_trajectories} shows the generation of the trajectories according to the estimated conditional variance.
 \begin{figure}[H]
     \centering
@@ -1473,28 +1474,58 @@ where the notations of section \ref{sec:bollinger_bands} apply. Figure \ref{fig:
 \section{Impact of SV Modelling on Triple Trading}
 This section presents the results of the comparisons between Bollinger Bands strategies with and without Stochastic Volatility modelling. The aim is to assess whether using more advanced modelling and model calibration will result to better performance than simple models used often in practice. In the first part, the tuning of the parameters is discarded and the default parameters $\theta = (p=20, \alpha = 2, t = \text{SMA})$ recommended by John Bollinger are considered. The cross validation phase could add a bias to the results because we aim to compare the two Bollinger Bands strategies for a fixed $\theta$. The default parameters are widely used in practice among traders and it is pertinent to base the comparison for those values. Later, a cross validation phase is performed to maximize the performance of the best strategy and it is tested against the ZScore and the Buy and Hold strategies. It is also worth noting that we do not require the stocks to belong to the same sector when building a triple. \\
 
-For each $(\mathcal{I}_i)_{1 \leq i \leq 12}$, the cointegrated triples are formed, the models are calibrated and 20 tradable triples are selected based on the $\mathcal{SR}$ criteria. Then, both strategies are tested on the corresponding out-sample set $\mathcal{O}_i$ with the same models parameters. Finally, the results are confronted. \\
+For each $(\mathcal{I}_i)_{1 \leq i \leq 12}$, the cointegrated triples are formed, the models are calibrated and 20 tradable triples are selected based on the $\mathcal{SR}$ criteria. Then, both strategies are tested on the corresponding out-sample set $\mathcal{O}_i$ with the same models parameters. Table 1 summarizes the interesting figures for the calibration step.\\
 
-Table 1 shows the 20 tradable triples used in the strategy without SV modelling, for the period Jan, 01 2008 - Dec, 31 2009. Of the possible candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}.
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\hline
+                              && Criteria & of Sector& belonging \\
+Period & Coint triples & All & Partial & None \\
+\hline
+Jan, 1 1990 - Jan, 1 1992 & 3503    & 622 (0.177) & 1637 (0.467) & 1244 (0.355) \\
+Jan, 1 1992 - Jan, 1 1994 & 2147    & 323 (0.150) & 1187 (0.552)  & 637 (0.297) \\
+Jan, 1 1994 - Jan, 1 1996 & 3928    & 449 (0.114) & 1748 (0.445)  & 1731 (0.440) \\
+Jan, 1 1996 - Jan, 1 1998 & 4640    & 471 (0.101) & 2207 (0.475)  & 1962 (0.422) \\
+Jan, 1 1998 - Jan, 1 2000 & 3254    & 285 (0.083) & 1574 (0.483)  & 1395 (0.429) \\
+Jan, 1 2000 - Jan, 1 2002 & 2643    & 228 (0.085) & 1355 (0.512)  & 1060 (0.401)\\
+Jan, 1 2002 - Jan, 1 2004 & 5718    & 338 (0.059) & 2340 (0.409)  & 3040 (0.531) \\
+Jan, 1 2004 - Jan, 1 2006 & 3539    & 186 (0.052) & 1508 (0.426)  & 1845 (0.521) \\
+Jan, 1 2006 - Jan, 1 2008 & 3541    & 159 (0.044) & 1350 (0.381)  & 2032 (0.573) \\
+Jan, 1 2008 - Jan, 1 2010 & 5967    & 190 (0.031) & 2205 (0.369)  & 3572 (0.599) \\
+Jan, 1 2010 - Jan, 1 2012 & 3521    & 167 (0.047) & 1147 (0.410)  & 1907 (0.541) \\
+Jan, 1 2012 - Jan, 1 2014 & 4083    & 122 (0.029) & 1592 (0.389)  & 2371 (0.580) \\
+\hline
+Total & 46484 & 3540 (0.007) & 19850 (0.427) & 22796 (0.490) \\
+\hline
+\end{tabular}
+\caption{Statistics about the in-sample step}
+\end{table}
 
+\section{Example : Period 2008-2009}
+
+This part focuses on the result of the different strategies for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Table \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_simple_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger Bands with and without Stochastic Volatility modelling and Z-score. Each of this tuple has passed the correlation and the cointegration tests. In addition, it must exhibit a very high Sharpe ratio on $\mathcal{I}$ to be shortlisted. $\beta = (\beta_1, \beta_2, \beta_3)$ represents the cointegrating vector associated to the triple.
+All the triples exhibit a very high Sharpe ratio on the in-sample period and a lower but still promising Sharpe ratio on the ou-sample period. 
+
+\renewcommand{\arraystretch}{0.8}% Wider
 \begin{table}[H]
 \centering
 \begin{tabular}{lllllllllll}
 \hline
-Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & SRI & SRO & Net Ret. & MDD & Trd\\ \hline
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
 SYY  & PRU  & PTC  & 1.00 & -0.09 & -0.25 & 3.21 & 0.83 & 22991.15 & 0.41 & 10 \\
 SYY  & PRU  & PTC  & 1.00 & -0.09 & -0.25 & 3.21 & 0.83 & 22991.15 & 0.41 & 10 \\
 JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.24 & 0.26 & 11255.74 & 0.33 & 13 \\
 JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.24 & 0.26 & 11255.74 & 0.33 & 13 \\
 MA  & LSI  & PXD  & 1.00 & -0.23 & -0.24 & 3.24 & 0.34 & 12827.76 & 0.35 & 10 \\
 SEE  & SHLD  & TSN  & 1.00 & -0.28 & -0.29 & 3.26 & 0.56 & 11882.95 & 0.25 & 8 \\
-MKC  & JNJ  & KSU  & 1.00 & -0.57 & -0.06 & 3.28 & -0.00 & 9989.55 & 0.22 & 10 \\
+MKC  & JNJ  & KSU  & 1.00 & -0.57 & -0.06 & 3.28 & 0.01 & 9989.55 & 0.22 & 10 \\
 FII  & FCX  & MSI  & 1.00 & -0.22 & -0.34 & 3.35 & 1.21 & 20997.83 & 0.25 & 12 \\
 NSC  & PG  & R  & 1.00 & -0.50 & -0.37 & 3.35 & 1.12 & 32770.77 & 0.48 & 12 \\
 LUK  & MAC  & MHK  & 1.00 & -0.31 & -0.43 & 3.37 & 0.20 & 11666.71 & 0.49 & 8 \\
 SEE  & SCI  & SHLD  & 1.00 & -0.34 & -0.27 & 3.38 & 1.19 & 14839.25 & 0.15 & 10 \\
 SEE  & SCI  & SHLD  & 1.00 & -0.34 & -0.27 & 3.38 & 1.19 & 14839.25 & 0.15 & 10 \\
-TIE  & 0772031D  & CVH  & 1.00 & -0.47 & -0.24 & 3.44 & 0.34 & 10992.36 & 0.19 & 10 \\
+TIE  & 031D  & CVH  & 1.00 & -0.47 & -0.24 & 3.44 & 0.34 & 10992.36 & 0.19 & 10 \\
 AMT  & AMP  & CCI  & 1.00 & -0.16 & -0.49 & 3.44 & 1.14 & 15091.08 & 0.14 & 11 \\
 MA  & LSI  & OXY  & 1.00 & -0.22 & -0.31 & 3.47 & 0.88 & 24489.13 & 0.31 & 11 \\
 FCX  & DIS  & DO  & 1.00 & -0.43 & -0.84 & 3.48 & 0.46 & 19763.68 & 0.74 & 8 \\
@@ -1504,40 +1535,16 @@ SEE  & SHLD  & UNM  & 1.00 & -0.21 & -0.28 & 3.75 & 1.80 & 16396.51 & 0.09 & 12 
 SYY  & PNC  & PRU  & 1.00 & -0.04 & -0.13 & 3.90 & 1.07 & 27394.60 & 0.29 & 10 \\
 \hline
 \end{tabular}
-\caption{Simple Bollinger Bands}
+\caption{The 20 selected triples for the Simple Bollinger Bands (2008-2009)}
+\label{20_selected_triples_simple_bands}
 \end{table}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{lllll}
-\hline
-Summary Statistics of the triple strategy  			& Bollinger & Z-score & Bollinger (SV) & SPX\\
-\hline Jan, 01 2008 - Dec, 31 2009 \\
-\hline
-\# of observations in the sample								    & 505       &505      && 505\\
-\# of observations in the training window						& 169       &169      && 169\\
-\# of days in the trading period								    & 336       &336      && 336\\
-\# of triples in the trading period   							& 20        &20       && N.A.\\
-\# of cointegrated spreads to analyze 				      & 5967      &5967     && N.A.\\
-Average annualized return 										      & 60.11 \%  &78.06 \% && 12.92 \%\\
-Annualized Sharpe Ratio 										        & 2.57      &3.07     && 0.41\\
-Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     && 0.36\\
-Largest daily return 											          & 5.81\%    &8.31 \%  && 10.78 \%\\
-Lowest daily return 											          & -5.53\%   &-4.23\%  && -8.92 \%\\
-Cumulative profit on the trading period             & 79.38\%   &103.88 \%&& 17.26 \% \\
-Correlation with the market returns 							  & 0.0637    &-0.0302  && 1\\
-Skewness of the returns														  & 0.489     &1.006    && 0.133\\
-Kurtosis of the returns														  & 6.973     &11.863   && 6.421 \\
-Maximum Drawdown  												          & 8.44\%    &6.32 \%  && 32.73 \%\\
-\hline
-\end{tabular}
-\end{table}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{lllllllllll}
 \hline
-Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & SRI & SRO & Net Ret. & MDD & Trd\\ \hline
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
 HPQ  & HSP  & ITW  & 1.00 & -0.15 & -0.60 & 3.71 & 0.05 & 11105.64 & 0.57 & 4 \\
 SUNE  & AIG  & AIZ  & 1.00 & -0.06 & -0.53 & 3.73 & 0.94 & 14008.95 & 0.16 & 3 \\
 KO  & KMX  & VIAB  & 1.00 & -0.05 & -0.26 & 3.75 & 0.63 & 14000.93 & 0.18 & 5 \\
@@ -1560,7 +1567,65 @@ LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \
 LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
 \hline
 \end{tabular}
-\caption{ZScore}
+\caption{The 20 selected triples for the Bollinger Bands with SV modelling (2008-2009)}
+\label{20_selected_triples_simple_bands_sv}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllllllllll}
+\hline
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
+HPQ  & HSP  & ITW  & 1.00 & -0.15 & -0.60 & 3.71 & 0.05 & 11105.64 & 0.57 & 4 \\
+SUNE  & AIG  & AIZ  & 1.00 & -0.06 & -0.53 & 3.73 & 0.94 & 14008.95 & 0.16 & 3 \\
+KO  & KMX  & VIAB  & 1.00 & -0.05 & -0.26 & 3.75 & 0.63 & 14000.93 & 0.18 & 5 \\
+FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
+FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
+JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
+JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
+WY  & RTN  & SLM  & 1.00 & -0.60 & -0.18 & 3.87 & 1.36 & 23280.39 & 0.31 & 4 \\
+L  & KIM  & R  & 1.00 & -0.31 & -0.24 & 3.88 & 0.09 & 11723.15 & 0.77 & 2 \\
+ETFC  & AYE  & BCR  & 1.00 & -0.80 & -0.51 & 3.90 & 1.11 & 18337.12 & 0.22 & 4 \\
+HSH  & HRS  & OKE  & 1.00 & -0.16 & -0.41 & 3.91 & 0.74 & 15225.56 & 0.23 & 4 \\
+EMR  & EIX  & FCX  & 1.00 & -0.52 & -0.26 & 3.91 & 1.20 & 20795.44 & 0.30 & 7 \\
+MHFI  & MET  & NEE  & 1.00 & -0.25 & -0.56 & 3.94 & 0.64 & 18726.76 & 0.35 & 5 \\
+L  & KSU  & MDLZ  & 1.00 & -0.44 & -0.67 & 3.95 & 0.32 & 12355.60 & 0.27 & 2 \\
+SLB  & CEG  & CF  & 1.00 & -0.24 & -0.44 & 3.97 & 1.08 & 30520.06 & 0.98 & 3 \\
+NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
+NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
+PNR  & HLS  & HNZ  & 1.00 & -0.28 & -0.66 & 4.15 & 0.66 & 14050.95 & 0.20 & 4 \\
+LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
+LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
+\hline
+\end{tabular}
+\caption{The 20 selected triples for the strategy based on ZScore (2008-2009)}
+\label{20_selected_triples_zscore}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\hline
+Statistics  			& Bollinger & Z-score & Bollinger (SV) & SPX\\
+\hline
+\# of observations in the sample								    & 505       &505      && 505\\
+\# of observations in the training window						& 169       &169      && 169\\
+\# of days in the trading period								    & 336       &336      && 336\\
+\# of triples in the trading period   							& 20        &20       && N.A.\\
+\# of cointegrated spreads to analyze 				      & 5967      &5967     && N.A.\\
+Average annualized return 										      & 60.11 \%  &78.06 \% && 12.92 \%\\
+Annualized Sharpe Ratio 										        & 2.57      &3.07     && 0.41\\
+Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     && 0.36\\
+Largest daily return 											          & 5.81\%    &8.31 \%  && 10.78 \%\\
+Lowest daily return 											          & -5.53\%   &-4.23\%  && -8.92 \%\\
+Cumulative profit on the trading period             & 79.38\%   &103.88 \%&& 17.26 \% \\
+Correlation with the market returns 							  & 0.0637    &-0.0302  && 1\\
+Skewness of the returns														  & 0.489     &1.006    && 0.133\\
+Kurtosis of the returns														  & 6.973     &11.863   && 6.421 \\
+Maximum Drawdown  												          & 8.44\%    &6.32 \%  && 32.73 \%\\
+\hline
+\end{tabular}
+\caption{Summary of Triple Trading for the period 2008-2009}
 \end{table}
 
 \begin{table}[H]
