@@ -1180,7 +1180,7 @@ where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average l
         \caption{$(p, \alpha) = (20,2.0)$}
         \label{bollinger2}
     \end{subfigure}
-    \caption{Bollinger bands strategy applied to Walt Disney Co NYSE for the year 2002. Lag is 20 days. $B^+_\theta$ is red, $B^-_\theta$ yellow and $m_\theta$ navy blue}
+    \caption{Simple Bollinger bands strategy applied to Walt Disney Co NYSE for the year 2002. Lag is 20 days. $B^+_\theta$ is red, $B^-_\theta$ yellow and $m_\theta$ navy blue.}
     \label{bollinger_bands_intro}
 \end{figure}
 
@@ -1198,7 +1198,7 @@ where $(S_t)_{t \geq 0}$ is the price of the spread, $p$ is the moving average l
         \caption{$(p, \alpha) = (40,2.5)$}
         \label{bollinger4}
     \end{subfigure}
-    \caption{Example of Bollinger bands strategy applied to Walt Disney Co NYSE for the year 2002. Lag is 40 days. $B^+_\theta$ is red, $B^-_\theta$ yellow and $m_\theta$ navy blue.}
+    \caption{Smple Bollinger bands strategy applied to Walt Disney Co NYSE for the year 2002. Lag is 40 days. $B^+_\theta$ is red, $B^-_\theta$ yellow and $m_\theta$ navy blue.}
     \label{bollinger_bands_intro_2}
 \end{figure}
 
@@ -1505,7 +1505,7 @@ Total & 46484 & 3540 (0.007) & 19850 (0.427) & 22796 (0.490) \\
 \section{Example : Period 2008-2009}
 
 This part focuses on the result of the different strategies for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Table \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_simple_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger Bands with and without Stochastic Volatility modelling and Z-score. Each of this tuple has passed the correlation and the cointegration tests. In addition, it must exhibit a very high Sharpe ratio on $\mathcal{I}$ to be shortlisted. $\beta = (\beta_1, \beta_2, \beta_3)$ represents the cointegrating vector associated to the triple.
-All the triples exhibit a very high Sharpe ratio on the in-sample period and a lower but still promising Sharpe ratio on the ou-sample period. 
+All the triples exhibit a very high Sharpe ratio on the in-sample period and a lower but still promising Sharpe ratio on the out-sample period. 
 
 \renewcommand{\arraystretch}{0.8}% Wider
 \begin{table}[H]
@@ -1545,26 +1545,27 @@ SYY  & PNC  & PRU  & 1.00 & -0.04 & -0.13 & 3.90 & 1.07 & 27394.60 & 0.29 & 10 \
 \begin{tabular}{lllllllllll}
 \hline
 Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
-HPQ  & HSP  & ITW  & 1.00 & -0.15 & -0.60 & 3.71 & 0.05 & 11105.64 & 0.57 & 4 \\
-SUNE  & AIG  & AIZ  & 1.00 & -0.06 & -0.53 & 3.73 & 0.94 & 14008.95 & 0.16 & 3 \\
-KO  & KMX  & VIAB  & 1.00 & -0.05 & -0.26 & 3.75 & 0.63 & 14000.93 & 0.18 & 5 \\
-FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
-FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
-JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
-JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
-WY  & RTN  & SLM  & 1.00 & -0.60 & -0.18 & 3.87 & 1.36 & 23280.39 & 0.31 & 4 \\
-L  & KIM  & R  & 1.00 & -0.31 & -0.24 & 3.88 & 0.09 & 11723.15 & 0.77 & 2 \\
-ETFC  & AYE  & BCR  & 1.00 & -0.80 & -0.51 & 3.90 & 1.11 & 18337.12 & 0.22 & 4 \\
-HSH  & HRS  & OKE  & 1.00 & -0.16 & -0.41 & 3.91 & 0.74 & 15225.56 & 0.23 & 4 \\
-EMR  & EIX  & FCX  & 1.00 & -0.52 & -0.26 & 3.91 & 1.20 & 20795.44 & 0.30 & 7 \\
-MHFI  & MET  & NEE  & 1.00 & -0.25 & -0.56 & 3.94 & 0.64 & 18726.76 & 0.35 & 5 \\
-L  & KSU  & MDLZ  & 1.00 & -0.44 & -0.67 & 3.95 & 0.32 & 12355.60 & 0.27 & 2 \\
-SLB  & CEG  & CF  & 1.00 & -0.24 & -0.44 & 3.97 & 1.08 & 30520.06 & 0.98 & 3 \\
-NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
-NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
-PNR  & HLS  & HNZ  & 1.00 & -0.28 & -0.66 & 4.15 & 0.66 & 14050.95 & 0.20 & 4 \\
-LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
-LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
+VLO  & SUNE  & SVU  & 1.00 & -0.40 & -0.32 & 3.04 & 0.18 & 10692.01 & 0.23 & 2 \\
+INTC  & CSX  & CVG  & 1.00 & -0.41 & -0.19 & 3.05 & 0.15 & 12892.33 & 0.91 & 5 \\
+INTC  & CSX  & CVG  & 1.00 & -0.41 & -0.19 & 3.05 & 0.16 & 13824.31 & 0.91 & 5 \\
+MAT  & IP  & IPG  & 1.00 & -0.22 & -0.20 & 3.09 & -0.14 & 9033.67 & 0.44 & 6 \\
+NKE  & KLAC  & KMX  & 1.00 & -0.31 & -0.22 & 3.12 & 1.00 & 125329.26 & 0.70 & 8 \\
+NKE  & KLAC  & KMX  & 1.00 & -0.31 & -0.22 & 3.12 & 1.52 & 288286.19 & 0.70 & 10 \\
+NKE  & KLAC  & KMX  & 1.00 & -0.31 & -0.22 & 3.14 & 1.01 & 102627.67 & 0.69 & 8 \\
+DFS  & DHR  & MSI  & 1.00 & -1.01 & -0.36 & 3.15 & -1.02 & 3273.84 & 0.70 & 4 \\
+MAT  & IR  & ITT  & 1.00 & -0.18 & -0.46 & 3.19 & -0.08 & 9112.14 & 0.48 & 2 \\
+AMAT  & ALL  & AME  & 1.00 & -0.27 & -0.43 & 3.21 & 0.18 & 12029.12 & 0.68 & 4 \\
+AMAT  & AME  & CVS  & 1.00 & -0.54 & -0.28 & 3.24 & 0.01 & 10118.17 & 0.43 & 3 \\
+NWL  & BBT  & COF  & 1.00 & -0.16 & -0.22 & 3.25 & 0.29 & 11703.30 & 0.28 & 4 \\
+MO  & MHK  & MSI  & 1.00 & -0.07 & -0.16 & 3.26 & -0.72 & 5102.08 & 0.52 & 5 \\
+MAT  & IP  & IR  & 1.00 & -0.19 & -0.26 & 3.38 & 0.87 & 16667.10 & 0.32 & 3 \\
+MKC  & COST  & COV  & 1.00 & -0.24 & -0.20 & 3.47 & 0.11 & 10421.81 & 0.16 & 4 \\
+MKC  & COST  & COV  & 1.00 & -0.24 & -0.20 & 3.47 & 0.11 & 10421.81 & 0.16 & 4 \\
+ETFC  & ETN  & GCI  & 1.00 & -0.95 & -0.23 & 3.51 & 0.59 & 10912.62 & 0.10 & 2 \\
+WY  & MET  & MHFI  & 1.00 & -0.19 & -0.44 & 3.51 & 1.04 & 23042.24 & 0.30 & 8 \\
+TIE  & 0772031D  & CVH  & 1.00 & -0.47 & -0.24 & 3.64 & 0.70 & 12159.16 & 0.17 & 6 \\
+MAT  & KLAC  & KO  & 1.00 & -0.30 & -0.47 & 3.87 & 0.49 & 18728.88 & 0.41 & 6 \\
+MAT  & KLAC  & KO  & 1.00 & -0.30 & -0.47 & 4.02 & 0.51 & 19505.18 & 0.41 & 6 \\
 \hline
 \end{tabular}
 \caption{The 20 selected triples for the Bollinger Bands with SV modelling (2008-2009)}
@@ -1608,80 +1609,25 @@ LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \
 \hline
 Statistics  			& Bollinger & Z-score & Bollinger (SV) & SPX\\
 \hline
-\# of observations in the sample								    & 505       &505      && 505\\
-\# of observations in the training window						& 169       &169      && 169\\
-\# of days in the trading period								    & 336       &336      && 336\\
-\# of triples in the trading period   							& 20        &20       && N.A.\\
-\# of cointegrated spreads to analyze 				      & 5967      &5967     && N.A.\\
-Average annualized return 										      & 60.11 \%  &78.06 \% && 12.92 \%\\
-Annualized Sharpe Ratio 										        & 2.57      &3.07     && 0.41\\
-Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     && 0.36\\
-Largest daily return 											          & 5.81\%    &8.31 \%  && 10.78 \%\\
-Lowest daily return 											          & -5.53\%   &-4.23\%  && -8.92 \%\\
-Cumulative profit on the trading period             & 79.38\%   &103.88 \%&& 17.26 \% \\
-Correlation with the market returns 							  & 0.0637    &-0.0302  && 1\\
-Skewness of the returns														  & 0.489     &1.006    && 0.133\\
-Kurtosis of the returns														  & 6.973     &11.863   && 6.421 \\
-Maximum Drawdown  												          & 8.44\%    &6.32 \%  && 32.73 \%\\
+\# of observations in the sample								    & 505       &505      & 505    & 505\\
+\# of observations in the training window						& 169       &169      & 169    & 169\\
+\# of days in the trading period								    & 336       &336      & 336    & 336\\
+\# of triples in the trading period   							& 20        &20       & 20     & N.A.\\
+\# of cointegrated spreads to analyze 				      & 5967      &5967     & 5976   & N.A.\\
+Average annualized return 										      & 60.11 \%  &78.06 \% & 187.51 \%& 12.92 \%\\
+Annualized Sharpe Ratio 										        & 2.57      &3.07     & 1.41   & 0.41\\
+Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     & 1.40   & 0.36\\
+Largest daily return 											          & 5.81\%    &8.31 \%  & 16.16 \% & 10.78 \%\\
+Lowest daily return 											          & -5.53\%   &-4.23\%  & -10.58 \% & -8.92 \%\\
+Cumulative profit on the trading period             & 79.38\%   &103.88 \%& 250.44\% & 17.26 \% \\
+Correlation with the market returns 							  & 0.0637    &-0.0302  & 0.0555 & 1\\
+Skewness of the returns														  & 0.489     &1.006    & 0.450 & 0.133\\
+Kurtosis of the returns														  & 6.973     &11.863   & 3.735 & 6.421 \\
+Maximum Drawdown  												          & 8.44\%    &6.32 \%  & 28.20 \% & 32.73 \%\\
 \hline
 \end{tabular}
 \caption{Summary of Triple Trading for the period 2008-2009}
 \end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lll}
-\hline
-\multicolumn{1}{|l|}{Ticker}     & \multicolumn{1}{|l|}{Name} & \multicolumn{1}{l|}{Sector}\\ \hline
-0772031D UN Equity & QWEST COMMUNICATIONS INTL & N.A. \\
-AMP UN Equity & AMERIPRISE FINANCIAL INC & Financials \\
-AMT UN Equity & AMERICAN TOWER CORP & Financials \\
-BCR UN Equity & CR BARD INC & Health Care \\
-BRK/B UN Equity & BERKSHIRE HATHAWAY INC-CL B & Financials \\
-CCI UN Equity & CROWN CASTLE INTL CORP & Financials \\
-CVH UN Equity & COVENTRY HEALTH CARE INC & N.A. \\
-DDR UN Equity & DDR CORP & Financials \\
-DE UN Equity & DEERE CO & Industrials \\
-DIS UN Equity & WALT DISNEY CO/THE & Consumer Discretionary \\
-DO UN Equity & DIAMOND OFFSHORE DRILLING & Energy \\
-ETFC UW Equity & E*TRADE FINANCIAL CORP & Financials \\
-FCX UN Equity & FREEPORT-MCMORAN COPPER & Materials \\
-FII UN Equity & FEDERATED INVESTORS INC-CL B & Financials \\
-HIG UN Equity & HARTFORD FINANCIAL SVCS GRP & Financials \\
-JDSU UQ Equity & JDS UNIPHASE CORP & Information Technology \\
-JDSU UW Equity & JDS UNIPHASE CORP & Information Technology \\
-JNJ UN Equity & JOHNSON AND JOHNSON & Health Care \\
-JNS UN Equity & JANUS CAPITAL GROUP INC & Financials \\
-KSU UN Equity & KANSAS CITY SOUTHERN & Industrials \\
-LSI UN Equity & LSI CORP & Information Technology \\
-LUK UN Equity & LEUCADIA NATIONAL CORP & Financials \\
-MA UN Equity & MASTERCARD INC-CLASS A & Information Technology \\
-MAC UN Equity & MACERICH CO/THE & Financials \\
-MDT UN Equity & MEDTRONIC INC & Health Care \\
-MHK UN Equity & MOHAWK INDUSTRIES INC & Consumer Discretionary \\
-MKC UN Equity & MCCORMICK AND CO-NON VTG SHRS & Consumer Staples \\
-MSI UN Equity & MOTOROLA SOLUTIONS INC & Information Technology \\
-NSC UN Equity & NORFOLK SOUTHERN CORP & Industrials \\
-OXY UN Equity & OCCIDENTAL PETROLEUM CORP & Energy \\
-PG UN Equity & PROCTER GAMBLE CO/THE & Consumer Staples \\
-PNC UN Equity & PNC FINANCIAL SERVICES GROUP & Financials \\
-PRU UN Equity & PRUDENTIAL FINANCIAL INC & Financials \\
-PTC UQ Equity & PTC INC & Information Technology \\
-PTC UW Equity & PTC INC & Information Technology \\
-PXD UN Equity & PIONEER NATURAL RESOURCES CO & Energy \\
-R UN Equity & RYDER SYSTEM INC & Industrials \\
-SCI UN Equity & SERVICE CORP INTERNATIONAL & Consumer Discretionary \\
-SEE UN Equity & SEALED AIR CORP & Materials \\
-SHLD UQ Equity & SEARS HOLDINGS CORP & Consumer Discretionary \\
-SHLD UW Equity & SEARS HOLDINGS CORP & Consumer Discretionary \\
-SYY UN Equity & SYSCO CORP & Consumer Staples \\
-TIE UN Equity & TITANIUM METALS CORP & N.A. \\
-TSN UN Equity & TYSON FOODS INC-CL A & Consumer Staples \\
-UNM UN Equity & UNUM GROUP & Financials \\
-\hline
-\end{tabular}
-\end{table}
-
 
 \begin{figure}[!htb]
 \centering
@@ -1943,6 +1889,63 @@ GBPUSD & CADUSD & CHFUSD & 1.000000& -0.432923& -0.177363 \\
 \end{tabular}
 \caption{Cointegration on FX Rates between Jan, 1 1999 and Jan, 1 2013}
 \label{coint_fx}
+\end{table}
+
+\section{names}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\hline
+\multicolumn{1}{|l|}{Ticker}     & \multicolumn{1}{|l|}{Name} & \multicolumn{1}{l|}{Sector}\\ \hline
+0772031D UN Equity & QWEST COMMUNICATIONS INTL & N.A. \\
+AMP UN Equity & AMERIPRISE FINANCIAL INC & Financials \\
+AMT UN Equity & AMERICAN TOWER CORP & Financials \\
+BCR UN Equity & CR BARD INC & Health Care \\
+BRK/B UN Equity & BERKSHIRE HATHAWAY INC-CL B & Financials \\
+CCI UN Equity & CROWN CASTLE INTL CORP & Financials \\
+CVH UN Equity & COVENTRY HEALTH CARE INC & N.A. \\
+DDR UN Equity & DDR CORP & Financials \\
+DE UN Equity & DEERE CO & Industrials \\
+DIS UN Equity & WALT DISNEY CO/THE & Consumer Discretionary \\
+DO UN Equity & DIAMOND OFFSHORE DRILLING & Energy \\
+ETFC UW Equity & E*TRADE FINANCIAL CORP & Financials \\
+FCX UN Equity & FREEPORT-MCMORAN COPPER & Materials \\
+FII UN Equity & FEDERATED INVESTORS INC-CL B & Financials \\
+HIG UN Equity & HARTFORD FINANCIAL SVCS GRP & Financials \\
+JDSU UQ Equity & JDS UNIPHASE CORP & Information Technology \\
+JDSU UW Equity & JDS UNIPHASE CORP & Information Technology \\
+JNJ UN Equity & JOHNSON AND JOHNSON & Health Care \\
+JNS UN Equity & JANUS CAPITAL GROUP INC & Financials \\
+KSU UN Equity & KANSAS CITY SOUTHERN & Industrials \\
+LSI UN Equity & LSI CORP & Information Technology \\
+LUK UN Equity & LEUCADIA NATIONAL CORP & Financials \\
+MA UN Equity & MASTERCARD INC-CLASS A & Information Technology \\
+MAC UN Equity & MACERICH CO/THE & Financials \\
+MDT UN Equity & MEDTRONIC INC & Health Care \\
+MHK UN Equity & MOHAWK INDUSTRIES INC & Consumer Discretionary \\
+MKC UN Equity & MCCORMICK AND CO-NON VTG SHRS & Consumer Staples \\
+MSI UN Equity & MOTOROLA SOLUTIONS INC & Information Technology \\
+NSC UN Equity & NORFOLK SOUTHERN CORP & Industrials \\
+OXY UN Equity & OCCIDENTAL PETROLEUM CORP & Energy \\
+PG UN Equity & PROCTER GAMBLE CO/THE & Consumer Staples \\
+PNC UN Equity & PNC FINANCIAL SERVICES GROUP & Financials \\
+PRU UN Equity & PRUDENTIAL FINANCIAL INC & Financials \\
+PTC UQ Equity & PTC INC & Information Technology \\
+PTC UW Equity & PTC INC & Information Technology \\
+PXD UN Equity & PIONEER NATURAL RESOURCES CO & Energy \\
+R UN Equity & RYDER SYSTEM INC & Industrials \\
+SCI UN Equity & SERVICE CORP INTERNATIONAL & Consumer Discretionary \\
+SEE UN Equity & SEALED AIR CORP & Materials \\
+SHLD UQ Equity & SEARS HOLDINGS CORP & Consumer Discretionary \\
+SHLD UW Equity & SEARS HOLDINGS CORP & Consumer Discretionary \\
+SYY UN Equity & SYSCO CORP & Consumer Staples \\
+TIE UN Equity & TITANIUM METALS CORP & N.A. \\
+TSN UN Equity & TYSON FOODS INC-CL A & Consumer Staples \\
+UNM UN Equity & UNUM GROUP & Financials \\
+\hline
+\end{tabular}
 \end{table}
 
 
