@@ -1504,7 +1504,7 @@ Total & 46484 & 3540 (0.007) & 19850 (0.427) & 22796 (0.490) \\
 
 \section{Example : Period 2008-2009}
 
-This part focuses on the result of the different strategies for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Table \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_simple_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger Bands with and without Stochastic Volatility modelling and Z-score. Each of this tuple has passed the correlation and the cointegration tests. In addition, it must exhibit a very high Sharpe ratio on $\mathcal{I}$ to be shortlisted. $\beta = (\beta_1, \beta_2, \beta_3)$ represents the cointegrating vector associated to the triple.
+This part focuses on the result of the different strategies for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Table \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_simple_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger Bands with and without Stochastic Volatility modelling and Z-score. Each of this tuple has passed the correlation and the cointegration tests. In addition, it must exhibit a very high Sharpe ratio on $\mathcal{I}$ ($\mathcal{SR}_\mathcal{I}$) to be shortlisted. $\beta = (\beta_1, \beta_2, \beta_3)$ represents the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR), maximum drawdown (MDD), variance of the returns $\hat{\sigma^2}$ and the number of trades $(\# Trds)$ are recorded on the out-sample step. 
 All the triples exhibit a very high Sharpe ratio on the in-sample period and a lower but still promising Sharpe ratio on the out-sample period. 
 
 \renewcommand{\arraystretch}{0.8}% Wider
@@ -1607,16 +1607,17 @@ LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \
 \centering
 \begin{tabular}{lllll}
 \hline
-Statistics  			& Bollinger & Z-score & Bollinger (SV) & SPX\\
+Statistics  			& Bollinger & Z-score & Bollinger (SV) & SPX (B\&H)\\
 \hline
 \# of observations in the sample								    & 505       &505      & 505    & 505\\
-\# of observations in the training window						& 169       &169      & 169    & 169\\
-\# of days in the trading period								    & 336       &336      & 336    & 336\\
+\# of observations in $\mathcal{I}$						      & 169       &169      & 169    & 169\\
+\# of days in the trading period ($\mathcal{O}$)    & 336       &336      & 336    & 336\\
 \# of triples in the trading period   							& 20        &20       & 20     & N.A.\\
 \# of cointegrated spreads to analyze 				      & 5967      &5967     & 5976   & N.A.\\
 Average annualized return 										      & 60.11 \%  &78.06 \% & 187.51 \%& 12.92 \%\\
 Annualized Sharpe Ratio 										        & 2.57      &3.07     & 1.41   & 0.41\\
 Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     & 1.40   & 0.36\\
+Largest daily return 											          & 5.81\%    &8.31 \%  & 16.16 \% & 10.78 \%\\
 Largest daily return 											          & 5.81\%    &8.31 \%  & 16.16 \% & 10.78 \%\\
 Lowest daily return 											          & -5.53\%   &-4.23\%  & -10.58 \% & -8.92 \%\\
 Cumulative profit on the trading period             & 79.38\%   &103.88 \%& 250.44\% & 17.26 \% \\
