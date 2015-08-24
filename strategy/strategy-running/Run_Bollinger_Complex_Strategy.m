@@ -12,14 +12,6 @@ format longg;
 load('spreads_6575_7306.mat');
 load('spx_6575_7306.mat');
 
-% N = length(spreads(1).px)+100;
-% for spr_id = spreads_ids
-%     spread      = spreads(spr_id);
-%     [ pmcmc ]   = Sto_Volatility_Estimator( spread.px, 100, 3000 );
-%     fname       = sprintf('pmcmc_%d.mat', spr_id); 
-%     save(fname, 'pmcmc');
-% end
-
 mat_a = zeros(length(spreads),5);
 for i = 1:length(spreads)
     try
@@ -65,10 +57,7 @@ for i = spreads_ids
     c = c + 1;
 end
 portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
-
-%Sometimes you can just remove the end if it's too bad.
 PerformanceAssessment(portfolio_cumsum, spx(T:end), initial_bet)
-
 portfolio_cumsum_sv = portfolio_cumsum;
 
 

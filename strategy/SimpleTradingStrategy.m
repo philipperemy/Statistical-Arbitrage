@@ -25,4 +25,10 @@ function [ pl, balance_cum, trds ] = SimpleTradingStrategy( pp, Spread, start_id
     
     [ pl, balance_cum, trds ] = strat_simulator( pp, beg, T, initial_bet, Spread, spr, spr_uppr_trends, spr_lowr_trends, spr_lowr_trends, spr_uppr_trends, disp, considerTrdCost );
 
+    %stopping point
+    if(any(balance_cum < 0))
+        id = find( balance_cum < 0); id = id(1);
+        balance_cum(id:end) = zeros(1,length(balance_cum)-id+1);
+    end
+    
 end
