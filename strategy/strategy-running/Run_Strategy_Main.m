@@ -16,10 +16,12 @@ BOLLINGER_CPX       = 2;
 BOLLINGER_SIMPLE    = 1;
 
 strat_id            = BOLLINGER_CPX;
-% 
+
+% BOLLINGER_SIMPLE = 0.4614 
+% BOLLINGER_CPX = 0.4321,
 % load('spreads_1_731.mat');
 % load('spx_1_731.mat');
-% [ portfolio_cumsum_1_731 ] = Run_Strategy( pp,spreads, spx, strat_id );
+% [ portfolio_cumsum_1_731 ] = Run_Strategy( pp,spreads, spx, BOLLINGER_SIMPLE );
 % fprintf('done 1\n');
 % 
 % load('spreads_731_1462.mat');
@@ -116,7 +118,7 @@ strat_id            = BOLLINGER_CPX;
 % 
 % ans =
 %          0.419872057980445
-% WITH SIMPLE IT WAS 0.365
+% WITH SIMPLE IT WAS 0.369761053758438
 
 load('spreads_6575_7306.mat');
 load('spx_6575_7306.mat');
