@@ -51,12 +51,16 @@ classdef ParticleMarkovChainMonteCarloSVTwoFactorsBetaCor < ParticleMarkovChainM
                     if(val > 5)
                        val = 5; 
                     end
-                case {'rho_prop', 'rho2_prop'}
-                    val = rand; %unif, must be positive
+                case {'rho_prop'}
+                   val = 0.90 + (1-0.90)*rand;
+                    % val = rand; %unif, must be positive
+                case {'rho2_prop'}
+                    val = rand;
                 case {'sigma_prop', 'sigma2_prop'}
                     val = 2*rand;
 				case 'cor_prop'
 					val = 2*rand-1;
+                    %val = -rand;
             end
         end
         

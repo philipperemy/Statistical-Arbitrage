@@ -26,7 +26,7 @@ classdef ParticleMarkovChainMonteCarlo < handle
  
         function [ret] = check_update(this, log_numerator, log_denominator)
             ret = this.NO_UPDATE;
-            if (rand < min(1, exp(log_numerator - log_denominator)))
+            if (log_numerator > log_denominator)
                 ret = this.UPDATE;
             end
         end
@@ -73,7 +73,7 @@ classdef ParticleMarkovChainMonteCarlo < handle
                                break; 
                             end
                             
-                            if(c == 200) %before it was 50
+                            if(c == 100) %before it was 50
                                fprintf('stuck in an infinite loop...\n');
                                return;
                             end
