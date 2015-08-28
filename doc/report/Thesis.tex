@@ -449,27 +449,6 @@ The next step is to determine the number of lags to include in the model. Differ
 \section{Creation and Validation of the Spread Instruments}
 A rigorous testing for cointegration is performed to select the tuples for trading. Algorithm \ref{formation_spread_algorithm} explains the procedure. The result of a test is denoted $h = p_{value} < 0.05$. Values of $h$ equal to 1 indicate rejection of the null hypothesis in favor of the alternative model. Values of $h$ equal to 0 indicate a failure to reject the null.
 
-% \begin{algorithm}[H]
-% \caption{Formation of the Spread (Auxiliary function)}\label{formation_spread_algorithm}
-% \begin{algorithmic}[1]
-% \Procedure{FormValidSpreadFromTuple}{$(\matr{X}_i)_{1 < i \leq N}$}
-% \For{j from 1 to N} //Order is important in a tuple
-%     \State Regress $\Delta \matr{X}_j = f((\Delta \matr{X}_i)_{i \neq j})$
-%     \State Form the spread $\matr{S} = \beta'\matr{X} = \matr{X}_j - \sum_{i\neq j} \beta_i \matr{X}_i$
-%     \State Determine the optimal lag $p$ for the ADF test (section \ref{sec:unit_root_testing})
-%     \State $h_1$ = Test $\matr{S} \sim I(1)$ with an Augmented Dickey-Fuller test with lags $[0,p]$
-%     \State $h_2$ = Test $\matr{S} \sim RW(\cdot)$ with variance ratio test for random walk
-%     \If{$h_1 = 1$ \textbf{and} $h_2 = 1$}
-%       \State $\matr{S}$ is a spread candidate for trading.
-%       \State \textbf{Break} //Success
-%     \EndIf
-%   \EndFor{end} \\
-% \Return $\matr{S}$
-% \EndProcedure
-% \end{algorithmic}
-% \end{algorithm}
-
-
 \begin{algorithm}[H]
 \caption{Formation of the Spread}\label{formation_spread_algorithm}
 \begin{algorithmic}[1]
@@ -683,11 +662,11 @@ Sequential Monte Carlo (also known as Particle Filtering) paradigm is based on M
 Rejection sampling is a technique which samples from a target distribution $p(\matr{X})$ (known up to a proportional constant) by sampling from another easy to sample proposal distribution $\pi(\matr{X})$. This assumes that there exists a known finite constant $C$ such that $p(\matr{X}) \leq C \pi(\matr{X})$ for every $\matr{x}$. The idea is to draw $\matr{X} \sim \pi$ and accept it as a sample of $p$ with probability $p(\matr{X}) / ( C \pi(\matr{X}))$.
 
 \subsection{Importance Sampling}
-The idea of importance sampling is to choose a proposal distribution $\pi(\matr{X})$ in place of the true probability distribution $p(\matr{X})$, which is difficult to sample. The support of $\pi(\matr{X})$ is assumed to cover that of $p(\matr{X})$. Under these assumptions, the classic Monte Carlo integration problem
+The idea of importance sampling is to choose a proposal distribution $\pi(\matr{X})$ in place of the true probability distribution $p(\matr{X})$, which is difficult to sample. The support of $\pi(\matr{X})$ is assumed to cover that of $p(\matr{X})$. Under these assumptions, the classic Monte Carlo integration problem is
 \begin{equation}
 p(f) = E[f(\matr{X})] = \int f(\matr{X})p(d\matr{X})
 \end{equation}
-for any suitable function $f$ can be rewritten as
+for any suitable function $f$. It can be rewritten as
 \begin{equation}
 \int f(\matr{X})p(\matr{X})d\matr{X} = \int f(\matr{X}) \frac{p(\matr{X})}{\pi(\matr{X})} \pi(\matr{X}) d\matr{X} \label{is_equation}
 \end{equation}
@@ -696,26 +675,32 @@ Importance sampling is used to draw a number of independent samples from $\pi(\m
 \section{Sequential Monte Carlo Methods}
 \label{section:smc}
 \subsection{Sequential Importance Sampling Resampling}
-The Sequential Importance Sampling Resampling (SIR) algorithm is a Sequential Monte Carlo method which approximates the filtering probability density $p(\matr{x}_t|y_{1:t})$ by a weighted set of $N$ samples $(w_t^{(i)}, \matr{x}_t^{(i)})$ for $i \in [1,N]$. The importance weights $w_t^{(i)}$ are approximations to the relative posterior distributions. SIR is a sequential version of importance sampling with a resampling step. As in importance sampling, the expectation of a function $f$ can be approximated as a weighted average
+The Sequential Importance Sampling Resampling (SIS-R) algorithm is a sequential version of importance sampling with resampling which approximates the filtering probability density $p(\matr{x}_t|y_{1:t})$ of the latant variables by a weighted set of $N$ samples $(w_t^{(i)}, \matr{x}_t^{(i)})_{1 \leq i \leq N}$. $N$ is known as the number of particles. The importance weights $w_t^{(i)}$ are approximations to the relative posterior distributions. This algorithm has been introduced in 1987 to tackle the degeneracy problem, unresolved by its previous version, known as Sequential Importance Sampling (SIS). The degeneracy happens when all but one of the importance weights are close to zero. The correction is done by adding a resampling step to eliminate samples with trivial importance weights and propagate samples with larger weights. As in importance sampling, the expectation of a function $f$ can be approximated as a weighted average
 \begin{equation}
 \int f(\matr{x}_t)p(\matr{x}_t|y_{1:t})d \matr{x}_t \simeq \sum_{i=1}^N w_t^{(i)} f(\matr{x}_t^{(i)})
 \end{equation}
-SIR algorithm has been introduced in 1987 to solve the degeneracy problem. As a matter of fact, the previous algorithm, known as Sequential Importance Sampling (SIS) does not perform the resampling step. In this case, the degeneracy happens when all but one of the importance weights are close to zero. Introducing this new step works to rectify this problem by eliminating samples with trivial importance weights and propagating samples with larger weights. This step is presented in Algorithm \ref{algo_resampling_step}. The input is the set of particles at time $t$ and the output is this same set resampled with the weights being re-initialized. $N$ is the number of particles in the particle filter. The general algorithm SIR is presented in Algorithm \ref{algo_sisr_filter}. The input consists in the observations $y_{1:T}$, the parameters vector $\theta$ and the number of particles $N$. The output is the estimated latent states $\matr{x}^*_{1:T}$ and the estimator $\hat{p}^N_\theta(y_{1:T})$. Generally, the resampling step is not performed at each time but at some specific steps to improve the performance. It is controlled by the Effective Sample Size (ESS) parameter which gives an estimate of the effective number of particles. When it is too low, it means that the algorithm is performing poorly and a resampling is necessary. A threshold $N_{thr}$ is arbitrary selected to trigger this resampling. Usually, it is equal to $N/3$ but can vary depending on the applications.
+
+This step is presented in Algorithm \ref{algo_resampling_step}. The input is the set of particles at time $t$ and the output is this same set resampled with the weights being re-initialized. $N$ is the number of particles in the particle filter.
 \begin{algorithm}[H]
 \caption{Multinomial Resampling}\label{algo_resampling_step}
 \begin{algorithmic}[1]
+\Procedure{MultinomialResampling}{$(w_t^{(i)}, \matr{x}_t^{(i)})_{1 \leq i \leq N}$, $N$}
 \For{i from 1 to N}
-  \State Sample $j \in [1,N]$ with probabilities proportional to $\{w_{t}^{(1)},..., w_{t}^{(N)}\}$
+  \State Sample an integer $j \in [1,N]$ with probabilities proportional to $\{w_{t}^{(1)},..., w_{t}^{(N)}\}$
   \State Replace the current particle $i$ with this new one. $\matr{x}_t^{(i)} \gets \matr{x}_t^{(j)}$
   \State Re initialize the weight $w_t^{(i)} = 1/N$
 \EndFor{end}
+\EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
+The general algorithm SIR is presented in Algorithm \ref{algo_sisr_filter}. The input consists in the observations $y_{1:T}$, the parameters vector $\theta$ and the number of particles $N$. The output is the estimated latent states $\matr{x}^*_{1:T}$ and the estimator $\hat{p}^N_\theta(y_{1:T})$. Generally, the resampling step is not performed at each time but at some specific steps to improve the performance. It is controlled by the Effective Sample Size (ESS) parameter which gives an estimate of the effective number of particles. When it is too low, it means that the algorithm is performing poorly and a resampling is necessary. A threshold $N_{thr}$ is arbitrary selected to trigger this resampling. Usually, it is equal to $N/3$ but can vary depending on the applications.
+
 \begin{algorithm}[H]
 \caption{Sequential Importance Sampling Resampling (SISR)}\label{algo_sisr_filter}
+{\small
 \begin{algorithmic}[1]
-\Procedure{Input}{$y_{1:T}$, $\theta$, N, $N_{thr}$}
+\Procedure{SISR}{$y_{1:T}$, $\theta$, N, $N_{thr}$}
 \For{i from 1 to N}
 	\State Sample $\matr{x}_1^{(i)} \sim \pi (\matr{x}_1)$
 	\State Calculate weight $w_1^{(i)} = \displaystyle{\frac{p(y_1 | \matr{x}_1) p(\matr{x}_1)}{\pi (\matr{x}_1 | y_{1:t})}}$
@@ -723,13 +708,13 @@ SIR algorithm has been introduced in 1987 to solve the degeneracy problem. As a 
 \State $\matr{x}^*_1 = \sum_{i=1}^N \matr{x}_1^{(i)}.w_1^{(i)}$
 \State Set $\hat{p}^N_\theta(y_1) = \frac{1}{N} \sum_{i=1}^N w_1^{(i)}$
 
-\For{t from 1 to T}
+\For{t from 2 to T}
 	\For{i from 1 to N}
 	  \State Draw sample from the proposal distribution $\matr{x}_t^{(i)} \sim \pi \left(\matr{x}_t|\matr{x}_{1:t-1}^{(i)}, y_{1:t} \right)$
 		\State Calculate weight $\displaystyle{\hat{w}_t^{(i)} = w_{t-1}^{(i)} \frac{p(y_t|\matr{x}_t^{(i)}) p(\matr{x}_t^{(i)}|\matr{x}_{t-1}^{(i)})}{\pi \left(\matr{x}_t^{(i)}|\matr{x}_{1:t-1}^{(i)}, y_{1:t} \right)}}$
-		\State Compute the normalized importance weight $\displaystyle{w_t^{(i)} = \frac{\hat{w}_t^{(i)}}{\sum_{j=1}^N \hat{w}_t^{(j)}}}$
 	\EndFor{end}
-	\State Compute an estimation of ESS as $N_{eff} = 1 / \left(  \sum_{i=1}^N \left(w_t^{(i)} \right)^2 \right)$
+	\State Compute the normalized importance weight for each $i$, $\displaystyle{w_t^{(i)} = \frac{\hat{w}_t^{(i)}}{\sum_{j=1}^N \hat{w}_t^{(j)}}}$
+	\State Compute the ESS as $N_{eff} = 1 / \left(  \sum_{i=1}^N \left(w_t^{(i)} \right)^2 \right)$
 	\If{$N_{eff} < N_{thr}$} 
 		  \State //perform resampling step
 		\EndIf{end}
@@ -740,13 +725,14 @@ SIR algorithm has been introduced in 1987 to solve the degeneracy problem. As a 
 \Return ($\matr{x}^*_{1:T}$, $\hat{p}^N_\theta(y_{1:T})$)
 \EndProcedure
 \end{algorithmic}
+}
 \end{algorithm}
 
 It is worth noting that $\matr{x}$ can be multivariate. Models exist where the observations are generated from two or more latent processes (models $\mathcal{M}_6$ and $\mathcal{M}_7$ are such examples). In the case where $\matr{x}$ is bivariate, the particle filter is updated to draw two sets of particles instead of one (one for $\matr{x}_1$ and one for $\matr{x}_2$). \\
 
-Particle filters with transition prior probability distribution $f_\theta(\cdot)$ as importance function $\pi(\matr{X})$ are commonly known as Bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(\matr{x}_k| \matr{x}_{1:k-1}, y_{1:k}) = p(\matr{x}_k|\matr{x}_{k-1})$. Coupled with a resampling done at each step, set by $N_{thr} = \infty$, the weights formula is simplified to
+Particle filters with transition prior probability distribution $f_\theta(\cdot)$ as importance function $\pi(\matr{X})$ are commonly known as Bootstrap filter. This choice is motivated by the facility of drawing particles and performing subsequent importance weight calculations. Here, $\pi(\matr{x}_t| \matr{x}_{1:t-1}, y_{1:t}) = p(\matr{x}_t |\matr{x}_{1:t-1}, y_{1:t})$. Coupled with a resampling done at each step, set by $N_{thr} = \infty$, the weights formula is simplified to
 \begin{equation}
-w_k^{(i)} = \frac{p(y_k|\matr{x}_k^{(i)})p(\matr{x}_k^{(i)}|\matr{x}^{(i)}_{k-1})}{\pi(\matr{x}_k^{(i)}|\matr{x}^{(i)}_{1:k-1},y_{1:k})}=  p(y_k|\matr{x}_k^{(i)})
+w_t^{(i)} = \frac{p(y_t|\matr{x}_t^{(i)})p(\matr{x}_t^{(i)}|\matr{x}^{(i)}_{t-1})}{\pi(\matr{x}_t^{(i)}|\matr{x}^{(i)}_{1:t-1},y_{1:t})}=  p(y_t|\matr{x}_t^{(i)})
 \end{equation}
 
 It is clear from the understanding of importance resampling that these weights are appropriate for representing a sample from $p(\matr{x}_t|y_{1:t})$, and so the particles and weights can be propagated forward to the next time point. It is also clear that the average weight at each time gives an estimate of the marginal likelihood of the current data point given the data so far. So we define the conditional marginal of $y_t$ by
@@ -762,12 +748,12 @@ and the conditional marginal estimator of $y_{1:T}$ over all the state-space is
 
 Again, from the importance resampling scheme, it should be reasonably clear that $\hat{p}^N_{\theta}(y_{1:T})$ is a consistent estimator of $p_{\theta}(y_{1:T})$. It is much less obvious, but nevertheless true that this estimator is also unbiased, according to \cite{delmoral2004}. This result is the cornerstone of Particle MCMC models. As $T$ is usually large, it is usually preferred to work with log likelihoods
 \begin{align*}
-\log p_{\theta}(y_{1:T}) &= \log p_\theta(y_1) + \sum_{t=2}^T \log p_\theta(y_t | y_{1:T-1}) \numberthis \\
+\log p_{\theta}(y_{1:T}) &= \log p_\theta(y_1) + \sum_{t=2}^T \log p_\theta(y_t | y_{1:t-1}) \numberthis \\
 \log \hat{p}^N_\theta(y_{1:T}) &= \sum_{t=1}^T \log \left(\frac{1}{N} \sum_{k=1}^N w_t^{k} \right) \numberthis
 \end{align*}
 
-\section{Resampling step}
-As exposed before, Sequential Monte Carlo can be decomposed in two main steps: sequential importance sampling (SIS) and resampling. As explained before, the main drawback of SIS is that it becomes very unstable as $T$ increases due to the discrepancy between the weights, a phenomenon known as weight degeneracy. To stabilize the algorithm and gain some accuracy, it is necessary to perform resampling sufficiently often. This step is also time-critical. We ran performance benchmarks and it turned out that resampling can represent more than half of the time spent in the Bootstrap filter. Many methods exist in the literature: multinomial, stratified, systematic and residuals resampling are such examples. Despite the lack of complete theoretical analysis of its behavior, multinomial resampling is probably the most used algorithm because almost all software products offer a default implementation of this method. \cite{douc2005} found an interesting result:
+\section{Resampling Methods}
+SISR can be decomposed in two main steps: sequential importance sampling (SIS) and resampling. To balance performance and accuracy, it is necessary to perform resampling sufficiently often. This step is also time-critical as highlighted by the performance benchmarks we ran: resampling represents on average half of the time spent in the filter. Many resampling methods exist in the literature: multinomial, stratified, systematic and residuals are such examples. Despite the lack of complete theoretical analysis of its behavior, multinomial resampling is probably the most used algorithm because almost all software products offer a default implementation of this method. \cite{douc2005} found an interesting result:
 \begin{theorem}
 \textit{
 Stratified resampling has a lower conditional variance compared to multinomial resampling.
@@ -777,7 +763,7 @@ Stratified resampling has a lower conditional variance compared to multinomial r
 See Appendix \ref{app:proof}.
 \end{proof}
 
-From a mathematical point of view, the stratified resampling is compelling. A benchmark study consisting in resampling 1000 weights numerous times was performed and the results are presented in Table \ref{resampling_method_table}. The stratified resampling seems to offer the best balance in terms of speed and variance. For this reason, we choose it as default resampling method inside our particle filters.
+From a mathematical point of view, the stratified resampling is compelling. A benchmark consisting in resampling 1000 weights numerous times was run and the results are gathered in Table \ref{resampling_method_table}. The stratified resampling seems to offer the best balance in terms of speed and variance. For this reason, we choose it as default resampling method inside our particle filters.
 
 \begin{table}[H]
 \centering
@@ -803,13 +789,13 @@ In the classic MCMC scheme, the Metropolis Hastings (MH) algorithm is used to ta
 \min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p({\matr{y}}|\theta^\star)}{p({\matr{y}}|\theta)} \right) \numberthis \label{classic_mcmc_target}
 \end{align*}
 
-where $q(\theta^\star|\theta)$ is the proposal density. As discussed before, the marginal likelihood $p(\matr{y}|\theta) = \int p(\matr{y}|\matr{x})p(\matr{x}|\theta) d\matr{x}$ is often intractable and the ratio becomes impossible to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,\matr{x}|\matr{y})$. Usually the knowledge of the kernel $p_\theta(\matr{x}_t|\matr{x}_{t-1})$ makes $p(\matr{x}|\theta)$ tractable. For instance, a path $\matr{x}_{1:T}$ governed by a linear Gaussian process $\matr{X}_t = \rho \matr{X}_{t-1} + \tau \epsilon_{t-1} \text{, } \epsilon_t \sim \mathcal{N}(0,1)$ can be easily simulated as long as $\rho$, $\tau$ and $\matr{x}_1$ are known quantities. \\ 
+where $q(\theta^\star|\theta)$ is the proposal density. As discussed before, the marginal likelihood $p(\matr{y}|\theta) = \int p(\matr{y}|\matr{x})p(\matr{x}|\theta) d\matr{x}$ is often intractable and the ratio becomes impossible to compute. The simple likelihood-free scheme targets the full joint posterior $p(\theta,\matr{x}|\matr{y})$. Usually the knowledge of the kernel $f_\theta$ makes $p(\matr{x_{1:T}}|\theta)$ tractable. For instance, a path $\matr{x}_{1:T}$ governed by a linear Gaussian process $\matr{X}_t = \rho \matr{X}_{t-1} + \tau \epsilon_{t-1} \text{, } \epsilon_t \sim \mathcal{N}(0,1)$ can be easily simulated as long as $\rho$, $\tau$ and $\matr{x}_1$ are known quantities. \\ 
 
 The MH is built in two stages. First, a new candidate $\theta^*$ is proposed from $q(\theta^\star|\theta)$. Then, $\matr{x}^*$ is sampled from $p(\matr{x}^\star|\theta^\star)$. The generated pair $(\theta^\star,\matr{x}^\star)$ is accepted with the ratio
 \begin{align*}
 \min \left( 1, \frac{p(\theta^\star)}{p(\theta)} \times  \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \times \frac{p(\matr{y}|{\matr{x}}^\star,\theta^\star)}{p(\matr{y}|{\matr{x}},\theta)} \right) \numberthis
 \end{align*}
-At each step, $\matr{x}^*$ is consistent with $\theta^*$ because it was generated from $p(\matr{x}^\star|\theta^\star)$. The problem of this approach is that the sampled $\matr{x}^*$ may not be consistent with $\matr{y}$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $\matr{x}^\star$ to track $p(\matr{y}|\matr{x}^\star,\theta)$. This is why $\matr{x}^*$ should be sampled from $p(\matr{x}^\star|\theta^\star,\matr{y})$. Under this assumption, the ratio now becomes
+At each step, $\matr{x}^*$ is consistent with $\theta^*$ because it has been generated from $p(\matr{x}^\star|\theta^\star)$. The problem of this approach is that the sample $\matr{x}^*$ may not be consistent with $\matr{y}$. As $T$ grows, it becomes nearly impossible to iterate over all possible values of $\matr{x}^\star$ to track $p(\matr{y}|\matr{x}^\star,\theta)$. This is why $\matr{x}^*$ should be sampled from $p(\matr{x}^\star|\theta^\star,\matr{y})$. Under this assumption, the ratio now becomes
 \begin{align*}
  \min \left(1, \frac{p(\theta^\star)}{p(\theta)}   \frac{p({\matr{x}}^\star|\theta^\star)}{p({\matr{x}}|\theta)}   \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)}   \frac{p(\matr{y}|{\matr{x}}^\star,\theta^\star)}{p(\matr{y}|{\matr{x}},\theta)}  \frac{p({\matr{x}}|\matr{y},\theta)}{p({\matr{x}}^\star|\matr{y},\theta^\star)} \right) \numberthis
 \end{align*}
@@ -819,11 +805,11 @@ Using the basic marginal likelihood identity described in \cite{chib1995}, the r
  \min \left(1, \frac{p(\theta^\star)}{p(\theta)}  \times \frac{p(\matr{y}|\theta^\star)}{p(\matr{y}|\theta)} \times \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \right) \numberthis
 \end{align*}
 
-It is now clear that a pseudo-marginal MCMC scheme for state-space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in \cite{andrieu2010}. Remarkably $\matr{x}$ is no more present and the ratio is exactly the same as the classical marginal scheme shown before in Equation (\ref{classic_mcmc_target}). Indeed, the ideal marginal scheme corresponds to PMMH when $N \rightarrow \infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one Bootstrap particle filter is used. The PMMH algorithm proposed by \cite{andrieu2010} is an MCMC algorithm for state-space models jointly updating $\theta$ and $\matr{x}_{1:T}$. A new $\theta^\star$ is proposed from $q(\theta^\star|\theta)$  and the corresponding $\matr{x}_{1:T}^\star$ is generated by running a Bootstrap particle filter with $\theta^\star$ The pair $(\theta^\star,x_{1:T}^\star)$ is accepted using the Metropolis-Hastings ratio
+It is now clear that a pseudo-marginal MCMC scheme for state-space models can be derived by substituting $\hat{p}^N_{\theta}(y_{1:T})$, computed from a particle filter, in place of $p_{\theta}(y_{1:T})$. This turns out to be a simple special case of the particle marginal Metropolis-Hastings (PMMH) algorithm described in \cite{andrieu2010} and in Algorithm \ref{algo_pmcmc}. Remarkably $\matr{x}$ is no more present and the ratio is exactly the same as the classical marginal scheme shown before in Equation (\ref{classic_mcmc_target}). Indeed, the ideal marginal scheme corresponds to PMMH when $N \rightarrow \infty$. The likelihood-free scheme is obtained with just one particle in the filter. When $N$ is intermediate, the PMMH algorithm is a trade-off between the ideal and the likelihood-free schemes, but is always likelihood-free when one Bootstrap particle filter is used. The PMMH algorithm proposed by \cite{andrieu2010} is an MCMC algorithm for state-space models jointly updating $\theta$ and $\matr{x}_{1:T}$. A new $\theta^\star$ is proposed from $q(\theta^\star|\theta)$  and the corresponding $\matr{x}_{1:T}^\star$ is generated by running a Bootstrap particle filter with $\theta^\star$ The pair $(\theta^\star,x_{1:T}^\star)$ is accepted using the Metropolis-Hastings ratio
 \begin{equation}
 \min \left(1, \frac{\hat{p}_{\theta^\star}(y_{1:T})}{\hat{p}_{\theta}(y_{1:T})} \times \frac{p(\theta^\star)}{p(\theta)} \times \frac{q(\theta|\theta^\star)}{q(\theta^\star|\theta)} \right)
 \end{equation} 
-where $\hat{p}^N_{\theta^\star}(y_{1:T})$ is the particle filter's unbiased estimate of marginal likelihood. Note that the terms $p(\cdot)$ and $q(\cdot|\cdot)$ cancel out when the proposal densities correspond to the respective prior distributions. Algorithm \ref{algo_pmcmc} describes the PMMH algorithm.
+where $\hat{p}^N_{\theta^\star}(y_{1:T})$ is the particle filter's unbiased estimate of marginal likelihood. Note that the terms $p(\cdot)$ and $q(\cdot|\cdot)$ cancel out when the proposal densities correspond to the respective prior distributions.
 
 Due to the unbiasedness property of $\hat{p}^N_{\theta^\star}(y_{1:T})$, the PMMH algorithm works for any positive $N$. In practical applications, a critical issue resides in how to choose the number of particles $N$. A large $N$ gives a more accurate estimate of the log likelihood at a greater computational cost, while a small $N$ would lead to a larger variance.
 
@@ -836,13 +822,13 @@ Due to the unbiasedness property of $\hat{p}^N_{\theta^\star}(y_{1:T})$, the PMM
 
 \For{i from 2 to M}
 	\State Sample $\theta'$ from $q(\theta'|\theta^{(i-1)})$
-	\State $\hat{p}^N_{\theta'}(y_{1:T}), \matr{x}^{*'}_{1:T}$ $ \gets$ Call Bootstrap Particle Filter with ($y_{1:T}$, $\theta'$, N)
+	\State $\hat{p}^N_{\theta'}(y_{1:T}), \matr{x}^{*'}_{1:T}$ $ \gets$ Call Bootstrap Particle Filter with ($y_{1:T}$, $\theta'$, $N$)
 	\State With probability,
 	
 	$$\min \left\{1, \frac{q(\theta^{(i-1)}|\theta')\hat{p}_N(y_{1:T}|\theta')p(\theta')}{q(\theta'|\theta^{(i-1)})\hat{p}_N(y_{1:T}|\theta^{(i-1)})p(\theta^{(i-1)})}  \right\} $$
 	
 	\State Set $\matr{x}^{*(i)}_{1:T} \gets \matr{x}^{'*}_{1:T},\theta^{(i)} \gets \theta', \hat{p}^N_{\theta^{(i)}}(y_{1:T}) \gets \hat{p}^N_{\theta'}(y_{1:T})$
-	\State Otherwise $\matr{x}^{*(i)}_{1:T} \gets \matr{x}^{(i-1)*}_{1:T},\theta^{(i)} \gets \theta^{(i-1)}, \hat{p}^N_{\theta^{(i)}}(y_{1:T}) \gets \hat{p}^N_{\theta^{(i-1)}}(y_{1:T})$
+	\State Otherwise $\matr{x}^{*(i)}_{1:T} \gets \matr{x}^{*(i-1)}_{1:T},\theta^{(i)} \gets \theta^{(i-1)}, \hat{p}^N_{\theta^{(i)}}(y_{1:T}) \gets \hat{p}^N_{\theta^{(i-1)}}(y_{1:T})$
 	
 \EndFor{end}
 \\
@@ -858,9 +844,9 @@ Due to the unbiasedness property of $\hat{p}^N_{\theta^\star}(y_{1:T})$, the PMM
 \cite{tran2014} showed that the efficiency of estimating an intractable likelihood using Bayesian inference and importance sampling is weakly sensitive to $N$ around its optimal value. Furthermore, the loss of efficiency decreases at worse linearly when we choose $N$ higher than the optimal value, whereas
 the efficiency can deteriorate exponentially when $N$ is below the optimal. \cite{pitt2012} showed that we should choose $N$ so that the variance of the resulting log-likelihood is around 0.85. Of course, in practice this variance will not be constant, as it is a function of the parameters as well as a decreasing function of $N$. \cite{pitt2012} suggests that a reasonable strategy is to estimate the posterior mean $\bar{\theta} = E[\theta|y_{1:T}]$ from an initial short run with $N$ set to a large value. The value of $N$ could then be adjusted such that the variance of the log-likelihood Var$(\log \hat{p}_N(y|\bar{\theta}))$ evaluated at $\bar{\theta}$ is around 0.85. The penalty for getting the variance wrong is not too severe within a certain range. Still from \cite{pitt2012}, their results indicated that although a value of $0.92^2 = 0.8464$ is optimal, the penalty is small provided the value is between 0.25 and 2.25. This allows for quite a large margin of error in choosing $N$ and also suggests that the simple schemes advocated should work well. \\
 
-An analysis was carried out to measure the variations of the variance across the parameter space for different values of $N$. The state-space model $\mathcal{M}_2$ is used to synthetic data with $(\rho,\sigma,\nu) = (0.91,1,3)$. The Bootstrap filter is called repeatedly to estimate its intrinsic variance. Figure (\ref{tuning_n_rho_varying}) shows the behavior of the filter's variance $\var(\log \hat{p}_N(y|\theta))$ when $\rho$ varies over its domain of definition. It gives a hint that the variance is not likely to oscillate in big proportions when $\theta$ change. \\
+An analysis was carried out to measure the variations of the variance across the parameter space for different values of $N$. The state-space model $\mathcal{M}_2$ is used to generate synthetic data with $(\rho,\sigma,\nu) = (0.91,1,3)$. The Bootstrap filter is called repeatedly to estimate its intrinsic variance. Figure (\ref{tuning_n_rho_varying}) shows the behavior its variance when $\rho$ varies over its domain of definition. It gives us a hint that the variance is not likely to oscillate in big proportions when $\theta$ change. \\
 
-The reasonable strategy of \cite{pitt2012} is not viable in practice as it requires to have a good estimate of $\bar{\theta}$ which is often difficult to achieve with a short run of PMCMC due to the burn-in phase. It is much more relevant to derive a general rule on how to choose $N$ optimal, provided that such a rule exists. We conduct a test on synthetic data where the true value $\theta_{tr} = \bar{\theta}$ is known. It is composed of $T=1000$ daily returns, generated from the specifications of model $\mathcal{M}_2$. For a given value of $N$, the Bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihoods Var$(\log \hat{p}_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. From Figure (\ref{est_var_pn_theta_n}), the optimal of $N$ seems to be around 1000. The process is repeated for several values of $T$ to detect a general rule. Figure \ref{n_opt_function_t} shows the results for $T \in [0, 2000]$ and $N \in [0, 2500]$. A linear trend can easily be identified. To reinforce this belief, a linear regression $N = a T + b$ is performed. Both the values $b \simeq 0 (3)$ and $a \simeq 1 (1.2)$ suggest that the rule $T = N$ seems to hold, at least for $T < 2000$.
+The reasonable strategy of \cite{pitt2012} is not viable in practice as it requires to have a good estimate of $\bar{\theta}$ which is often difficult to achieve with a short run of PMCMC due to the burn-in phase. It is more relevant to derive a general rule on how to choose $N$ optimal, provided that such a rule exists. We conduct a test on synthetic data where the true value $\theta_{tr} = \bar{\theta}$ is known. It is composed of $T=1000$ daily returns, generated from the specifications of model $\mathcal{M}_2$. For a given value of $N$, the Bootstrap filter of $\mathcal{M}_2$ is called several times and the variance of the log likelihood Var$(\log \hat{p}_N(y|\bar{\theta}))$ is estimated. The process is repeated for different values of $N$. From Figure (\ref{est_var_pn_theta_n}), the optimal of $N$ seems to be around 1000. The process is repeated for several values of $T$ to detect a general rule. Figure \ref{n_opt_function_t} shows the results for $T \in [0, 2000]$ and $N \in [0, 2500]$. A linear trend can easily be identified. To reinforce this belief, a linear regression $N = a T + b$ is fitted. Both the values $b \simeq 0 (3)$ and $a \simeq 1 (1.2)$ suggest that the rule $T = N$ seems to hold, at least for $T < 2000$.
 
 %https://www.sharelatex.com/blog/2013/08/07/thesis-series-pt3.html
 %http://tex.stackexchange.com/questions/42968/reduction-of-space-between-two-sub-figures
@@ -896,8 +882,8 @@ In practical applications, the true value of $\theta_{tr}$ is usually unknown an
 
 \section{Parameter Estimation on Real Data}
 
-Once the models have been validated, they can be fitted to real world data. The dataset used here is $\mathcal{EQTY}_{daily}$, presented in \ref{sec:presentation_data}. The number of steps of Particle MCMC is taken large enough to ensure that there is a sufficient number of samples available to form the Bayesian posterior distributions $\mathcal{D}(\theta|y_{1:T})$. Unless stated otherwise, the PMCMC scheme algorithm will loop 10000 times before stopping. The first 1000 samples are discarded for each parameter because the chains require several steps to reach their equilibrium distribution (burn-in). A component-wise scheme is used to update the parameters, i.e. one by one sequentially. Note that it is possible to parallel this scheme by introducing a bias. However, a more efficient way is to parallel the filter, still with a bias. Both algorithms have been implemented and are available in the appendix. Because the bias has not been rigorously evaluated, a non parallel version was used for the computations. Once the burn-in phase is performed, the mean value $\bar{\theta}$ is selected from the distribution $\mathcal{D}(\theta|y_{1:T})$, as the best estimation for $\theta_{tr}$. Some statistics, moments and confidence intervals can be obtained from $\mathcal{D}(\theta|y_{1:T})$. It is also important to choose correctly the prior distributions $p(\theta)$ and the proposal densities $q(\theta|\theta')$ to maintain a good acceptance rate. \cite{roberts1997} showed that the optimal acceptance rate is 0.234 under quite general conditions. \\
-Table \ref{est_appl_params} summarizes such an analysis for model $\mathcal{M}_5$ on the stock APPL for the period Sep, 09 2003 - Jun, 04 2006. Figure \ref{sigma_svm_checks} exposes some checks on the posterior distribution $p(\sigma|y_{1:T}, \mathcal{M}_5)$. The chain mixes well with an acceptance rate of 0.180, close to the 0.234 optimal value of \cite{roberts1997}. According to Figures \ref{sigma_svm_2} and \ref{sigma_svm_3}, the posterior distribution seems to be normally distributed, with a skewness of 0.224 and a kurtosis of 2.945. Finally, the autocorrelation function of the chain is fast decaying, which assesses the good performance of the sampling.
+Once the models have been validated, they can be fitted to real world data. The dataset used here is $\mathcal{EQTY}_{daily}$, presented in \ref{sec:presentation_data}. The number of steps of Particle MCMC is taken large enough to ensure that there is a sufficient number of samples available to form the Bayesian posterior distributions $\mathcal{D}(\theta|y_{1:T})$. Unless stated otherwise, the PMCMC scheme algorithm will loop 10000 times before stopping. The first 1000 samples are discarded for each parameter because the chains require several steps to reach their equilibrium distribution (burn-in). A component-wise scheme is used to update the parameters, i.e. one by one sequentially. Note that it is possible to parallel this scheme by introducing a bias. However, a more efficient way is to parallel the filter, still with a bias. Both algorithms have been implemented and are available in the folder \texttt{pmcmc} (Appendix \ref{app:implementation}). Because the bias has not been rigorously evaluated, a non parallel version was used for the computations throughout the scope of the thesis. Once the burn-in phase is performed, the mean value $\bar{\theta}$ is selected from the distribution $\mathcal{D}(\theta|y_{1:T})$ as the best estimation for $\theta_{tr}$. Some statistics, moments and confidence intervals can be obtained from $\mathcal{D}(\theta|y_{1:T})$. It is also important to choose correctly the prior distributions $p(\theta)$ and the proposal densities $q(\theta|\theta')$ to maintain a good acceptance rate. \cite{roberts1997} showed that the optimal acceptance rate is 0.234 under quite general conditions. \\
+Table \ref{est_appl_params} summarizes such an analysis for model $\mathcal{M}_5$ on the stock APPL for the period 2003-Sep-09 - 2006-Jun-04. Figure \ref{sigma_svm_checks} exposes some checks on the posterior distribution $p(\sigma|y_{1:T}, \mathcal{M}_5)$. The chain mixes well with an acceptance rate of 0.180, close to the 0.234 optimal value of \cite{roberts1997}. According to Figures \ref{sigma_svm_2} and \ref{sigma_svm_3}, the posterior distribution seems to be normally distributed, with a skewness of 0.224 and a kurtosis of 2.945. Finally, the autocorrelation function of the chain is fast decaying, which assesses the good performance of the sampling.
 
 \begin{table}[H]
 \centering
@@ -981,7 +967,9 @@ When $p(Y_T | \mathcal{M_A})$ and $p(Y_T | \mathcal{M_B})$ are estimated, \cite{
 
 \subsection{Results}
 \label{sec:model_selection}
-It is interesting to see how models perform in practical applications. When it seems pretty obvious that using a leverage can be pertinent according to stylized facts, it seems less evident that the mean of the returns exhibits a stochastic mean proportional to its volatility. The best model is selected on a group composed of several cointegrated spreads on different periods. The computationally intensive property makes it difficult to test every model for every spread. A sample of 10 spreads is considered randomly beforehand across different sectors such as Energy, Information Technology and Financial. The conclusion is fairly clear on the random group. It turns out that $\mathcal{M}_7$ outperforms all the other models in every situation, in terms of marginal likelihood and AIC. On average, the Kass Factor of $\mathcal{M}_7$ over $\mathcal{M}_6$ is between 2 and 6, showing a positive evidence. The $\mathcal{M}_2$ and $\mathcal{M}_3$ model are respectively ranked third and fourth. Therefore, model $\mathcal{M}_7$ is selected as the most compelling model for the rest of the analysis. This section also introduces an example with detailed explanations about the procedure we used, for a particular spread and a particular stock.
+It is interesting to see how models perform in practical applications. When it seems pretty obvious that using a leverage can be pertinent according to stylized facts, it seems less evident that the mean of the returns exhibits a stochastic mean proportional to its volatility. The best model is selected on a group composed of several cointegrated spreads on different periods. The computationally intensive property makes it difficult to test every model for every spread. A sample of 10 spreads is considered randomly beforehand across different sectors such as Energy, Information Technology and Financial. The conclusion is fairly clear on the random group. It turns out that $\mathcal{M}_7$ outperforms all the other models in every situation, in terms of marginal likelihood and AIC. On average, the Kass Factor of $\mathcal{M}_7$ over $\mathcal{M}_6$ is between 2 and 10, showing a positive evidence. The $\mathcal{M}_2$ and $\mathcal{M}_3$ model are respectively ranked third and fourth. Therefore, model $\mathcal{M}_7$ is selected as the most compelling model for the rest of the analysis. \\
+
+This section also introduces an example with detailed explanations about the procedure we used, for a particular spread and a particular stock. The results are confronted to detect if the inferences are in accordance.
 \label{sec:model_selection}
 \begin{figure}[H]
     \centering
@@ -1000,9 +988,9 @@ It is interesting to see how models perform in practical applications. When it s
     \caption{Stock APPL and Spread AMR-CRANE-DOVER. Period is from 09-Sep-2003 to 04-Jun-2006.}
 \end{figure}
 
-Both a stock and a spread are considered to see if the results and the inference are in accordance. The stock at hand is Apple (APPL) and the period is Sep, 09 2003 - Jun, 04 2006 (Figure \ref{apple_2003_2006}). The daily returns are computed according to the formula $Y_t = S_t / S_{t-1} - 1$ and are given as input to the stochastic volatility models. We set $N$, the number of particles to 1000 and run the different samplers for $M = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. The model with the highest marginal likelihood is taken as reference and the Bayes factors are computed relatively to this model. Table \ref{estimation_of_sv_appl} and \ref{spread_amr_crane_2003_2006} report estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. $\log (L)$ is the log marginal likelihood $\hat{p}_N(y| \mathcal{M})$. We find that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of marginal likelihood and AIC criteria. For the stock case, the Kass factor $2 \log BF$ of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 2.8 which indicates a positive evidence in favor of the SVTF model and its leverage $\rho$. Compared to the SV with leverage $\mathcal{M}_3$ with one factor, the Kass factor in favor of SVL is 10.0 which is a strong evidence. The distribution of the parameters are also fairly concentrated around their means. Overall, the values of $\phi$ are very close to one and confirm strong daily volatility persistence, in accordance to the volatility clustering fact seen in econometrics. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is small whereas $\phi_Z$ is almost equal to 0 and $\sigma_Z$ is high. It seems clear now that the volatility of the returns can be decomposed into two distinct processes: a long-run stochastic trend $\matr{X}$ and a process $\matr{Z}$ accounting for short-run dynamics. \\
+The stock at hand is Apple (APPL) on the period 2003-Sep-09 - 2006-Jun-04 (Figure \ref{apple_2003_2006}). The daily returns are computed according to the formula $Y_t = S_t / S_{t-1} - 1$ and are given as input to the stochastic volatility models. We set $N$, the number of particles to 1000 and run the different samplers for $M = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. The model with the highest marginal likelihood is taken as reference and the Bayes factors are computed relatively to this model. Table \ref{estimation_of_sv_appl} and \ref{spread_amr_crane_2003_2006} report estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. $\log (L)$ is the log marginal likelihood $\hat{p}_N(y| \mathcal{M})$. We find that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 2.8 which indicates a positive evidence in favor of the SVTF model and its leverage $\rho$. Compared to the SV with leverage $\mathcal{M}_3$ with one factor, the Kass factor in favor of SVL is 10.0 which is a strong evidence. The distribution of the parameters are also fairly concentrated around their means. Overall, the values of $\phi$ are very close to one and confirm strong daily volatility persistence, in accordance to the volatility clustering fact seen in econometrics. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is small whereas $\phi_Z$ is almost equal to 0 and $\sigma_Z$ is high. It seems clear now that the volatility of the returns can be decomposed into two distinct processes: a long-run stochastic trend $\matr{X}$ and a process $\matr{Z}$ accounting for short-run dynamics. \\
 
-The same procedure was conducted on a spread, composed of three stocks: AMR CORP, CRANE CO and DOVER CORP with associated cointegrating vector $\beta = (1, -0.0865, -0.3796)$. The considered period is Sep, 9 2003 - Jun, 4 2006. Table \ref{estimation_of_svm_appl_spr} reports estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. We find again that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of the marginal likelihood and AIC criteria. This time, the Kass factor of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 10.8 which indicates a very strong positive evidence in favor of the SVTF model and its leverage $\rho$. Figure \ref{estimation_of_latent_processes} shows the estimation of the latent processes $\matr{X}$ and $\matr{Z}$ of model $\mathcal{M}_7$ for the spread. 
+The same procedure was conducted on a spread, composed of three stocks: AMR CORP, CRANE CO and DOVER CORP with associated cointegrating vector $\beta = (1, -0.0865, -0.3796)$. The considered period is the same as the one used for the stock. Table \ref{estimation_of_svm_appl_spr} reports estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. We find again that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of the marginal likelihood and AIC criteria. This time, the Kass factor of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 10.8 which indicates a very strong positive evidence in favor of the SVTF model and its leverage $\rho$. Figure \ref{estimation_of_latent_processes} shows the estimation of the latent processes $\matr{X}$ and $\matr{Z}$ of model $\mathcal{M}_7$ for the spread. 
 
 \begin{figure}[H]
     \centering
@@ -1083,17 +1071,17 @@ $2 \log \mathcal{BF}(\cdot, \mathcal{M}7)$& 28.8    & 17.8      & 23.2    & 26.4
 \label{sec:estimation_bollinger_bands_sv}
 Once the best Stochastic Volatility model has been selected ($\mathcal{M}_7$ according to Section \ref{sec:model_selection}) and its parameters being estimated, the volatility of the spread can be approximated. The main idea behind using these stochastic volatility models is to catch the dynamics of the spread through a better estimation of its hidden volatility. According to Definition \ref{spread_def}, a spread is a particular linear combination of assets where each asset price is one observation of a more general process, over a time interval. For a given first order Markov $n$-process $\matr{X}_t$, the returns $y_{1:T}$ modelled by a SV model, are usually of the form $y_t | \matr{x}_t, \theta \sim \mathcal{D} \left( \mu_\theta(t), \sigma_\theta^2(t) \right)$, where $\mathcal{D}$ can represent any suitable distribution in a location-scale family (Definition \ref{location_scale_family}). By definition, $Y_t = S_t / S_{t-1} - 1$. We then have
 \begin{equation}
-S_t | S_{t-1}, \matr{x}_t, \theta \sim \mathcal{D} \left(S_{t-1} \mu_\theta(t)+S_{t-1}, S_{t-1}^2 \sigma_\theta^2(t) \right) \numberthis \label{equation_price_vol}
+S_t | S_{t-1}, \matr{x}_t, \theta \sim \mathcal{D} \left(S_{t-1} \mu_\theta(t)+S_{t-1}, |S_{t-1}|^2 \sigma_\theta^2(t) \right) \numberthis \label{equation_price_vol}
 \end{equation}
-where the volatility $\sigma_\theta^2(t)$ and the mean $\mu_\theta(t)$ are known quantities because they only depend on measured quantities ($\matr{x}_{1:t}$ and $S_{t-1}$) at time $t-1$. One should be careful because $S_t$ can be negative in the case of spread instruments. \\
+where the volatility $\sigma_\theta^2(t)$ and the mean $\mu_\theta(t)$ are known quantities because they depend on $\mathcal{F}_{t-1}$-measurable quantities. One should be careful because $S_t$ can be negative in the case of spread instruments. \\
 
-In order to estimate the volatility of the spread $S_t$, we generate many of Monte Carlo paths according to Equation (\ref{equation_price_vol}). Algorithm \ref{rolling_volatility_algo} explains the procedure when model $\mathcal{M}_7$ (TFSVL) is considered\footnote{The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands (Equation \ref{bolls_computations}).}. In the most general case, $M$ paths $\{S_{t,n}\}_{0 < n \leq M, t \in \mathbb{N}^*}$ are generated from Equation (\ref{equation_price_vol}). Let $f_a : \mathbb{R}^{+M} \rightarrow \mathbb{R}^+$ be a positive-definite aggregating function. The aggregated rolling volatility of lag $p$ for all the $M$ paths is defined as $r\sigma(t,p) = f_a(r\sigma_1(t, p),...,r\sigma_M(t, p))$ for $t >0$. If $f_a$ is simply the sample mean estimator, the equation is simplified to $r\sigma(t,p) = \frac{1}{M}\sum_{i=1}^M r\sigma_i(t, p)$. Depending on the context and on the cross validation phase, $f_a$ can be any measurable function satisfying the conditions above. Throughout the scope of this thesis, $f_a$ will defined as the sample mean. Without any more information, the sample mean is a pertinent measure to summarize a set of points in one single point.
+In order to estimate the rolling volatility of the spread $S_t$, we generate many of Monte Carlo paths according to Equation (\ref{equation_price_vol}). Algorithm \ref{rolling_volatility_algo} explains the procedure when model $\mathcal{M}_7$ (TFSVL) is considered\footnote{The volatility computed in this approach is of the same shape as the one computed in the default Bollinger bands (Equation \ref{bolls_computations}).}. In the most general case, $M$ paths $\{S_{t,n}\}_{0 < n \leq M, t \in \mathbb{N}^*}$ are generated from Equation (\ref{equation_price_vol}). Let $f_a : \mathbb{R}^{+M} \rightarrow \mathbb{R}^+$ be a positive-definite aggregating function. The aggregated rolling volatility of lag $p$ for all the $M$ paths is defined as $r\sigma_p(t) = f_a(r\sigma_p(t)_1,...,r\sigma_p(t)_M)$ for $t >0$. If $f_a$ is simply the sample mean estimator, the equation is simplified to $r\sigma_p(t) = \frac{1}{M}\sum_{i=1}^M r\sigma_p(t)_i$. Depending on the context, $f_a$ can be any measurable function satisfying the conditions above. Throughout the scope of this thesis, $f_a$ will be equal to the sample mean. Without any more information, the sample mean is a pertinent measure to summarize a set of points in one single point.
 
 \begin{algorithm}
 \caption{Rolling volatility computation for model $\mathcal{M}_7$ (TFSVL)}
 \label{rolling_volatility_algo}
 \begin{algorithmic}[1]
-\Procedure{Input}{$x_{1:T}, z_{1:T}, S_{1:T}$, $\theta = \beta$, $M$, $f_a = M^{-1} \sum_{i=1}^M \cdot$}
+\Procedure{Input}{$x_{1:T}, z_{1:T}, S_{1:T}$, $\theta = \beta$, $M$, $f_a = M^{-1} \sum_{i=1}^M \cdot$, $p$}
 
 \For{t from 1 to T}
 	\For{i from 1 to M}
@@ -1101,25 +1089,26 @@ In order to estimate the volatility of the spread $S_t$, we generate many of Mon
 	\EndFor{end}
 \EndFor{end}
 \For{i from 1 to M}
-	\State Compute the default rolling volatility $(r\sigma_i(t))_{t>0}$ for the $i^{th}$ path, $(S_{ti})_{t>0}$
+	\State Compute the default rolling volatility $(r\sigma_p(t)_i)_{t>0}$ for the $i^{th}$ path, $(S_{ti})_{t>0}$
 \EndFor{end}
 
 \For{t from 1 to T}
-	\State $\displaystyle{r\sigma(t) = M^{-1} \sum_{i=1}^M r\sigma_i(t)}$
+	\State $\displaystyle{r\sigma_p(t) = M^{-1} \sum_{i=1}^M r\sigma_p(t)_i}$
 \EndFor{end}
 \\
-\Return $r\sigma(t)$
+\Return $r\sigma_p(t)$
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
 \chapter{Statistical Arbitrage Strategies}
-Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought (long) with the expectation that it will climb towards its outperforming partner, the other is sold (short). This hedges risk from whole-market movements. The idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having approximately the same value in local currency. It is important to understand that the quantity to interest is the difference between the two or $n$ assets, better known as the spread. The purpose is not to trade on assets, but on the spread. The operations to buy or sell the spread are assumed to be atomic, i.e. they have a succeed-or-fail property. The common strategy is to evaluate if the spread is either underpriced or overpriced. A typical way is to open a position once the spread deviates far from its long-run equilibrium, and unwind it when it reverts. Dealing with spreads instead of non-stationary assets is beneficial because stationary series are on average more reverting. This approach has the advantage of eliminating the market exposure. \\ 
-In this section, two strategies are presented: Bollinger bands and Z-Score. The first one models a time-varying mean for the spread and volatility bands (simple and complex modelling) to gauge the spread deviation, whereas the second one assumes a fixed non-zero mean and fixed volatility bands.
+Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought (long) with the expectation that it will climb towards its outperforming partner, and the other is sold (short). This approach has the advantage of eliminating the market exposure. The idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having approximately the same value in local currency. It is important to understand that the quantity to interest is the pseudo difference between the assets, better known as the spread. The approach abstracts the trading on the underlying assets and primarily focuses on spread trading. The operations to buy or sell the spread are assumed to be atomic, i.e. they have a succeed-or-fail property. The common strategy is to evaluate if the spread is either underpriced or overpriced. A typical way is to open a position once the spread deviates far from its long-run equilibrium, and unwind it when it reverts. Dealing with spreads instead of non-stationary assets is beneficial because stationary series are on average more reverting. \\
+
+In this section, two strategies are presented: Bollinger bands and Z-Score. The first one models a time-varying mean for the spread and time-varying volatility bands (with simple or complex modelling) to gauge the spread deviation, whereas the second one assumes a fixed non-zero mean and fixed volatility bands.
 
 \section{Bollinger Bands}
 \label{sec:bollinger_bands}
-Bollinger bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m_\theta(t)$ of lag $p$ with two volatility bands $B_\theta^+(t), B_\theta^-(t)$, above and below it. The computation of the volatility bands involves a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is proportional to a parameter called $\alpha$. The bands will expand and contract as the price becomes volatile or becomes bound into a tight trading pattern. When prices continually touch the upper bound $B^+(t,\cdot)$, the spread is considered to be overbought. Conversely, when they continually touch the lower band, it is oversold. The indicator is calculated by
+Bollinger bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m_\theta(t)$ of lag $p$ with two volatility bands $B_\theta^+(t), B_\theta^-(t)$, above and below it. The computation of the volatility bands involves a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is proportional to a parameter called $\alpha$. The bands will expand and contract as the prices become volatile or bound into a tight trading pattern. When prices continually touch the upper bound $B_\theta^+(t)$, the spread is considered to be overbought. Conversely, when they continually touch the lower band, it is oversold. The indicator is calculated by
 \begin{align*}
 m_{SMA}(t,p) &= \frac{1}{p}\sum_{j=1}^p S_{t-j} \numberthis \label{bb_m} \\
 m_{EMA}(t,p) &= k \times S_t + (1-k) \times m_{EMA}(t-1,p) \text{, } k = 2/(p+1) \numberthis \label{bb_ema} \\
@@ -1296,7 +1285,7 @@ Finally, one technique to assess the performance of a strategy is to compare it 
 This chapter is structured in three main parts. Firstly, an example is examined to show some interesting facts about volatility modelling. Next, the cross validation of the Bollinger bands parameters is presented in further details. Finally, the Bollinger bands with and without the complex volatility estimation are compared. Also, the Z-score and the Buy and Hold strategies are considered as a benchmark.
 
 \section{Volatility Modelling of Spreads using Model $\mathcal{M}_7$}
-Throughout this section, the same spread $S_t$ as that of Section \ref{sec:model_selection} is considered. This procedure is not restricted to this particular spread and is valid for any stationary spread and any stochastic volatility models. This sections focused on the main points described in Section \ref{sec:estimation_bollinger_bands_sv}. The model $\mathcal{M}_7$ is used to estimate the conditional variance $S_t | S_{t-1}, \matr{x}_t, \theta$. From there and from Equation (\ref{equation_price_vol}), $M = 1000$ Monte Carlo trajectories are generated. Figure \ref{fig:generation_of_the_trajectories} shows the generation of the trajectories according to the estimated conditional variance.
+Throughout this section, the same spread $S_t$ as that of Section \ref{sec:model_selection} is considered. This procedure is not restricted to this particular spread and is valid for any stationary spread and any stochastic volatility models. This section focused on the main points described in Section \ref{sec:estimation_bollinger_bands_sv}. The model $\mathcal{M}_7$ is used to estimate the conditional variance $S_t | S_{t-1}, \matr{x}_t, \theta$. From there and from Equation (\ref{equation_price_vol}), $M = 1000$ Monte Carlo trajectories are generated. Figure \ref{fig:generation_of_the_trajectories} shows the generation of the trajectories according to the estimated conditional variance.
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.49\textwidth}
