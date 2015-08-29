@@ -68,40 +68,40 @@ bar([ mean(U_0(:)) mean(U_1(:)) mean(U_2(:)) mean(U_3(:))]);
 xlabel('Method');
 title('Expected number of hypotheses surviving from t=1');
 
+N_j = 100;
+vec_res = zeros(1,N_j);
+vec_stra = zeros(1,N_j);
+vec_sys = zeros(1,N_j);
+vec_mult = zeros(1,N_j);
+for j = 1:N_j
+    fprintf('%d\n', j);
+    w = rand(1000,1);
+    w = w / sum(w);
 
-w = rand(1000,1);
-w = w / sum(w);
+    ITERATIONS = 10000;
+    tic;
+    for i = 1:ITERATIONS
+        resampleResidual(w);
+    end
+    vec_res(j) = toc;
 
-ITERATIONS = 10000;
-tic;
-for i = 1:ITERATIONS
-    resampleResidual(w);
+    %%Simply the best
+    tic;
+    for i = 1:ITERATIONS
+        resampleStratified(w);
+    end
+    vec_stra(j) = toc;
+
+    %http://www.site.uottawa.ca/~mbolic/Miodrag_Bolic_files/published/bolic_jasp_2004.pdf
+    %Said to be the fastest
+    tic;
+    for i = 1:ITERATIONS
+        resampleSystematic(w);
+    end
+    vec_sys(j) = toc;
+
+    for i = 1:ITERATIONS
+        randsample(1000, 1000, 'true', w);
+    end
+    vec_mult(j) = toc;
 end
-toc;
-
-%Sample as randsample
-% tic;
-% for i = 1:ITERATIONS
-%     resampleMultinomial(w);
-% end
-% toc;
-
-%%Simply the best
-tic;
-for i = 1:ITERATIONS
-    resampleStratified(w);
-end
-toc;
-
-%http://www.site.uottawa.ca/~mbolic/Miodrag_Bolic_files/published/bolic_jasp_2004.pdf
-%Said to be the fastest
-tic;
-for i = 1:ITERATIONS
-    resampleSystematic(w);
-end
-toc;
-
-for i = 1:ITERATIONS
-    randsample(1000, 1000, 'true', w);
-end
-toc;
