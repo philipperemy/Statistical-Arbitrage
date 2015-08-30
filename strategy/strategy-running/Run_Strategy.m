@@ -51,9 +51,10 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
     for i = 1:spread_count
         if(complex_strat)
             try
-                %fprintf('TRAIN Bollinger Complex, i = %d\n', i);
+                fprintf('TRAIN Bollinger Complex, i = %d\n', i);
                 s = sprintf('pmcmc_%d.mat', i);
                 load(s);
+                mat = complex.mat;
                 mat_tr(i,1) = mat(1);
                 mat_tr(i,2) = mat(2);
                 mat_tr(i,3) = mat(3);
@@ -68,10 +69,10 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
             T           = ceil((1/3)* length(Spread.px));
 
             if(zscore_strat)
-                %fprintf('TRAIN ZScore, i = %d\n', i);
+                fprintf('TRAIN ZScore, i = %d\n', i);
                 [pl, cum_pro, trds]= SimpleTradingStrategyZScore( pp, Spread, 1, T, zscore_conf, 0, 1, @Strategy_Simulator, initial_bet );
             else
-                %fprintf('TRAIN Bollinger Simple, i = %d\n', i);
+                fprintf('TRAIN Bollinger Simple, i = %d\n', i);
                 spread_vol = 0;
                 [pl, cum_pro, trds]= SimpleTradingStrategy( pp, Spread, 1, T, boll_conf, spread_vol, 0, 1, @Strategy_Simulator, initial_bet );
             end

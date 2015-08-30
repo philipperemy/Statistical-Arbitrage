@@ -1,3 +1,4 @@
+clear;clc;
 addpath('../../helpers/');
 addpath('../../coint/deepsearch');
 addpath('../../coint/impl');
@@ -51,3 +52,53 @@ end
 
 rho_props = theta_mat(:,1);
 rho_props(rho_props == 0) = [];
+rho_props(find(diff(rho_props) == 0)) = [];
+
+sigma_props = theta_mat(:,2);
+sigma_props(sigma_props == 0) = [];
+sigma_props(find(diff(sigma_props) == 0)) = [];
+
+rho2_props = theta_mat(:,3);
+rho2_props(rho2_props == 0) = [];
+rho2_props(find(diff(rho2_props) == 0)) = [];
+
+sigma2_props = theta_mat(:,4);
+sigma2_props(sigma2_props == 0) = [];
+sigma2_props(find(diff(sigma2_props) == 0)) = [];
+
+beta_props = theta_mat(:,5);
+beta_props(beta_props == 0) = [];
+beta_props(find(diff(beta_props) == 0)) = [];
+
+cor_props = theta_mat(:,6);
+cor_props(cor_props == 0) = [];
+cor_props(find(diff(cor_props) == 0)) = [];
+
+close all;
+Draw_Histogram(rho_props, [0.90 1], 60, '\phi_X', 'north');
+Draw_Histogram(sigma_props, [0 2], 60, '\sigma_X', 'north');
+Draw_Histogram(rho2_props, [0 1], 60, '\phi_Z', 'north');
+Draw_Histogram(sigma2_props, [0 2], 60, '\sigma_Z', 'north');
+Draw_Histogram(beta_props, [0 4.8], 60, '\beta', 'north');
+Draw_Histogram(cor_props, [-1 1], 60, '\rho', 'north');
+
+figure;
+%For the statistics
+MCMC_Checks(rho_props);
+MCMC_Checks(sigma_props);
+MCMC_Checks(rho2_props);
+MCMC_Checks(sigma2_props);
+MCMC_Checks(beta_props);
+MCMC_Checks(cor_props);
+
+sr = mat_tr(:,3);
+sr(sr == 0) = [];
+sr(isnan(sr)) = [];
+mean(sr)
+
+Draw_Histogram(sr, [-5 5], 20, 'SR (out-sample)', 'northwest');
+figure;
+MCMC_Checks(sr);
+
+%sr(find(diff(sr) == 0)) = [];
+%CAN IMPROVE

@@ -9,14 +9,15 @@ addpath('..');
 load ../../data/spx.mat;
 format longg;
 
-load('spreads_6575_7306.mat');
-load('spx_6575_7306.mat');
+load('spreads_5114_5845.mat');
+load('spx_5114_5845.mat');
 
 mat_a = zeros(length(spreads),5);
 for i = 1:length(spreads)
     try
         s = sprintf('pmcmc_%d.mat', i);
         load(s);
+        mat = complex.mat;
         mat_a(i,1) = mat(1);
         mat_a(i,2) = mat(2);
         mat_a(i,3) = mat(3);
@@ -29,7 +30,7 @@ end
 
 sorted_mat_a = Rank_Results(mat_a, 3, 20);
 spreads_ids = sorted_mat_a(:,5)';
-
+%sr = mat_a(:,3); sr(isnan(sr)) = []; sr(sr == 0) = []; mean(sr)
 mat_t 		 = zeros(length(spreads_ids) , 5 );
 fprintf('testing\n');
 c = 1;

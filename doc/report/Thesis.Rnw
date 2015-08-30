@@ -1385,13 +1385,13 @@ Jan, 1 2008 - Jan, 1 2010 & 5967    & 190 (0.031) & 2205 (0.369)  & 3572 (0.599)
 Jan, 1 2010 - Jan, 1 2012 & 3521    & 167 (0.047) & 1147 (0.410)  & 1907 (0.541) \\
 Jan, 1 2012 - Jan, 1 2014 & 4083    & 122 (0.029) & 1592 (0.389)  & 2371 (0.580) \\
 \hline
-Total & 46484 & 3540 (0.007) & 19850 (0.427) & 22796 (0.490) \\
+Total & 46484 & 3540 (0.083) & 19850 (0.427) & 22796 (0.490) \\
 \hline
 \end{tabular}
 \caption{Statistics about the in-sample step}
 \end{table}
 
-\section{Example : Period 2008-2009}
+\subsection{Case Study: Period 2008-2009}
 
 This part focuses on the result of the different strategies for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Table \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_simple_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger bands with and without Stochastic Volatility modelling and Z-score. Each triple has passed the correlation and the cointegration tests. In addition, it must exhibit a very high Sharpe ratio on $\mathcal{I}$ ($\mathcal{SR}_\mathcal{I}$) to be shortlisted. $\beta = (\beta_1, \beta_2, \beta_3)$ represents the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR), maximum drawdown (MDD), variance of the returns $\hat{\sigma}^2$ and the number of trades (\# Trds) are recorded on the out-sample step. A closer look shows that all the triples exhibit a very high Sharpe ratio on the in-sample period and a lower but still promising Sharpe ratio on the out-sample period. 
 
@@ -1526,6 +1526,55 @@ Maximum Drawdown  												          & 8.44\%    &6.32 \%  & 28.20 \% & 32.73
 \label{fig:1}
 \end{figure}
 
+\subsection{Results with Default Parameters for Bollinger Bands}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllllll}
+\hline
+\multicolumn{1}{|l|}{Period | Parameter Mean} & \multicolumn{1}{|l|}{$\mu(\phi_X)$} & \multicolumn{1}{|l|}{$\mu(\sigma_X)$} & \multicolumn{1}{|l|}{$\mu(\phi_Z)$} & \multicolumn{1}{|l|}{$\mu(\sigma_Z)$} & \multicolumn{1}{|l|}{$\mu(\beta)$} & \multicolumn{1}{|l|}{$\mu(\rho)$} \\ \hline
+Jan, 1 1990 - Jan, 1 1992 &  & & & & &\\
+Jan, 1 1992 - Jan, 1 1994 &  0.9860 & 0.3468 & 0.4109 & 0.4737 & 0.4552 & -0.5419 \\ 
+Jan, 1 1994 - Jan, 1 1996 &  0.9834 & 0.3932 & 0.4102 & 0.5243 & 0.4762 & -0.5160 \\
+Jan, 1 1996 - Jan, 1 1998 &  0.9808 & 0.4560 & 0.4116 & 0.6149 & 0.5241 & -0.5673 \\
+Jan, 1 1998 - Jan, 1 2000 &  0.9802 & 0.4780 & 0.4041 & 0.4041 & 0.5426 & -0.5729 \\
+Jan, 1 2000 - Jan, 1 2002 &  0.9780 & 0.5204 & 0.3970 & 0.6375 & 0.5913 & -0.5654 \\
+Jan, 1 2002 - Jan, 1 2004 &  0.9842 & 0.4048 & 0.3822 & 0.5600 & 0.5079 & -0.5237 \\
+Jan, 1 2004 - Jan, 1 2006 &  0.9857 & 0.3759 & 0.3635 & 0.6377 & 0.5102 & -0.4270 \\
+Jan, 1 2006 - Jan, 1 2008 &  0.9847 & 0.4211 & 0.3620 & 0.6905 & 0.5551 & -0.4334 \\
+Jan, 1 2008 - Jan, 1 2010 &  & & & & &\\
+Jan, 1 2010 - Jan, 1 2012 &  & & & & &\\
+Jan, 1 2012 - Jan, 1 2014 &  & & & & &\\
+\hline
+\end{tabular}
+\caption{Statistics about the parameters estimation $\mathcal{M}_7$}
+\label{tab:param_stats_1992_1994}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\hline
+Period & \multicolumn{1}{|l|}{Mean}     & \multicolumn{1}{|l|}{Median} & \multicolumn{1}{|l|}{Min} & \multicolumn{1}{|l|}{Max} \\
+\hline
+Jan, 1 1990 - Jan, 1 1992 &  & & & \\
+Jan, 1 1992 - Jan, 1 1994 &  0.5627 & 0.5195 & -2.9373 & 3.5681 \\ 
+Jan, 1 1994 - Jan, 1 1996 &  0.6751 & 0.6075 & -2.3025 & 4.7169 \\
+Jan, 1 1996 - Jan, 1 1998 &  0.4010 & 0.3726 & -3.0290 & 4.1024 \\
+Jan, 1 1998 - Jan, 1 2000 &  0.2073 & 0.1991 & -2.5701 & 4.0478 \\
+Jan, 1 2000 - Jan, 1 2002 &  0.4488 & 0.4118 & -2.2615 & 3.7445 \\
+Jan, 1 2002 - Jan, 1 2004 &  0.5194 & 0.5367 & -3.1040 & 4.2277 \\
+Jan, 1 2004 - Jan, 1 2006 &  0.5582 & 0.5827 & -2.4348 & 4.1926 \\
+Jan, 1 2006 - Jan, 1 2008 &  0.4027 & 0.3539 & -2.5793 & 4.5596 \\
+Jan, 1 2008 - Jan, 1 2010 &  & & & \\
+Jan, 1 2010 - Jan, 1 2012 &  & & & \\
+Jan, 1 2012 - Jan, 1 2014 &  & & & \\
+\hline
+Total & & & & \\
+\hline
+\end{tabular}
+\caption{Statistics about $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Triple Trading. Equity Set.}
+\end{table}
 
 \section{Gradient and Optimization of the Bollinger bands}
 
@@ -1798,5 +1847,423 @@ GBPUSD & CADUSD & CHFUSD & 1.000000& -0.432923& -0.177363 \\
 \caption{Cointegration on FX Rates between Jan, 1 1999 and Jan, 1 2013}
 \label{coint_fx}
 \end{table}
+
+\section{Distribution of model parameters}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1992-1994)}
+    \label{fig:param_dists_1992_1994}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1994-1996)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1996-1998)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1998-2000)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2000-2002)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2002-2004)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2004-2006)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/1}
+        \caption{$\phi_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/2}
+        \caption{$\sigma_X$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/3}
+        \caption{$\phi_Z$}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/4}
+        \caption{$\sigma_Z$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/5}
+        \caption{$\beta$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/6}
+        \caption{$\rho$}
+    \end{subfigure}
+    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2006-2008)}
+    \label{fig:param_dists_2000_2002}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/731_1462/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1992 - Jan, 01 1994. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/1462_2192/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1994 - Jan, 01 1996. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2192_2923/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1996 - Jan, 01 1998. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/2923_3653/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1998 - Jan, 01 2000. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/3653_4384/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2000 - Jan, 01 2002. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/4384_5114/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2002 - Jan, 01 2004. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5114_5845/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2004 - Jan, 01 2006. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/sr}
+        \caption{Simple Modelling}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/params/5845_6575/sr}
+        \caption{Complex Modelling}
+    \end{subfigure}
+    \caption[]s{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2006 - Jan, 01 2008. Triple Trading. Equity Set.}
+    \label{fig:sharpe_ratio_comparison}
+\end{figure}
 
 \end{document}
