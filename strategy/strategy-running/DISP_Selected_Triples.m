@@ -10,7 +10,7 @@ function [ ] = DISP_Selected_Triples( pp, spreads, spreads_ids, mat_train, mat_t
        net = mat_tst(c,1);
 
        sri = mat_train(i,3);
-       s = sprintf('%d, %s & %s & %s & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %i \\\\', i, char(CleanName(pp.tickers(spread.tuple(1)))), char(CleanName(pp.tickers(spread.tuple(2)))), char(CleanName(pp.tickers(spread.tuple(3)))),...
+       s = sprintf('%s & %s & %s & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %i \\\\', char(CleanName(pp.tickers(spread.tuple(1)))), char(CleanName(pp.tickers(spread.tuple(2)))), char(CleanName(pp.tickers(spread.tuple(3)))),...
            spread.beta(1), spread.beta(2), spread.beta(3), sri, sro, net, mdd, tr);
        tuples(end+1) = spread.tuple(1);
        tuples(end+1) = spread.tuple(2);

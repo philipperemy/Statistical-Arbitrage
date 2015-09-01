@@ -11,6 +11,7 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{ stmaryrd }
+\usepackage{changepage}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -991,7 +992,7 @@ This section also introduces an example with detailed explanations about the pro
     \caption{Stock APPL and Spread AMR-CRANE-DOVER. Period is from 09-Sep-2003 to 04-Jun-2006.}
 \end{figure}
 
-The stock at hand is Apple (APPL) on the period Sep, 9 2003 - Jun, 4 2006 (Figure \ref{apple_2003_2006}). The daily returns are computed according to the formula $Y_t = S_t / S_{t-1} - 1$ and are given as input to the stochastic volatility models. We set $N$, the number of particles to 1000 and run the different samplers for $M = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95 \% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. The model with the highest marginal likelihood is taken as reference and the Bayes factors are computed relatively to this model. Table \ref{estimation_of_sv_appl} and \ref{spread_amr_crane_2003_2006} report estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. $\log (L)$ is the log marginal likelihood $\hat{p}_N(y| \mathcal{M})$. We find that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 2.8 which indicates a positive evidence in favor of the SVTF model and its leverage $\rho$. Compared to the SV with leverage $\mathcal{M}_3$ with one factor, the Kass factor in favor of SVL is 10.0 which is a strong evidence. The distribution of the parameters are also fairly concentrated around their means. Overall, the values of $\phi$ are very close to one and confirm strong daily volatility persistence, in accordance to the volatility clustering fact seen in econometrics. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is small whereas $\phi_Z$ is almost equal to 0 and $\sigma_Z$ is high. It seems clear now that the volatility of the returns can be decomposed into two distinct processes: a long-run stochastic trend $\matr{X}$ and a process $\matr{Z}$ accounting for short-run dynamics. \\
+The stock at hand is Apple (APPL) on the period Sep, 9 2003 - Jun, 4 2006 (Figure \ref{apple_2003_2006}). The daily returns are computed according to the formula $Y_t = S_t / S_{t-1} - 1$ and are given as input to the stochastic volatility models. We set $N$, the number of particles to 1000 and run the different samplers for $M = 10000$ Metropolis Hastings iterations. After discarding the first 1000 iterations, we collect the final sample and compute the posterior mean $\bar{\theta}$, the posterior median, 95\% credibility intervals, the log likelihoods that results from the particle filter, the logarithm of the marginal likelihood, the AIC criterion and the M-H acceptance ratio. The model with the highest marginal likelihood is taken as reference and the Bayes factors are computed relatively to this model. Table \ref{estimation_of_sv_appl} and \ref{spread_amr_crane_2003_2006} report estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. $\log (L)$ is the log marginal likelihood $\hat{p}_N(y| \mathcal{M})$. We find that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of marginal likelihood and AIC criteria. The Kass factor $2 \log BF$ of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 2.8 which indicates a positive evidence in favor of the SVTF model and its leverage $\rho$. Compared to the SV with leverage $\mathcal{M}_3$ with one factor, the Kass factor in favor of SVL is 10.0 which is a strong evidence. The distribution of the parameters are also fairly concentrated around their means. Overall, the values of $\phi$ are very close to one and confirm strong daily volatility persistence, in accordance to the volatility clustering fact seen in econometrics. The values of $(\phi_X, \sigma_X)$ and $(\phi_Z, \sigma_Z)$ are very interesting. $\phi_X$ is very close to 1 and $\sigma_X$ is small whereas $\phi_Z$ is almost equal to 0 and $\sigma_Z$ is high. It seems clear now that the volatility of the returns can be decomposed into two distinct processes: a long-run stochastic trend $\matr{X}$ and a process $\matr{Z}$ accounting for short-run dynamics. \\
 
 The same procedure was conducted on a spread, composed of three stocks: AMR CORP, CRANE CO and DOVER CORP with associated cointegrating vector $\beta = (1, -0.0865, -0.3796)$. The considered period is the same as the one used for the stock. Table \ref{estimation_of_svm_appl_spr} reports estimation of $\theta$ for the stochastic volatility models $(\mathcal{M}_1, ..., \mathcal{M}_7)$. We find again that the Gaussian TFSVL model ($\mathcal{M}_7$) performs best in terms of the marginal likelihood and AIC criteria. This time, the Kass factor of SVTFL $\mathcal{M}_7$ versus SVTF $\mathcal{M}_6$ is 10.8 which indicates a very strong positive evidence in favor of the SVTF model and its leverage $\rho$. Figure \ref{estimation_of_latent_processes} shows the estimation of the latent processes $\matr{X}$ and $\matr{Z}$ of model $\mathcal{M}_7$ for the spread. 
 
@@ -1240,7 +1241,7 @@ The workflow involves the preparation of the datasets and the selection of the c
 \section{General Framework}
 
 \subsection{Training and Simulation Sets}
-We use the same dataset as in Section \ref{sec:presentation_data}. The whole sample period is divided into sets of length \textbf{two} years. Each set is split into two sets: the in-sample set denoted $\mathcal{I}$ and the out-of-sample $\mathcal{O}$ with a 2:1 ratio: $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. Detection of cointegrated tuples, selection of the best tuples and tuning of the Bollinger bands parameters $(p,t,\alpha)$ is done on $\mathcal{I}$. The purpose of $\mathcal{O}$ is to assess the performance of the strategy on unseen data with the parameters computed in the training period. This technique is known as cross validation and is used to avoid overfitting during the calibration. 
+We use the same dataset as in Section \ref{sec:presentation_data}. The whole sample period is divided into sets of length \textbf{two} years. Each set is split into two sets: the in-sample set denoted $\mathcal{I}$ and the out-of-sample $\mathcal{O}$ with a 1:2 ratio: $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. The choice of the ratio is motivated by the fact that the Bollinger bands has a stochastic mean and are therefore less sensitive to a break of the cointegration property, contrary to the Z-score. Detection of cointegrated tuples, selection of the best tuples and tuning of the Bollinger bands parameters $(p,t,\alpha)$ is done on $\mathcal{I}$. The purpose of $\mathcal{O}$ is to assess the performance of the strategy on unseen data with the parameters computed in the training period. This technique is known as cross validation and is used to avoid overfitting during the calibration. 
 
 
 \subsection{Framework Hypotheses}
@@ -1326,13 +1327,13 @@ The next step is to compute the rolling volatility for every trajectory. The agg
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{model_vol/4}
-        \caption{$r\sigma_{STD}(t)$ and estimated 90 \% confidence intervals (MC)}
+        \caption{$r\sigma_{STD}(t)$ and estimated 90\% confidence intervals (MC)}
         \label{vol_mod_4}
     \end{subfigure}
     \begin{subfigure}[t]{0.49\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{model_vol/4_2}
-        \caption{$r\sigma_{STD}(t)$ and estimated 95 \% confidence intervals (MC)}
+        \caption{$r\sigma_{STD}(t)$ and estimated 95\% confidence intervals (MC)}
         \label{vol_mod_4}
     \end{subfigure}
     \caption{Confidence intervals of the trajectories of the spread process $S_t$}
@@ -1392,7 +1393,7 @@ Jan, 1 2012 - Jan, 1 2014 & 4083    & 122 (0.029) & 1592 (0.389)  & 2371 (0.580)
 Total & 46484 & 3540 (0.083) & 19850 (0.427) & 22796 (0.490) \\
 \hline
 \end{tabular}
-\caption{Cointegrated triples selected on the in-sample sets}
+\caption{Cointegrated triples selected on the in-sample sets. Percentages are added in brackets.}
 \label{tab:calibration_selection}
 \end{table}
 
@@ -1402,102 +1403,107 @@ In the first part, the tuning of the parameters is discarded and the default par
 % Later, a cross validation phase is performed to maximize the performance of the best strategy and it is tested against the Z-score and the Buy and Hold strategies.
 
 \subsubsection{Portfolio Approach}
-For every period, the 20 best in-sample $\mathcal{SR}_\mathcal{I}$ triples are selected to compose the portfolio for the three strategies. The assessment on the corresponding out-sample set $\mathcal{O}_i$ is performed accordingly. The procedure is explained for the the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates (Table \ref{tab:calibration_selection}), 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Tables \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_simple_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger bands with complex Volatility modelling and Z-score. $\beta = (\beta_1, \beta_2, \beta_3)$ is the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR), maximum drawdown (MDD), variance of the returns $\hat{\sigma}^2$ and the number of trades (\# Trds) are recorded on the out-sample step. A closer look shows that all the triples exhibit a very high Sharpe ratio on the in-sample period, as expected, and a lower but still promising Sharpe ratio on the out-sample period. Table \ref{tab:valuation_portfolio_2008_2009} summarizes some statistics for the portfolio of each strategy. The results are in favor of the Z-score and the SV with complex modelling.
+For every period, the 20 best in-sample $\mathcal{SR}_\mathcal{I}$ triples are selected to compose the portfolio for the three strategies. The assessment on the corresponding out-sample set $\mathcal{O}_i$ is performed accordingly. The procedure is explained for the the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates (Table \ref{tab:calibration_selection}), 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm}. Tables \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_complex_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy: Bollinger bands with complex Volatility modelling and Z-score. $\beta = (\beta_1, \beta_2, \beta_3)$ is the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR), maximum drawdown (MDD), variance of the returns $\hat{\sigma}^2$ and the number of trades (\# Trds) are recorded on the out-sample step. The net return takes into account with the transaction costs. A closer look shows that all the triples exhibit a very high Sharpe ratio on the in-sample period, as expected, and a lower but still promising Sharpe ratio on the out-sample period. Table \ref{tab:valuation_portfolio_2008_2009} summarizes some statistics for the portfolio of each strategy. The results are in favor of the Z-score and the Bollinger bands with complex modelling.
 
 \renewcommand{\arraystretch}{0.8}% Wider
 \begin{table}[H]
 \centering
-\begin{tabular}{lllllllllll}
+\begin{adjustwidth}{-2.6cm}{}
+\begin{tabular}{llllllllllll}
 \hline
-Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
-SYY  & PRU  & PTC  & 1.00 & -0.09 & -0.25 & 3.21 & 0.83 & 22991.15 & 0.41 & 10 \\
-SYY  & PRU  & PTC  & 1.00 & -0.09 & -0.25 & 3.21 & 0.83 & 22991.15 & 0.41 & 10 \\
-JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.24 & 0.26 & 11255.74 & 0.33 & 13 \\
-JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.24 & 0.26 & 11255.74 & 0.33 & 13 \\
-MA  & LSI  & PXD  & 1.00 & -0.23 & -0.24 & 3.24 & 0.34 & 12827.76 & 0.35 & 10 \\
-SEE  & SHLD  & TSN  & 1.00 & -0.28 & -0.29 & 3.26 & 0.56 & 11882.95 & 0.25 & 8 \\
-MKC  & JNJ  & KSU  & 1.00 & -0.57 & -0.06 & 3.28 & 0.01 & 9989.55 & 0.22 & 10 \\
-FII  & FCX  & MSI  & 1.00 & -0.22 & -0.34 & 3.35 & 1.21 & 20997.83 & 0.25 & 12 \\
-NSC  & PG  & R  & 1.00 & -0.50 & -0.37 & 3.35 & 1.12 & 32770.77 & 0.48 & 12 \\
-LUK  & MAC  & MHK  & 1.00 & -0.31 & -0.43 & 3.37 & 0.20 & 11666.71 & 0.49 & 8 \\
-SEE  & SCI  & SHLD  & 1.00 & -0.34 & -0.27 & 3.38 & 1.19 & 14839.25 & 0.15 & 10 \\
-SEE  & SCI  & SHLD  & 1.00 & -0.34 & -0.27 & 3.38 & 1.19 & 14839.25 & 0.15 & 10 \\
-TIE  & 031D  & CVH  & 1.00 & -0.47 & -0.24 & 3.44 & 0.34 & 10992.36 & 0.19 & 10 \\
-AMT  & AMP  & CCI  & 1.00 & -0.16 & -0.49 & 3.44 & 1.14 & 15091.08 & 0.14 & 11 \\
-MA  & LSI  & OXY  & 1.00 & -0.22 & -0.31 & 3.47 & 0.88 & 24489.13 & 0.31 & 11 \\
-FCX  & DIS  & DO  & 1.00 & -0.43 & -0.84 & 3.48 & 0.46 & 19763.68 & 0.74 & 8 \\
-ETFC  & DDR  & DE  & 1.00 & -0.31 & -0.47 & 3.51 & 0.87 & 13869.04 & 0.29 & 10 \\
-HIG  & BCR  & BRK/B  & 1.00 & -0.65 & -1.58 & 3.55 & 0.23 & 12665.36 & 0.62 & 8 \\
-SEE  & SHLD  & UNM  & 1.00 & -0.21 & -0.28 & 3.75 & 1.80 & 16396.51 & 0.09 & 12 \\
-SYY  & PNC  & PRU  & 1.00 & -0.04 & -0.13 & 3.90 & 1.07 & 27394.60 & 0.29 & 10 \\
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & \specialcell{Net\\Return} & \specialcell{Annualized\\Return} & \specialcell{Max\\Drawdown} & \specialcell{Number of\\Trades}\\ \hline
+SYY  & PNC  & PRU  & 1.00 & -0.04 & -0.13 & 3.90 & 1.07 & 27394.60 & 130.45 \%& 0.29 & 10 $\times$ 2\\
+SEE  & SHLD  & UNM  & 1.00 & -0.21 & -0.28 & 3.75 & 1.80 & 16396.51 & 47.97 \%& 0.09 & 12 $\times$ 2\\
+HIG  & BCR  & BRK/B  & 1.00 & -0.65 & -1.58 & 3.55 & 0.23 & 12665.36 & 19.99 \%& 0.62 & 8 $\times$ 2\\
+ETFC  & DDR  & DE  & 1.00 & -0.31 & -0.47 & 3.51 & 0.87 & 13869.04 & 29.01 \%& 0.29 & 10 $\times$ 2\\
+FCX  & DIS  & DO  & 1.00 & -0.43 & -0.84 & 3.48 & 0.46 & 19763.68 & 73.22 \%& 0.74 & 8 $\times$ 2\\
+MA  & LSI  & OXY  & 1.00 & -0.22 & -0.31 & 3.47 & 0.88 & 24489.13 & 108.67 \%& 0.31 & 11 $\times$ 2\\
+AMT  & AMP  & CCI  & 1.00 & -0.16 & -0.49 & 3.44 & 1.14 & 15091.08 & 38.18 \%& 0.14 & 11 $\times$ 2\\
+TIE  & 0772031D  & CVH  & 1.00 & -0.47 & -0.24 & 3.44 & 0.34 & 10992.36 & 7.44 \%& 0.19 & 10 $\times$ 2\\
+SEE  & SCI  & SHLD  & 1.00 & -0.34 & -0.27 & 3.38 & 1.19 & 14839.25 & 36.29 \%& 0.15 & 10 $\times$ 2\\
+LUK  & MAC  & MHK  & 1.00 & -0.31 & -0.43 & 3.37 & 0.20 & 11666.71 & 12.50 \%& 0.49 & 8 $\times$ 2\\
+NSC  & PG  & R  & 1.00 & -0.50 & -0.37 & 3.35 & 1.12 & 32770.77 & 170.78 \%& 0.48 & 12 $\times$ 2\\
+FII  & FCX  & MSI  & 1.00 & -0.22 & -0.34 & 3.35 & 1.21 & 20997.83 & 82.48 \%& 0.25 & 12 $\times$ 2\\
+MKC  & JNJ  & KSU  & 1.00 & -0.57 & -0.06 & 3.28 & 0.00 & 9989.55 & -0.10 \%& 0.22 & 10 $\times$ 2\\
+SEE  & SHLD  & TSN  & 1.00 & -0.28 & -0.29 & 3.26 & 0.56 & 11882.95 & 14.12 \%& 0.25 & 8 $\times$ 2\\
+MA  & LSI  & PXD  & 1.00 & -0.23 & -0.24 & 3.24 & 0.34 & 12827.76 & 21.20 \%& 0.35 & 10 $\times$ 2\\
+JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.24 & 0.26 & 11255.74 & 9.42 \%& 0.33 & 13 $\times$ 2\\
+SYY  & PRU  & PTC  & 1.00 & -0.09 & -0.25 & 3.21 & 0.83 & 22991.15 & 97.43 \%& 0.41 & 10 $\times$ 2\\
+FOSL  & CMS  & COL  & 1.00 & -0.27 & -0.73 & 3.21 & 0.37 & 11676.18 & 12.57 \%& 0.24 & 7 $\times$ 2\\
+MTW  & MTG  & SUNE  & 1.00 & -0.08 & -0.59 & 3.21 & -0.12 & 9551.03 & -4.48 \%& 0.27 & 10 $\times$ 2\\
+HOG  & HNZ  & MDT  & 1.00 & -0.97 & -0.42 & 3.21 & 0.15 & 11108.11 & 8.31 \%& 0.42 & 9 $\times$ 2\\
 \hline
 \end{tabular}
-\caption{The 20 selected triples for the simple Bollinger bands (2008-2009)}
+\caption{The 20 triples composing the portfolio of the simple Bollinger bands (2008-2009)}
 \label{20_selected_triples_simple_bands}
+\end{adjustwidth}
 \end{table}
 
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lllllllllll}
+\begin{adjustwidth}{-2.6cm}{}
+\begin{tabular}{llllllllllll}
 \hline
-Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
-VLO  & SUNE  & SVU  & 1.00 & -0.40 & -0.32 & 3.04 & 0.18 & 10692.01 & 0.23 & 2 \\
-INTC  & CSX  & CVG  & 1.00 & -0.41 & -0.19 & 3.05 & 0.15 & 12892.33 & 0.91 & 5 \\
-INTC  & CSX  & CVG  & 1.00 & -0.41 & -0.19 & 3.05 & 0.16 & 13824.31 & 0.91 & 5 \\
-MAT  & IP  & IPG  & 1.00 & -0.22 & -0.20 & 3.09 & -0.14 & 9033.67 & 0.44 & 6 \\
-NKE  & KLAC  & KMX  & 1.00 & -0.31 & -0.22 & 3.12 & 1.00 & 125329.26 & 0.70 & 8 \\
-NKE  & KLAC  & KMX  & 1.00 & -0.31 & -0.22 & 3.12 & 1.52 & 288286.19 & 0.70 & 10 \\
-NKE  & KLAC  & KMX  & 1.00 & -0.31 & -0.22 & 3.14 & 1.01 & 102627.67 & 0.69 & 8 \\
-DFS  & DHR  & MSI  & 1.00 & -1.01 & -0.36 & 3.15 & -1.02 & 3273.84 & 0.70 & 4 \\
-MAT  & IR  & ITT  & 1.00 & -0.18 & -0.46 & 3.19 & -0.08 & 9112.14 & 0.48 & 2 \\
-AMAT  & ALL  & AME  & 1.00 & -0.27 & -0.43 & 3.21 & 0.18 & 12029.12 & 0.68 & 4 \\
-AMAT  & AME  & CVS  & 1.00 & -0.54 & -0.28 & 3.24 & 0.01 & 10118.17 & 0.43 & 3 \\
-NWL  & BBT  & COF  & 1.00 & -0.16 & -0.22 & 3.25 & 0.29 & 11703.30 & 0.28 & 4 \\
-MO  & MHK  & MSI  & 1.00 & -0.07 & -0.16 & 3.26 & -0.72 & 5102.08 & 0.52 & 5 \\
-MAT  & IP  & IR  & 1.00 & -0.19 & -0.26 & 3.38 & 0.87 & 16667.10 & 0.32 & 3 \\
-MKC  & COST  & COV  & 1.00 & -0.24 & -0.20 & 3.47 & 0.11 & 10421.81 & 0.16 & 4 \\
-MKC  & COST  & COV  & 1.00 & -0.24 & -0.20 & 3.47 & 0.11 & 10421.81 & 0.16 & 4 \\
-ETFC  & ETN  & GCI  & 1.00 & -0.95 & -0.23 & 3.51 & 0.59 & 10912.62 & 0.10 & 2 \\
-WY  & MET  & MHFI  & 1.00 & -0.19 & -0.44 & 3.51 & 1.04 & 23042.24 & 0.30 & 8 \\
-TIE  & 0772D & CVH  & 1.00 & -0.47 & -0.24 & 3.64 & 0.70 & 12159.16 & 0.17 & 6 \\
-MAT  & KLAC  & KO  & 1.00 & -0.30 & -0.47 & 3.87 & 0.49 & 18728.88 & 0.41 & 6 \\
-MAT  & KLAC  & KO  & 1.00 & -0.30 & -0.47 & 4.02 & 0.51 & 19505.18 & 0.41 & 6 \\
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & \specialcell{Net\\Return} & \specialcell{Annualized\\Return} & \specialcell{Max\\Drawdown} & \specialcell{Number of\\Trades}\\ \hline
+SYY  & PNC  & PRU  & 1.00 & -0.04 & -0.13 & 4.08 & 0.58 & 18069.64 & 60.52 \%& 0.33 & 6 $\times$ 2\\
+TIE  & 0772031D  & CVH  & 1.00 & -0.47 & -0.24 & 4.05 & 0.70 & 12159.16 & 16.19 \%& 0.17 & 6 $\times$ 2\\
+MAT  & KLAC  & KO  & 1.00 & -0.30 & -0.47 & 3.87 & 0.51 & 19505.18 & 71.28 \%& 0.41 & 6 $\times$ 2\\
+MTW  & MTG  & SUNE  & 1.00 & -0.08 & -0.59 & 3.66 & 0.28 & 10968.99 & 7.26 \%& 0.19 & 4 $\times$ 2\\
+ETFC  & ETN  & GCI  & 1.00 & -0.95 & -0.23 & 3.49 & 0.59 & 10912.62 & 6.84 \%& 0.10 & 2 $\times$ 2\\
+MKC  & COST  & COV  & 1.00 & -0.24 & -0.20 & 3.47 & 0.06 & 10240.28 & 1.80 \%& 0.16 & 4 $\times$ 2\\
+TWX  & TIF  & TNB  & 1.00 & -0.23 & -0.39 & 3.41 & 0.35 & 13045.36 & 22.84 \%& 0.38 & 5 $\times$ 2\\
+WY  & MET  & MHFI  & 1.00 & -0.19 & -0.44 & 3.41 & 1.04 & 23042.24 & 97.81 \%& 0.30 & 8 $\times$ 2\\
+CCK  & CCI  & GRA  & 1.00 & -0.25 & -0.18 & 3.38 & 0.60 & 12199.33 & 16.49 \%& 0.16 & 6 $\times$ 2\\
+MAT  & IP  & IR  & 1.00 & -0.19 & -0.26 & 3.38 & 0.84 & 16451.04 & 48.38 \%& 0.33 & 3 $\times$ 2\\
+BF/B  & BJS  & BNI  & 1.00 & -0.18 & -0.17 & 3.35 & 0.32 & 19287.20 & 69.65 \%& 0.53 & 9 $\times$ 2\\
+SEE  & SHLD  & WYN  & 1.00 & -0.20 & -0.22 & 3.35 & 0.85 & 11306.68 & 9.80 \%& 0.08 & 4 $\times$ 2\\
+INTC  & CSX  & CVG  & 1.00 & -0.41 & -0.19 & 3.21 & 0.15 & 12892.33 & 21.69 \%& 0.91 & 5 $\times$ 2\\
+CCK  & CHRS  & CSCO  & 1.00 & -0.03 & -0.60 & 3.14 & 0.56 & 11523.00 & 11.42 \%& 0.14 & 5 $\times$ 2\\
+ROP  & MTW  & MUR  & 1.00 & -0.19 & -0.34 & 3.04 & 1.46 & 46642.74 & 274.82 \%& 0.79 & 5 $\times$ 2\\
+HPQ  & HSP  & PPG  & 1.00 & -0.22 & -0.48 & 3.04 & 0.97 & 16047.82 & 45.35 \%& 0.21 & 3 $\times$ 2\\
+ETFC  & DDR  & DE  & 1.00 & -0.31 & -0.47 & 2.99 & 1.17 & 15966.98 & 44.75 \%& 0.29 & 6 $\times$ 2\\
+MSFT  & EL  & EMN  & 1.00 & -0.22 & -0.36 & 2.98 & 0.63 & 14874.22 & 36.55 \%& 0.20 & 5 $\times$ 2\\
+AA  & 0848680D  & AKS  & 1.00 & -0.09 & -0.53 & 2.96 & 0.72 & 13474.59 & 26.05 \%& 0.23 & 6 $\times$ 2\\
+THC  & PVH  & SIAL  & 1.00 & -0.41 & -0.42 & 2.95 & 0.93 & 12894.73 & 21.71 \%& 0.14 & 8 $\times$ 2\\
 \hline
 \end{tabular}
-\caption{The 20 selected triples for the complex Bollinger bands (2008-2009)}
-\label{20_selected_triples_simple_bands_sv}
+\caption{The 20 triples composing the portfolio of the complex Bollinger bands (2008-2009)}
+\label{20_selected_triples_complex_bands_sv}
+\end{adjustwidth}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{lllllllllll}
+\begin{adjustwidth}{-2.6cm}{}
+\begin{tabular}{llllllllllll}
 \hline
-Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & Net Ret. & MDD & \# Trds\\ \hline
-HPQ  & HSP  & ITW  & 1.00 & -0.15 & -0.60 & 3.71 & 0.05 & 11105.64 & 0.57 & 4 \\
-SUNE  & AIG  & AIZ  & 1.00 & -0.06 & -0.53 & 3.73 & 0.94 & 14008.95 & 0.16 & 3 \\
-KO  & KMX  & VIAB  & 1.00 & -0.05 & -0.26 & 3.75 & 0.63 & 14000.93 & 0.18 & 5 \\
-FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
-FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 0.35 & 4 \\
-JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
-JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 0.16 & 6 \\
-WY  & RTN  & SLM  & 1.00 & -0.60 & -0.18 & 3.87 & 1.36 & 23280.39 & 0.31 & 4 \\
-L  & KIM  & R  & 1.00 & -0.31 & -0.24 & 3.88 & 0.09 & 11723.15 & 0.77 & 2 \\
-ETFC  & AYE  & BCR  & 1.00 & -0.80 & -0.51 & 3.90 & 1.11 & 18337.12 & 0.22 & 4 \\
-HSH  & HRS  & OKE  & 1.00 & -0.16 & -0.41 & 3.91 & 0.74 & 15225.56 & 0.23 & 4 \\
-EMR  & EIX  & FCX  & 1.00 & -0.52 & -0.26 & 3.91 & 1.20 & 20795.44 & 0.30 & 7 \\
-MHFI  & MET  & NEE  & 1.00 & -0.25 & -0.56 & 3.94 & 0.64 & 18726.76 & 0.35 & 5 \\
-L  & KSU  & MDLZ  & 1.00 & -0.44 & -0.67 & 3.95 & 0.32 & 12355.60 & 0.27 & 2 \\
-SLB  & CEG  & CF  & 1.00 & -0.24 & -0.44 & 3.97 & 1.08 & 30520.06 & 0.98 & 3 \\
-NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
-NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 0.14 & 6 \\
-PNR  & HLS  & HNZ  & 1.00 & -0.28 & -0.66 & 4.15 & 0.66 & 14050.95 & 0.20 & 4 \\
-LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
-LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \\
+Stock 1 & Stock 2 & Stock 3 & $\beta_1$ & $\beta_2$ & $\beta_3$ & $\mathcal{SR}_\mathcal{I}$ & $\mathcal{SR}_\mathcal{O}$ & \specialcell{Net\\Return} & \specialcell{Annualized\\Return} & \specialcell{Max\\Drawdown} & \specialcell{Number of\\Trades}\\ \hline
+LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 284.46\% & 0.27 & 8 $\times$ 2 \\
+PNR  & HLS  & HNZ  & 1.00 & -0.28 & -0.66 & 4.15 & 0.66 & 14050.95 & 30.38\%& 0.20 & 4 $\times$ 2\\
+NTAP  & DTV  & NEU  & 1.00 & -0.59 & -0.20 & 3.99 & 1.49 & 16051.81 & 45.38\%& 0.14 & 6 $\times$ 2\\
+SLB  & CEG  & CF  & 1.00 & -0.24 & -0.44 & 3.97 & 1.08 & 30520.06 & 153.90\%& 0.98 & 3 $\times$ 2\\
+L  & KSU  & MDLZ  & 1.00 & -0.44 & -0.67 & 3.95 & 0.32 & 12355.60 & 17.66\%& 0.27 & 2 $\times$ 2\\
+MHFI  & MET  & NEE  & 1.00 & -0.25 & -0.56 & 3.94 & 0.64 & 18726.76 & 65.45\%& 0.35 & 5 $\times$ 2\\
+EMR  & EIX  & FCX  & 1.00 & -0.52 & -0.26 & 3.91 & -0.30 & 2537.76 & -74.62\%& 0.92 & 7 $\times$ 2\\
+HSH  & HRS  & OKE  & 1.00 & -0.16 & -0.41 & 3.91 & 0.74 & 15225.56 & 39.19\%& 0.23 & 4 $\times$ 2\\
+ETFC  & AYE  & BCR  & 1.00 & -0.80 & -0.51 & 3.90 & 1.11 & 18337.12 & 62.52\%& 0.22 & 4 $\times$ 2\\
+L  & KIM  & R  & 1.00 & -0.31 & -0.24 & 3.88 & 0.09 & 11723.15 & 12.92\%& 0.77 & 2 $\times$ 2\\
+WY  & RTN  & SLM  & 1.00 & -0.60 & -0.18 & 3.87 & 1.36 & 23280.39 & 99.60\%& 0.31 & 4 $\times$ 2\\
+JNS  & JDSU  & MDT  & 1.00 & -0.51 & -0.76 & 3.85 & 1.62 & 16043.91 & 45.32\% & 0.16 & 6 $\times$ 2\\
+FII  & FISV  & MSI  & 1.00 & -0.67 & -0.27 & 3.78 & 0.98 & 21794.70 & 88.46\%& 0.35 & 4 $\times$ 2\\
+KO  & KMX  & VIAB  & 1.00 & -0.05 & -0.26 & 3.75 & 0.63 & 14000.93 & 30.00\% & 0.18 & 5 $\times$ 2\\
+SUNE  & AIG  & AIZ  & 1.00 & -0.06 & -0.53 & 3.73 & 0.94 & 14008.95 & 30.06\%& 0.16 & 3 $\times$ 2\\
+HPQ  & HSP  & ITW  & 1.00 & -0.15 & -0.60 & 3.71 & 0.05 & 11105.64 & 8.29\%& 0.57 & 4 $\times$ 2\\
+NI  & NU  & OMC  & 1.00 & -0.56 & -0.34 & 3.66 & 1.14 & 14343.82 & 32.57\%& 0.16 & 5 $\times$ 2\\
+ETFC  & CCL  & CEG  & 1.00 & -0.90 & -0.24 & 3.63 & 0.84 & 14664.55 & 34.98\%& 0.19 & 3 $\times$ 2\\
+SLM  & RX  & SWY  & 1.00 & -0.77 & -0.69 & 3.63 & -0.12 & 8622.02 & -13.77\%& 0.87 & 7 $\times$ 2\\
+FCX  & DIS  & DO  & 1.00 & -0.43 & -0.84 & 3.56 & 1.11 & 40656.10 & 229.92\%& 0.53 & 5 $\times$ 2\\
 \hline
 \end{tabular}
-\caption{The 20 selected triples for the Z-score strategy (2008-2009)}
+\caption{The 20 triples composing the portfolio of the Z-score strategy (2008-2009)}
 \label{20_selected_triples_zscore}
+\end{adjustwidth}
 \end{table}
 
 \renewcommand{\arraystretch}{1}% Wider
@@ -1505,29 +1511,49 @@ LNC  & LLTC  & MHK  & 1.00 & -0.71 & -0.79 & 4.53 & 1.73 & 47928.66 & 0.27 & 8 \
 \centering
 \begin{tabular}{lllll}
 \hline
-Statistics  			& Bollinger & Z-score & Bollinger (SV) & SPX (B\&H)\\
+Statistics  			& \specialcell{Bollinger\\Simple} & \specialcell{Bollinger\\Complex} & \specialcell{Z-score\\Strategy} & \specialcell{SPX\\Buy\&Hold}\\
 \hline
-\# of observations in the sample								    & 505       &505      & 505    & 505\\
-\# of observations in $\mathcal{I}$						      & 336       &336      & 336    & 336\\
-\# of days in the trading period ($\mathcal{O}$)    & 169       &169      & 169    & 169\\
-\# of triples in the trading period   							& 20        &20       & 20     & N.A.\\
-\# of cointegrated spreads to analyze 				      & 5967      &5967     & 5976   & N.A.\\
-Average annualized return 										      & 60.11 \%  &78.06 \% & 187.51 \%& 12.92 \%\\
-Annualized Sharpe Ratio 										        & 2.57      &3.07     & 1.41   & 0.41\\
-Annualized Sharpe Ratio (with risk free)            & 2.51      &3.01     & 1.40   & 0.36\\
-Largest daily return 											          & 5.81\%    &8.31 \%  & 16.16 \% & 10.78 \%\\
-Largest daily return 											          & 5.81\%    &8.31 \%  & 16.16 \% & 10.78 \%\\
-Lowest daily return 											          & -5.53\%   &-4.23\%  & -10.58 \% & -8.92 \%\\
-Cumulative profit on the trading period             & 79.38\%   &103.88 \%& 250.44\% & 17.26 \% \\
-Correlation with the market returns 							  & 0.0637    &-0.0302  & 0.0555 & 1\\
-Skewness of the returns														  & 0.489     &1.006    & 0.450 & 0.133\\
-Kurtosis of the returns														  & 6.973     &11.863   & 3.735 & 6.421 \\
-Maximum Drawdown  												          & 8.44\%    &6.32 \%  & 28.20 \% & 32.73 \%\\
+\# of observations in the sample								    & 505        &505      & 505    & 505\\
+\# of observations in $\mathcal{I}$						      & 169        &169      & 169    & 169\\
+\# of days in the trading period ($\mathcal{O}$)    & 336        &336      & 336    & 336\\
+\# of triples in the trading period   							& 20         &20       & 20     & N.A.\\
+\# of cointegrated spreads to analyze 				      & 5967       &5967     & 5976   & N.A.\\
+Average annualized return 										      & 45.83\%   &47.93\% & 62.05\%& 12.92\%\\
+Annualized Sharpe Ratio 										        & 2.176      &2.227     & 2.341   & 0.412 \\
+Annualized Sharpe Ratio (w. risk free)            & 2.110      &2.293     & 2.394   & 0.362 \\
+Largest daily return 											          & 3.59\%     &4.49\%  & 6.44\% & 10.78\%\\
+Lowest daily return 											          & -5.04\%    &-4.45\%  & -3.47\% & -8.92\%\\
+Cumulative profit on the trading period             & 61.11\%    &63.91\%& 82.74\% & 17.26\% \\
+Correlation with the market returns 							  & -0.0246    &0.0348  & 0.0804 & 1\\
+Skewness of the returns														  & -0.0702     &0.3212    & 0.8913 & 0.1331\\
+Kurtosis of the returns														  & 7.3164     &5.5508   & 7.4581 & 6.4213 \\
+Maximum Drawdown  												          & 0.0888  & 0.0839 & 0.0894 & 0.3273\\
 \hline
 \end{tabular}
 \caption{Summary of Triple Trading for the period 2008-2009}
 \label{tab:valuation_portfolio_2008_2009}
 \end{table}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/strats/simple}
+        \caption{Bollinger Simple}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/strats/complex}
+        \caption{Bollinger Complex}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/strats/zscore}
+        \caption{Z-score}
+    \end{subfigure}
+    \caption{Portfolio valuation of each strategy on the period 2008-2009}
+    \label{fig:portfolio_valuations}
+\end{figure}
 
 % \begin{figure}[!htb]
 % \centering
@@ -1588,14 +1614,14 @@ Jan, 1 2012 - Jan, 1 2014 & \specialcell{0.5137\\(0.5021)} & \specialcell{0.4877
 Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} & \specialcell{-2.6077\\(-2.7259)} & \specialcell{4.2217\\(4.2659)} \\
 \hline
 \end{tabular}
-\caption{Statistics about $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Plain is complex mod. Brackets is simple mod.}
+\caption{Statistics about $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Plain is complex model. Brackets is simple model.}
 \label{tab:sharpe_ratios_1992_2014}
 \end{table}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width = 1\textwidth]{res/final_res}
-\caption{Histograms of the Sharpe Ratios on the out-sample set (2008-2010)}
+\caption{Histograms of the Sharpe Ratios on the out-sample set (2008-2009)}
 \label{fig:sr_comparison_2008_2010}
 \end{figure}
 
