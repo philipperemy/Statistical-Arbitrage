@@ -1,9 +1,15 @@
-function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
+function [ portfolio_cumsum, perf_assessment ] = Run_Strategy( spreads, spx, strat_id )
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%% LOAD A SPREAD MODULE %%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    addpath('../../helpers/');
+    addpath('../../coint/deepsearch');
+    addpath('../../coint/impl');
+    addpath('../../pmcmc');
+    addpath('../../filters');
+    addpath('../../models');
+    addpath('..');
+    load ../../data/spx.mat;
+    format longg;
+
     ZSCORE_ID           = 3;
     BOLLINGER_CPX       = 2;
     BOLLINGER_SIMPLE    = 1;
@@ -19,27 +25,11 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
             zscore_strat  = false;
             complex_strat = false;
     end
-
+    
     if(zscore_strat && complex_strat)
         disp('problem occurred');
         return;
     end
-
-    % load('spreads_7306_8036.mat');
-    % load('spx_7306_8036.mat');
-    % 
-    % load('spreads_8036_8767.mat');
-    % load('spx_8036_8767.mat');
-
-    addpath('../../helpers/');
-    addpath('../../coint/deepsearch');
-    addpath('../../coint/impl');
-    addpath('../../pmcmc');
-    addpath('../../filters');
-    addpath('../../models');
-    addpath('..');
-    load ../../data/spx.mat;
-    format longg;
 
     initial_bet  = 10000;
     spread_count = length(spreads);
@@ -48,6 +38,7 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
     zscore_conf  = struct('sell_open', 1, 'sell_close', -1, 'buy_open', -1, 'buy_close', 1);
 
     %train
+    c = 1;
     for i = 1:spread_count
         if(complex_strat)
             try
@@ -60,11 +51,13 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
                 mat_tr(i,3) = mat(3);
                 mat_tr(i,4) = mat(4);
                 mat_tr(i,5) = mat(5);
+                
+                complexx(c) = complex;
+                c = c + 1;
             catch
             end
         else
             %simple strategy
-
             Spread 		= spreads(i);
             T           = ceil((1/3)* length(Spread.px));
 
@@ -86,10 +79,31 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
     end
 
     %Rank according to Sharpe Ratio
-    sorted_mat_tr = Rank_Results(mat_tr, 3, 20);
-    spreads_ids = sorted_mat_tr(:,5)';
+    %Select 40 and drop some
+    sorted_mat_tr = Rank_Results(mat_tr, 3, 40);
+    spreads_ids = flip(sorted_mat_tr(:,5)');
+    selected_spreads_ids = [];
+    list = {};
+    for i = spreads_ids
 
-    mat_te 		 	 = zeros(length(spreads_ids) , 5 );
+       if(length(selected_spreads_ids) == 20)
+           break;
+       end
+        
+       spread = spreads(i);
+       s = sprintf('%s%s%s', char(CleanName(pp.tickers(spread.tuple(1)))), char(CleanName(pp.tickers(spread.tuple(2)))), char(CleanName(pp.tickers(spread.tuple(3)))));
+       disp(s);
+       s = cellstr(s);
+       if(isempty(strmatch(s, list)))
+           selected_spreads_ids(end+1) = i;
+       end
+       
+       list(end+1) = s;
+    end
+    
+    spreads_ids      = selected_spreads_ids;
+    
+    mat_te 		 	 = zeros(length(spreads_ids) , 5);
     portfolio_cumsum = zeros(1);
     c 			 	 = 1;
     for i = spreads_ids
@@ -98,20 +112,24 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
         T           = ceil((1/3)* length(Spread.px));
 
         if(complex_strat)
-            [ pmcmc ]  = Sto_Volatility_Estimator( Spread.px, 65, 600 );
-            spread_vol = pmcmc.vol_two_factors_leverage;
+            for j = 1:length(complexx)
+               if(complexx(j).mat(5) == i)
+                   spread_vol = complexx(j).model.vol_two_factors_leverage;
+                   break;
+               end
+            end
         else
             spread_vol = 0;
         end
 
         if(zscore_strat)
-            %fprintf('TEST ZScore i = %d\n', i);
+            fprintf('TEST ZScore i = %d\n', i);
             [pl, cum_pro, trds]= SimpleTradingStrategyZScore( pp, Spread, T, length(Spread.px), zscore_conf, 0, 1, @Strategy_Simulator, initial_bet );
         else
             if(spread_vol == 0)
-                %fprintf('TEST Bollinger Simple i = %d\n', i);
+                fprintf('TEST Bollinger Simple i = %d\n', i);
             else
-                %fprintf('TEST Bollinger Complex i = %d\n', i);
+                fprintf('TEST Bollinger Complex i = %d\n', i);
             end
 
             [pl, cum_pro, trds]= SimpleTradingStrategy( pp, Spread, T, length(Spread.px), boll_conf, spread_vol, 0, 1, @Strategy_Simulator, initial_bet );
@@ -142,7 +160,8 @@ function [ portfolio_cumsum ] = Run_Strategy( spreads, spx, strat_id )
         c = c + 1;
     end
     portfolio_cumsum = portfolio_cumsum / length(spreads_ids);
-    PerformanceAssessment(portfolio_cumsum, spx(T:end), initial_bet);
+    figure;
+    perf_assessment = PerformanceAssessment(portfolio_cumsum(1:end-2), spx(T:end), initial_bet);
     drawnow;
 
     DISP_Selected_Triples( pp, spreads, spreads_ids, mat_tr, mat_te );

@@ -1521,7 +1521,7 @@ Statistics  			& \specialcell{Bollinger\\Simple} & \specialcell{Bollinger\\Compl
 \# of cointegrated spreads to analyze 				      & 5967       &5967     & 5976   & N.A.\\
 Average annualized return 										      & 45.83\%   &47.93\% & 62.05\%& 12.92\%\\
 Annualized Sharpe Ratio 										        & 2.176      &2.227     & 2.341   & 0.412 \\
-Annualized Sharpe Ratio (w. risk free)            & 2.110      &2.293     & 2.394   & 0.362 \\
+Annualized Sharpe Ratio (w. risk free 2\%)          & 2.110      &2.293     & 2.394   & 0.362 \\
 Largest daily return 											          & 3.59\%     &4.49\%  & 6.44\% & 10.78\%\\
 Lowest daily return 											          & -5.04\%    &-4.45\%  & -3.47\% & -8.92\%\\
 Cumulative profit on the trading period             & 61.11\%    &63.91\%& 82.74\% & 17.26\% \\
@@ -1626,38 +1626,7 @@ Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} 
 \label{fig:sr_comparison_2008_2010}
 \end{figure}
 
-
-\section{Gradient and Optimization of the Bollinger bands}
-
-It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. 
-
-An example is considered with the spread formed by (NASDAQ:CTSH, NYSE: CTL, CVY:GR) on a period of length($\mathcal{I}$)= 4 years. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ after the validation on $\mathcal{I}$ and the gradient $\nabla f$. The type of moving average is $t = \{ SMA \}$ and is fixed. At first sight, the region where the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0.
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{surf/1}
-        \caption{Topology of $f$ (3D)}
-        \label{}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{surf/2}
-        \caption{Topology of $f$ (2D)}
-        \label{vol_mod_sma}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{surf/3}
-        \caption{Gradient $\nabla f$}
-        \label{vol_mod_sma}
-    \end{subfigure}
-    \caption{Detection of the stable global maximum of $f$ with $\nabla f$}
-    \label{fig:sharpe_ratio_topology}
-\end{figure}
-
-\chapter{Conclusion and Future work}
+\chapter{Conclusion and Future Work}
 
 The strategy is compared to the traditional buy and hold strategy where the investor buys a basket of stocks to reproduce the S\&P500 index and holds it until the end of the period where the position is unwound. Table xx presents the results of both strategies. Figure xx compares the cumulative excess returns and volatility of the strategy with the ones of the SPX index. The portfolio composed of the tuples shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. The second panel presents the implied volatility of the returns for both strategies computed with a standard stochastic volatility model. The strategy accounts for a low and stable volatility for the whole period. A very low correlation with the market returns attests the market neutral property of the strategy. Table 3 shows the performance year by year of the strategy and it is worth noticing that the excess returns is very high during the crisis where the volatility was very high. As highlighted by \cite{khandani2007} and \cite{avellaneda2010}, the second semester of 2007 and first semester of 2008 were quite complicated for quantitative investment funds. Particularly for statistical arbitrage strategies that experienced significant losses during the period, with subsequent recovery in some cases. Many managers suffered losses and had to sell out their portfolios, not benefiting from the subsequent recovery. We obtain results which are consistent with \cite{khandani2007} and \cite{avellaneda2010} and validate their unwinding theory for the quant fund drawdown. Note that in Figure 3, the proposed pairs trading strategy presented significant losses in the first semester of 2008, starting its recovery in the second semester. \cite{khandani2007} and \cite{avellaneda2010} suggest that the events of 2007-2008 may be a consequence of a lack of liquidity, caused by funds that had to undo their positions. The proposed statistical arbitrage generated average excess returns of xx\% per year in out-of-samples simulations, Sharpe ratio of xx, low exposure to the equity market and relatively low volatility and 5pt basis for transaction costs. Even in market crashes, it turns out that the strategy is still highly profitable, reinforcing the usefulness of co-integration in quantitative strategies.
 
@@ -2384,5 +2353,171 @@ In order to balance the high computational cost of estimating thousands of param
 
 \end{algorithmic}
 \end{algorithm}
+
+\section{Bollinger bands Strategy - Cumulative Returns}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/1}
+        \caption{1990-1992}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/2}
+        \caption{1992-1994}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/3}
+        \caption{1994-1996}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/4}
+        \caption{1996-1998}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/5}
+        \caption{1998-2000}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/6}
+        \caption{2000-2002}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/7}
+        \caption{2002-2004}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/8}
+        \caption{2004-2006}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/9}
+        \caption{2006-2008}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/10}
+        \caption{2008-2010}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/11}
+        \caption{2010-2012}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/12}
+        \caption{2012-2014}
+    \end{subfigure}
+    \caption[]{Cumulative returns for Bollinger bands strategy with simple modelling}
+    \label{fig:bollinger_bands_strategy_simple}
+\end{figure}
+
+\section{Bollinger bands Strategy - Cumulative Returns (complex)}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/1}
+        \caption{1990-1992}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/2}
+        \caption{1992-1994}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/3}
+        \caption{1994-1996}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/4}
+        \caption{1996-1998}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/5}
+        \caption{1998-2000}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/6}
+        \caption{2000-2002}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/7}
+        \caption{2002-2004}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/8}
+        \caption{2004-2006}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/9}
+        \caption{2006-2008}
+    \end{subfigure} \\
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest/10}
+        \caption{2008-2010}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/11}
+        \caption{2010-2012}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{res/backtest_cpx/12}
+        \caption{2012-2014}
+    \end{subfigure}
+    \caption[]{Cumulative returns for Bollinger bands strategy with simple modelling}
+    \label{fig:bollinger_bands_strategy_simple}
+\end{figure}
+
+\section{Gradient and Optimization of the Bollinger bands}
+
+It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. 
+
+An example is considered with the spread formed by (NASDAQ:CTSH, NYSE: CTL, CVY:GR) on a period of length($\mathcal{I}$)= 4 years. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ after the validation on $\mathcal{I}$ and the gradient $\nabla f$. The type of moving average is $t = \{ SMA \}$ and is fixed. At first sight, the region where the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{surf/1}
+        \caption{Topology of $f$ (3D)}
+        \label{}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{surf/2}
+        \caption{Topology of $f$ (2D)}
+        \label{vol_mod_sma}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{surf/3}
+        \caption{Gradient $\nabla f$}
+        \label{vol_mod_sma}
+    \end{subfigure}
+    \caption{Detection of the stable global maximum of $f$ with $\nabla f$}
+    \label{fig:sharpe_ratio_topology}
+\end{figure}
 
 \end{document}
