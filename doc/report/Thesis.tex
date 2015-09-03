@@ -1622,6 +1622,33 @@ Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} 
 %http://stattrek.com/online-calculator/t-distribution.aspx
 The Sharpe Ratios $\mathcal{SR}_\mathcal{O}$ statistics are presented in Table \ref{tab:sharpe_ratios_1992_2014}. The values in plain are for complex modelling and the ones in brackets for simple modelling. \textbf{It turns out that using complex modelling results in an average increase of 8.52\% in the Sharpe-Ratio.} A t-test\footnote{For more information, the reader can consult the MATLAB documentation on \url{http://mathworks.com/help/stats/ttest.html}} is conducted to assert that the pairwise difference between the means of simple and complex modelling Sharpe Ratios has a mean equal to 0. With a t-score of 2.815 with 11 degrees of freedom and a pvalue of 0.0168, the Null hypothesis is rejected at the 5\% significance level. Figure \ref{fig:sr_comparison_2008_2010} shows the distributions of the Sharpe Ratios with simple and complex modelling on the period 2008-2009. We can see clearly that using complex modellings leads to an improvement in this measure.
 
+\section{Gradient and Optimization of the Bollinger bands}
+
+It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. To have an overview, 50 spreads are randomly selected and cross validated on each set $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ after the validation on $\mathcal{O}$ and the gradient $\nabla f$. The type of moving average is $t = \{ EMA \}$ and is fixed. At first sight, the region where the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0. It gives us a hint that the bands are optimal for very large values of $p$ and flexible for $\alpha$. This result is in accordance with the good performance of the Z-score strategy that assumes a non-zero fixed mean. In fact, this case happens when $p \rightarrow \infty$. However, the whole population should be analyzed before making any hasty conclusions.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{surf/1}
+        \caption{Topology of $f$ (3D)}
+        \label{}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{surf/2}
+        \caption{Topology of $f$ (2D)}
+        \label{vol_mod_sma}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{surf/3}
+        \caption{Gradient $\nabla f$}
+        \label{vol_mod_sma}
+    \end{subfigure}
+    \caption{Detection of the stable global maximum of $f$ with $\nabla f$}
+    \label{fig:sharpe_ratio_topology}
+\end{figure}
 
 \chapter{Conclusion and Future Work}
 
@@ -2499,36 +2526,6 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
     \end{subfigure}
     \caption[]{Cumulative returns for Bollinger bands strategy with simple modelling}
     \label{fig:bollinger_bands_strategy_simple}
-\end{figure}
-
-\section{Gradient and Optimization of the Bollinger bands}
-
-It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. 
-
-An example is considered with the spread formed by (NASDAQ:CTSH, NYSE: CTL, CVY:GR) on a period of length($\mathcal{I}$)= 4 years. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ after the validation on $\mathcal{I}$ and the gradient $\nabla f$. The type of moving average is $t = \{ SMA \}$ and is fixed. At first sight, the region where the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0.
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{surf/1}
-        \caption{Topology of $f$ (3D)}
-        \label{}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{surf/2}
-        \caption{Topology of $f$ (2D)}
-        \label{vol_mod_sma}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{surf/3}
-        \caption{Gradient $\nabla f$}
-        \label{vol_mod_sma}
-    \end{subfigure}
-    \caption{Detection of the stable global maximum of $f$ with $\nabla f$}
-    \label{fig:sharpe_ratio_topology}
 \end{figure}
 
 \end{document}

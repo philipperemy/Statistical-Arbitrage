@@ -4,7 +4,7 @@ ZSCORE_ID           = 3;
 BOLLINGER_CPX       = 2;
 BOLLINGER_SIMPLE    = 1;
 
-strat_id            = BOLLINGER_CPX;
+strat_id            = BOLLINGER_SIMPLE;
 
 load('spreads_1_731.mat');
 load('spx_1_731.mat');
