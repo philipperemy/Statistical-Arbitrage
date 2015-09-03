@@ -234,6 +234,8 @@ In my family, I thank my parents Catherine and Bertrand. Last but not least, I a
 %\hfill Lawyer, A Civil War Veteran, Political Leader, And Orator Of United States
 
 \renewcommand{\contentsname}{Table of Contents}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
 \tableofcontents
 
 \listoffigures
@@ -1240,7 +1242,7 @@ The workflow involves the preparation of the datasets and the selection of the c
 \section{General Framework}
 
 \subsection{Training and Simulation Sets}
-We use the dataset $\mathcal{EQTY}_{daily}$ defined in Section \ref{sec:presentation_data}. The whole sample period is divided into sets of length \textbf{two} years. Each set is split into two sets: the in-sample set denoted $\mathcal{I}$ and the out-of-sample $\mathcal{O}$ with a 1:2 ratio: $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. The choice of the ratio is motivated by the fact that the Bollinger bands has a stochastic mean and are therefore less sensitive to a break of the cointegration property, contrary to the Z-score. Detection of cointegrated tuples, selection of the best tuples and tuning of the Bollinger bands parameters $(p,t,\alpha)$ is done on $\mathcal{I}$. The purpose of $\mathcal{O}$ is to assess the performance of the strategy on unseen data with the parameters computed in the training period. This technique is known as cross validation and is used to avoid overfitting during the calibration. 
+We use the dataset $\mathcal{EQTY}_{daily}$ defined in Section \ref{sec:presentation_data}. The whole sample period is divided sequentially into sets of length \textbf{two} years. Each set is split into two sets: the in-sample set denoted $\mathcal{I}$ followed by the out-of-sample $\mathcal{O}$ with a 1:2 ratio: $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. The choice of the ratio is motivated by the fact that the Bollinger bands has a stochastic mean and are therefore less sensitive to a break of the cointegration property, contrary to the Z-score. Detection of cointegrated tuples, selection of the best tuples and tuning of the Bollinger bands parameters $(p,t,\alpha)$ is done on $\mathcal{I}$. The purpose of $\mathcal{O}$ is to assess the performance of the strategy on unseen data with the parameters computed in the training period. This technique is known as cross validation and is used to avoid overfitting during the calibration. 
 
 
 \subsection{Framework Hypotheses}
@@ -1402,7 +1404,7 @@ In this section, the tuning of the parameters is discarded and the default param
 % Later, a cross validation phase is performed to maximize the performance of the best strategy and it is tested against the Z-score and the Buy and Hold strategies.
 
 \subsubsection{Portfolio Approach}
-For each period - indexed by $i$ - and for each strategy, the 20 best in-sample $\mathcal{SR}_{\mathcal{I}_i}$ triples are selected to compose the portfolio of the strategy. The assessment is done on the corresponding out-sample set $\mathcal{O}_i$. The procedure is explained for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm} (Table \ref{tab:calibration_selection}). Tables \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_complex_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy. $\beta = (\beta_1, \beta_2, \beta_3)$ is the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR) with costs and the number of trades are recorded on the out-sample step. A closer look shows that all the triples exhibit a very high Sharpe ratio on the in-sample period, as expected, and a lower but still promising Sharpe ratio on the out-sample period. Table \ref{tab:valuation_portfolio_2008_2009} summarizes some statistics for the three portfolios. The results are in favor of the Z-score and the Bollinger bands with complex modelling. It is worth noting that the Z-score strategy had two triples 7 and 19 which clearly underperformed the others. Indeed, both triples lost their cointegration property.
+For each period - indexed by $i$ - and for each strategy, the 20 best in-sample $\mathcal{SR}_{\mathcal{I}_i}$ triples are selected to compose the portfolio of the strategy. The assessment is done on the corresponding out-sample set $\mathcal{O}_i$. The procedure is explained for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm} (Table \ref{tab:calibration_selection}). Tables \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_complex_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy. $\beta = (\beta_1, \beta_2, \beta_3)$ is the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR) with costs and the number of trades are recorded on the out-sample step. A closer look shows that all the triples exhibit a very high Sharpe ratio on the in-sample period, as expected, and a lower but still promising Sharpe ratio on the out-sample period. Table \ref{tab:valuation_portfolio_2008_2009} summarizes some statistics for the three portfolios.
 
 \renewcommand{\arraystretch}{0.8}% Wider
 \begin{table}[H]
@@ -1518,8 +1520,8 @@ Statistics  			& \specialcell{Bollinger\\Simple} & \specialcell{Bollinger\\Compl
 \# of triples in the trading period   							& 20         &20       & 20     & N.A.\\
 \# of cointegrated spreads to analyze 				      & 5967       &5967     & 5976   & N.A.\\
 Average annualized return 										      & 45.83\%   &47.93\% & 62.05\%& 12.92\%\\
-Annualized Sharpe Ratio 										        & 2.176      &2.227     & 2.341   & 0.412 \\
-Annualized Sharpe Ratio (w. risk free 2\%)          & 2.110      &2.293     & 2.394   & 0.362 \\
+Annualized Sharpe Ratio (w. risk free 2\%)					& 2.110       &2.227     & 2.341   & 0.412 \\
+Annualized Sharpe Ratio                             & 2.176      &2.293     & 2.394   & 0.362 \\
 Largest daily return 											          & 3.59\%     &4.49\%  & 6.44\% & 10.78\%\\
 Lowest daily return 											          & -5.04\%    &-4.45\%  & -3.47\% & -8.92\%\\
 Cumulative profit on the trading period             & 61.11\%    &63.91\%& 82.74\% & 17.26\% \\
@@ -1529,7 +1531,7 @@ Kurtosis of the returns														  & 7.3164     &5.5508   & 7.4581 & 6.4213 
 Maximum Drawdown  												          & 0.0888  & 0.0839 & 0.0894 & 0.3273\\
 \hline
 \end{tabular}
-\caption{Summary of triple trading for the period 2008-2009}
+\caption{Summary of triple trading for the period 2008-2009 on the out-sample set $\mathcal{O}$}
 \label{tab:valuation_portfolio_2008_2009}
 \end{table}
 
@@ -1556,8 +1558,11 @@ Maximum Drawdown  												          & 0.0888  & 0.0839 & 0.0894 & 0.3273\\
 
 The valuations for the other periods are provided in Appendices \ref{app:portfolio_valuation_simple} and \ref{app:portfolio_valuation_complex}.
 
+\subsubsection{Comparison of the Strategies}
+At first glance, Z-score seems to be the strategy having the most promising results. One explanation is because spread instruments are assumed to have a non-zero constant mean. The results are in accordance with \cite{caldeira2013} who found an average Sharpe Ratio of 2 with Z-score on Brazilian markets. However, this strategy could become risky if the cointegrating property was lost. In the period Jan 2008 - Jan 2010, the Z-score strategy had two triples 7 and 19 which clearly underperformed the others. Indeed, both triples lost their cointegration property. This is why stop losses or continuous cointegration tests should be put in place to stop trading. Because none of those termination conditions are considered here, such a comparison could be biased and thereby we consider the Z-score strategy as purely theoretical. Considering the Bollinger bands strategies, the complex modelling clearly smoothes the cumulative returns resulting in a lower volatility, as shown by the Sharpe Ratio measures. On average, the simple modelling seem to have higher cumulative returns but it comes at a much higher volatility. Thereby, the complex modelling is more accurate and less aggressive in trading. A way of making the strategy even more profitable is to tune the Bollinger parameters, as shown partially in  Section \ref{sec:optimization_bb}.
+
 \subsubsection{Sharpe Ratio Distributions}
-Building a portfolio is a good approach to highlight the positive impact of using more complex models. Nevertheless, this cannot be considered as a full proof because the inference is only done on a small set of selected triples and not on the entire population. To reinforce our thoughts, we consider the study without any portfolios on the whole population of the cointegrated triples listed in Table \ref{tab:calibration_selection}. The model calibration is performed for each spread with the Cauchy PMCMC algorithm (Algorithm \ref{algo_pmcmc_cauchy}). Table \ref{tab:param_stats_1992_2014} presents the results of the calibration step on the in-sample sets. Some distributions are presented in Appendix \ref{app:distribution_model_parameters_m7}. The facts $\rho < 0$, $\phi_X \rightarrow 1$, $\phi_Z<\phi_X$, $\sigma_Z > \sigma_X$ are in accordance with the stylized facts and the specifications of the $\mathcal{M}_7$ (TFSVL). Not surprisingly, the two crisis periods 2000-2002 and 2008-2010 are the ones which have the highest values of $\beta$ and $\sigma_X, \sigma_Z$. Recall that $\beta$ models the amplitude of the absolute daily returns and $\sigma_X, \sigma_Z$ represent respectively the long-run and short-run volatilities. It is of common knowledge that periods of crisis come along with high absolute returns and volatility. 
+Building a portfolio is a good approach to highlight the positive impact of using more complex models. Nevertheless, this cannot be considered as a full proof because the inference is only done on a small set of selected triples and not on the entire population. To reinforce our thoughts, we consider the study without any portfolios on the whole population of the cointegrated triples listed in Table \ref{tab:calibration_selection}. The model calibration is performed for each spread with the Cauchy PMCMC algorithm (Algorithm \ref{algo_pmcmc_cauchy}). Table \ref{tab:param_stats_1992_2014} presents the results of the calibration step on the in-sample sets. Some distributions are presented in Appendix \ref{app:distribution_model_parameters_m7}. The facts $\rho < 0$, $\phi_X \rightarrow 1$, $\phi_Z<\phi_X$, $\sigma_Z > \sigma_X$ are in accordance with the stylized facts and the specifications of the $\mathcal{M}_7$ (TFSVL). Not surprisingly, the two crisis periods 2000-2002 and 2008-2010 are the ones which have the highest values of $\beta$ and $\sigma_X, \sigma_Z$. Recall that $\beta$ models the amplitude of the absolute daily returns and $\sigma_X, \sigma_Z$ represent respectively the long-run and short-run volatilities. It is of common knowledge that periods of crisis come along with high absolute returns and volatility.
 
 \renewcommand{\arraystretch}{0.9}% Wider
 \begin{table}[H]
@@ -1622,7 +1627,8 @@ Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} 
 %http://stattrek.com/online-calculator/t-distribution.aspx
 The Sharpe Ratios $\mathcal{SR}_\mathcal{O}$ statistics are presented in Table \ref{tab:sharpe_ratios_1992_2014}. The values in plain are for complex modelling and the ones in brackets for simple modelling. \textbf{It turns out that using complex modelling results in an average increase of 8.52\% in the Sharpe-Ratio.} A t-test\footnote{For more information, the reader can consult the MATLAB documentation on \url{http://mathworks.com/help/stats/ttest.html}} is conducted to assert that the pairwise difference between the means of simple and complex modelling Sharpe Ratios has a mean equal to 0. With a t-score of 2.815 with 11 degrees of freedom and a pvalue of 0.0168, the Null hypothesis is rejected at the 5\% significance level. Figure \ref{fig:sr_comparison_2008_2010} shows the distributions of the Sharpe Ratios with simple and complex modelling on the period 2008-2009. We can see clearly that using complex modellings leads to an improvement in this measure.
 
-\section{Gradient and Optimization of the Bollinger bands}
+\subsection{Gradient and Optimization of the Bollinger bands}
+\label{sec:optimization_bb}
 
 It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. To have an overview, 50 spreads are randomly selected and cross validated on each set $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ after the validation on $\mathcal{O}$ and the gradient $\nabla f$. The type of moving average is $t = \{ EMA \}$ and is fixed. At first sight, the region where the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0. It gives us a hint that the bands are optimal for very large values of $p$ and flexible for $\alpha$. This result is in accordance with the good performance of the Z-score strategy that assumes a non-zero fixed mean. In fact, this case happens when $p \rightarrow \infty$. However, the whole population should be analyzed before making any hasty conclusions.
 
@@ -1814,11 +1820,11 @@ which closes the proof.
 
 \section{Correlation Analysis of Quadruples}
 \label{sec:corr_analysis_quad}
-Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock sector for quadruples. The period spans the time from Jan 01, 2012 to May 27, 2013. Most distributions exhibit a bell shape with thin right tails and are therefore candidates for a filtering selection based on an arbitrary threshold $R^2_{th}$. It is worth noting that for $n=4$, each sector has its own threshold $R^2_{th}$.
+Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock sector for quadruples. The period spans the time from Jan 01, 2012 to May 27, 2013. Most distributions exhibit a bell shape with thin right tails and are therefore candidates for a filtering selection based on an arbitrary threshold $R^2_{th}$. It is worth noting that for $n=4$, each sector has its own threshold $R^2_{th}$. Table \ref{corr_quad} shows the number of quadruples before and after the filtering. $R^2_{thr}$ has been selected in such a way that roughly between 1000 and 10000 quadruples are selected for each sector for cointegration tests.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width = 0.62\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
+\includegraphics[width = 0.8\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
 \caption{Densities of $100 \times R^2$ for the quadruples (not all are cointegrated). Period is from Jan 01, 2012 to May 27, 2013}
 \label{dist_100_r2_quad}
 \end{figure}
@@ -1844,7 +1850,6 @@ Utilities                          & 760164 & 0.72 & 1290\\
 \caption{Correlation filtering for the quadruples on Jan 01, 2012 - May 27, 2013}
 \label{corr_quad}
 \end{table}
-Table \ref{corr_quad} shows the number of quadruples before and after the filtering. $R^2_{thr}$ has been selected in such a way that roughly between 1000 and 10000 quadruples are selected for each sector for cointegration tests.
 
 \section{Cointegration on Foreign Exchange Rates (FX)}
 
@@ -1930,278 +1935,9 @@ GBPUSD & CADUSD & CHFUSD & 1.000000& -0.432923& -0.177363 \\
         \includegraphics[width=1\textwidth]{res/params/731_1462/6}
         \caption{$\rho$}
     \end{subfigure}
-    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ for 2147 spreads (Jan 1992 - Jan 1994).}
+    \caption{Distributions of the parameters for 2147 spreads (Jan 1992 - Jan 1994)}
     \label{fig:param_dists_1992_1994}
 \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1994-1996)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1996-1998)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (1998-2000)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2000-2002)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2002-2004)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2004-2006)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/1}
-%         \caption{$\phi_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/2}
-%         \caption{$\sigma_X$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/3}
-%         \caption{$\phi_Z$}
-%     \end{subfigure} \\
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/4}
-%         \caption{$\sigma_Z$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/5}
-%         \caption{$\beta$}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.32\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/6}
-%         \caption{$\rho$}
-%     \end{subfigure}
-%     \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ (2006-2008)}
-%     \label{fig:param_dists_2000_2002}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/731_1462/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/731_1462/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1992 - Jan, 01 1994. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
 
 \begin{figure}[H]
     \centering
@@ -2235,122 +1971,9 @@ GBPUSD & CADUSD & CHFUSD & 1.000000& -0.432923& -0.177363 \\
         \includegraphics[width=1\textwidth]{res/params/6575_7306/6}
         \caption{$\rho$}
     \end{subfigure}
-    \caption[]{Distributions of the Stochastic Volatility parameters of $\mathcal{M}_7$ for 5967 spreads (Jan 2008 - Jan 2010).}
+    \caption{Distributions of the parameters for 5967 spreads (Jan 2008 - Jan 2010)}
     \label{fig:param_dists_2000_2002}
 \end{figure}
-
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/1462_2192/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1994 - Jan, 01 1996. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2192_2923/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1996 - Jan, 01 1998. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/2923_3653/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 1998 - Jan, 01 2000. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/3653_4384/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2000 - Jan, 01 2002. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/4384_5114/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2002 - Jan, 01 2004. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5114_5845/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2004 - Jan, 01 2006. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
-% 
-% \begin{figure}[H]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/sr}
-%         \caption{Simple Modelling}
-%     \end{subfigure}
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=1\textwidth]{res/params/5845_6575/sr}
-%         \caption{Complex Modelling}
-%     \end{subfigure}
-%     \caption[]s{Respective $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Period is Jan, 01 2006 - Jan, 01 2008. Triple Trading. Equity Set.}
-%     \label{fig:sharpe_ratio_comparison}
-% \end{figure}
 
 \section{Cauchy PMMH}
 \label{app:cauchy_pmmh}
@@ -2383,14 +2006,14 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
 \end{algorithmic}
 \end{algorithm}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width = 0.7\textwidth]{convergence}
-\caption{Convergence of $\log \hat{p}_N(y|\theta^{(i)})$ on synthetic data generated from $\mathcal{M}_2$. Convergence is at $i = 80$ for $\epsilon = 2, k = 50, N = 2T$.}
-\label{fig:sr_comparison_2008_2010}
-\end{figure}
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width = 0.7\textwidth]{convergence}
+% \caption{Convergence of $\log \hat{p}_N(y|\theta^{(i)})$ on synthetic data generated from $\mathcal{M}_2$. Convergence is at $i = 80$ for $\epsilon = 2, k = 50, N = 2T$.}
+% \label{fig:sr_comparison_2008_2010}
+% \end{figure}
 
-\section{Bollinger bands Strategy - Cumulative Returns}
+\section{Cumulative Returns for Bollinger bands Strategy with Simple modelling}
 \label{app:portfolio_valuation_simple}
 
 \begin{figure}[H]
@@ -2398,68 +2021,68 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/1}
-        \caption{1990-1992}
+        \caption{Jan 1990- Jan 1992}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/2}
-        \caption{1992-1994}
+        \caption{Jan 1992- Jan 1994}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/3}
-        \caption{1994-1996}
+        \caption{Jan 1994- Jan 1996}
     \end{subfigure} \\
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/4}
-        \caption{1996-1998}
+        \caption{Jan 1996- Jan 1998}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/5}
-        \caption{1998-2000}
+        \caption{Jan 1998- Jan 2000}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/6}
-        \caption{2000-2002}
+        \caption{Jan 2000- Jan 2002}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/7}
-        \caption{2002-2004}
+        \caption{Jan 2002- Jan 2004}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/8}
-        \caption{2004-2006}
+        \caption{Jan 2004- Jan 2006}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/9}
-        \caption{2006-2008}
+        \caption{Jan 2006- Jan 2008}
     \end{subfigure} \\
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/10}
-        \caption{2008-2010}
+        \caption{Jan 2008- Jan 2010}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/11}
-        \caption{2010-2012}
+        \caption{Jan 2010- Jan 2012}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/12}
-        \caption{2012-2014}
+        \caption{Jan 2012- Jan 2014}
     \end{subfigure}
-    \caption[]{Cumulative returns for Bollinger bands strategy with simple modelling}
+    \caption{Cumulative returns for Bollinger bands strategy with simple modelling on out-sample sets $\mathcal{O}$ where ratio($\mathcal{I}, \mathcal{O})$ = 1:2}
     \label{fig:bollinger_bands_strategy_simple}
 \end{figure}
 
-\section{Bollinger bands Strategy - Cumulative Returns (complex)}
+\section{Cumulative Returns for Bollinger bands Strategy with Complex modelling}
 \label{app:portfolio_valuation_complex}
 
 \begin{figure}[H]
@@ -2467,65 +2090,95 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/1}
-        \caption{1990-1992}
+        \caption{Jan 1990 - Jan 1992}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/2}
-        \caption{1992-1994}
+        \caption{Jan 1992- Jan 1994}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/3}
-        \caption{1994-1996}
+        \caption{Jan 1994- Jan 1996}
     \end{subfigure} \\
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/4}
-        \caption{1996-1998}
+        \caption{Jan 1996- Jan 1998}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest/5}
-        \caption{1998-2000}
+        \caption{Jan 1998- Jan 2000}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/6}
-        \caption{2000-2002}
+        \caption{Jan 2000- Jan 2002}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/7}
-        \caption{2002-2004}
+        \caption{Jan 2002- Jan 2004}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/8}
-        \caption{2004-2006}
+        \caption{Jan 2004- Jan 2006}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/9}
-        \caption{2006-2008}
+        \caption{Jan 2006- Jan 2008}
     \end{subfigure} \\
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{res/backtest/10}
-        \caption{2008-2010}
+        \includegraphics[width=1\textwidth]{res/strats/complex}
+        \caption{Jan 2008- Jan 2010}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/11}
-        \caption{2010-2012}
+        \caption{Jan 2010- Jan 2012}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{res/backtest_cpx/12}
-        \caption{2012-2014}
+        \caption{Jan 2012- Jan 2014}
     \end{subfigure}
-    \caption[]{Cumulative returns for Bollinger bands strategy with simple modelling}
+    \caption{Cumulative returns for Bollinger bands strategy with complex modelling on out-sample sets $\mathcal{O}$ where ratio($\mathcal{I}, \mathcal{O})$ = 1:2}
     \label{fig:bollinger_bands_strategy_simple}
 \end{figure}
+
+\section{Performance Assessment of Bollinger bands strategies}
+
+\renewcommand{\arraystretch}{1} % Wider
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Period & \multicolumn{1}{|l|}{\specialcell{Sharpe\\ Ratio}} & \multicolumn{1}{|l|}{\specialcell{Max\\Drawdown}} & \multicolumn{1}{|l|}{\specialcell{Annualized\\Returns}} & \multicolumn{1}{|l|}{Max} \\
+\hline
+\hline
+Jan, 1 1990 - Jan, 1 1992 & \specialcell{2.210\\(1.777)} & \specialcell{0.0456\\(0.0725)}& \specialcell{-2.1859\\(-2.6415)}& \specialcell{4.2892\\(4.4382)}\\ \hline
+Jan, 1 1992 - Jan, 1 1994 & \specialcell{2.715\\(2.184)} & \specialcell{0.0318\\(0.0891)} & \specialcell{-2.9373\\(-3.0505)} & \specialcell{3.5681\\(3.9564)} \\ \hline
+Jan, 1 1994 - Jan, 1 1996 & \specialcell{1.945\\(1.841)} & \specialcell{0.0363\\(0.0398)} & \specialcell{-2.3025\\(-2.4409)} & \specialcell{4.7169\\(4.7520)} \\ \hline
+Jan, 1 1996 - Jan, 1 1998 & \specialcell{1.828\\(2.071)} & \specialcell{0.0712\\(0.1182)} & \specialcell{-3.0290\\(-3.1060)} & \specialcell{4.1024\\(4.0582)} \\ \hline
+Jan, 1 1998 - Jan, 1 2000 & \specialcell{3.183\\(2.914)} & \specialcell{0.0418\\(0.0528)} & \specialcell{-2.5701\\(-2.5804)} & \specialcell{4.0478\\(5.0003)} \\ \hline
+Jan, 1 2000 - Jan, 1 2002 & \specialcell{3.563\\(0.848)} & \specialcell{0.0346\\(0.1362)} & \specialcell{-2.2615\\(-2.0821)} & \specialcell{3.7445\\(3.9255)} \\ \hline
+Jan, 1 2002 - Jan, 1 2004 & \specialcell{1.561\\(1.727)} & \specialcell{0.0355\\(0.0995)} & \specialcell{-3.1040\\(-3.5439)} & \specialcell{4.2277\\(4.1472)} \\ \hline
+Jan, 1 2004 - Jan, 1 2006 & \specialcell{2.102\\(1.014)} & \specialcell{0.0856\\(0.0674)} & \specialcell{-2.4348\\(-2.7721)} & \specialcell{4.1926\\(4.1905)} \\ \hline
+Jan, 1 2006 - Jan, 1 2008 & \specialcell{3.207\\(2.158)} & \specialcell{0.0323\\(0.0480)} & \specialcell{-2.5793\\(-2.5666)} & \specialcell{4.5596\\(3.8987)} \\ \hline
+Jan, 1 2008 - Jan, 1 2010 & \specialcell{2.293\\(2.666)} & \specialcell{0.0839\\(0.0673)}& \specialcell{-2.7525\\(-2.7811)}& \specialcell{4.0152\\(3.8975)}\\ \hline
+Jan, 1 2010 - Jan, 1 2012 & \specialcell{3.526\\(3.380)} & \specialcell{0.0540\\(0.0826)}& \specialcell{-2.3119\\(-2.2534)}& \specialcell{4.3517\\(4.0816)}\\ \hline
+Jan, 1 2012 - Jan, 1 2014 & \specialcell{1.424\\(1.897)} & \specialcell{0.0699\\(0.1278)}& \specialcell{-2.8241\\(-2.8924)}& \specialcell{4.8451\\(4.8451)}\\
+\hline
+Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} & \specialcell{-2.6077\\(-2.7259)} & \specialcell{4.2217\\(4.2659)} \\
+\hline
+\end{tabular}
+\caption{Statistics about $\mathcal{SR}_O$-distributions for simple and complex volatility modelling. Plain is complex model. Brackets is simple model.}
+\label{tab:comparison_strategies_1990_2014}
+\end{table}
 
 \end{document}
