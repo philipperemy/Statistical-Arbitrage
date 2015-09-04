@@ -2160,18 +2160,18 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
 Period & \multicolumn{1}{|l|}{\specialcell{Sharpe\\ Ratio}} & \multicolumn{1}{|l|}{\specialcell{Max\\Drawdown}} & \multicolumn{1}{|l|}{\specialcell{Annualized\\Returns}} & \multicolumn{1}{|l|}{Max} \\
 \hline
 \hline
-Jan, 1 1990 - Jan, 1 1992 & \specialcell{2.210\\(1.777)} & \specialcell{0.0456\\(0.0725)}& \specialcell{-2.1859\\(-2.6415)}& \specialcell{4.2892\\(4.4382)}\\ \hline
-Jan, 1 1992 - Jan, 1 1994 & \specialcell{2.715\\(2.184)} & \specialcell{0.0318\\(0.0891)} & \specialcell{-2.9373\\(-3.0505)} & \specialcell{3.5681\\(3.9564)} \\ \hline
-Jan, 1 1994 - Jan, 1 1996 & \specialcell{1.945\\(1.841)} & \specialcell{0.0363\\(0.0398)} & \specialcell{-2.3025\\(-2.4409)} & \specialcell{4.7169\\(4.7520)} \\ \hline
-Jan, 1 1996 - Jan, 1 1998 & \specialcell{1.828\\(2.071)} & \specialcell{0.0712\\(0.1182)} & \specialcell{-3.0290\\(-3.1060)} & \specialcell{4.1024\\(4.0582)} \\ \hline
-Jan, 1 1998 - Jan, 1 2000 & \specialcell{3.183\\(2.914)} & \specialcell{0.0418\\(0.0528)} & \specialcell{-2.5701\\(-2.5804)} & \specialcell{4.0478\\(5.0003)} \\ \hline
-Jan, 1 2000 - Jan, 1 2002 & \specialcell{3.563\\(0.848)} & \specialcell{0.0346\\(0.1362)} & \specialcell{-2.2615\\(-2.0821)} & \specialcell{3.7445\\(3.9255)} \\ \hline
-Jan, 1 2002 - Jan, 1 2004 & \specialcell{1.561\\(1.727)} & \specialcell{0.0355\\(0.0995)} & \specialcell{-3.1040\\(-3.5439)} & \specialcell{4.2277\\(4.1472)} \\ \hline
-Jan, 1 2004 - Jan, 1 2006 & \specialcell{2.102\\(1.014)} & \specialcell{0.0856\\(0.0674)} & \specialcell{-2.4348\\(-2.7721)} & \specialcell{4.1926\\(4.1905)} \\ \hline
-Jan, 1 2006 - Jan, 1 2008 & \specialcell{3.207\\(2.158)} & \specialcell{0.0323\\(0.0480)} & \specialcell{-2.5793\\(-2.5666)} & \specialcell{4.5596\\(3.8987)} \\ \hline
-Jan, 1 2008 - Jan, 1 2010 & \specialcell{2.293\\(2.666)} & \specialcell{0.0839\\(0.0673)}& \specialcell{-2.7525\\(-2.7811)}& \specialcell{4.0152\\(3.8975)}\\ \hline
-Jan, 1 2010 - Jan, 1 2012 & \specialcell{3.526\\(3.380)} & \specialcell{0.0540\\(0.0826)}& \specialcell{-2.3119\\(-2.2534)}& \specialcell{4.3517\\(4.0816)}\\ \hline
-Jan, 1 2012 - Jan, 1 2014 & \specialcell{1.424\\(1.897)} & \specialcell{0.0699\\(0.1278)}& \specialcell{-2.8241\\(-2.8924)}& \specialcell{4.8451\\(4.8451)}\\
+Jan, 1 1990 - Jan, 1 1992 & \specialcell{2.210\\(1.777)} & \specialcell{0.0456\\(0.0725)}& \specialcell{16.30\%\\(19.89\%)}& \specialcell{4.2892\\(4.4382)}\\ \hline
+Jan, 1 1992 - Jan, 1 1994 & \specialcell{2.715\\(2.184)} & \specialcell{0.0318\\(0.0891)} & \specialcell{26.59 \%\\(46.93\%)} & \specialcell{3.5681\\(3.9564)} \\ \hline
+Jan, 1 1994 - Jan, 1 1996 & \specialcell{1.945\\(1.841)} & \specialcell{0.0363\\(0.0398)} & \specialcell{22.80 \%\\(21.03\%)} & \specialcell{4.7169\\(4.7520)} \\ \hline
+Jan, 1 1996 - Jan, 1 1998 & \specialcell{1.828\\(2.071)} & \specialcell{0.0712\\(0.1182)} & \specialcell{27.6 \%\\(87.12\%)} & \specialcell{4.1024\\(4.0582)} \\ \hline
+Jan, 1 1998 - Jan, 1 2000 & \specialcell{3.183\\(2.914)} & \specialcell{0.0418\\(0.0528)} & \specialcell{\\(78.65\%)} & \specialcell{4.0478\\(5.0003)} \\ \hline
+Jan, 1 2000 - Jan, 1 2002 & \specialcell{3.563\\(0.848)} & \specialcell{0.0346\\(0.1362)} & \specialcell{49.54 \%\\(19.53\%)} & \specialcell{3.7445\\(3.9255)} \\ \hline
+Jan, 1 2002 - Jan, 1 2004 & \specialcell{1.561\\(1.727)} & \specialcell{0.0355\\(0.0995)} & \specialcell{12.61 \%\\(32.97\%)} & \specialcell{4.2277\\(4.1472)} \\ \hline
+Jan, 1 2004 - Jan, 1 2006 & \specialcell{2.102\\(1.014)} & \specialcell{0.0856\\(0.0674)} & \specialcell{41.64 \%\\(15.04\%)} & \specialcell{4.1926\\(4.1905)} \\ \hline
+Jan, 1 2006 - Jan, 1 2008 & \specialcell{3.207\\(2.158)} & \specialcell{0.0323\\(0.0480)} & \specialcell{40.32 \%\\(37.29\%)} & \specialcell{4.5596\\(3.8987)} \\ \hline
+Jan, 1 2008 - Jan, 1 2010 & \specialcell{2.293\\(2.176)} & \specialcell{0.0839\\(0.0673)}& \specialcell{47.93\%\\(45.83\%)}& \specialcell{4.0152\\(3.8975)}\\ \hline
+Jan, 1 2010 - Jan, 1 2012 & \specialcell{3.526\\(3.380)} & \specialcell{0.0540\\(0.0826)}& \specialcell{82.17\%\\(114.57\%)}& \specialcell{4.3517\\(4.0816)}\\ \hline
+Jan, 1 2012 - Jan, 1 2014 & \specialcell{1.424\\(1.897)} & \specialcell{0.0699\\(0.1278)}& \specialcell{16.25\%\\(46.98\%)}& \specialcell{4.8451\\(4.8451)}\\
 \hline
 Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} & \specialcell{-2.6077\\(-2.7259)} & \specialcell{4.2217\\(4.2659)} \\
 \hline
