@@ -12,6 +12,7 @@
 \usepackage{color}
 \usepackage{ stmaryrd }
 \usepackage{changepage}
+\usepackage{setspace}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -20,7 +21,10 @@
 
 \setlength\parindent{0pt}
 
-\usepackage{titlesec}
+\usepackage{titlesec, blindtext, color}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{5pt}}
+
 \titleformat{\section}
   {\normalfont\Large\bfseries}{\thesection}{1em}{}[{\titlerule[0.8pt]}]
 
@@ -208,6 +212,8 @@ This report is submitted as part requirement for the MSc Degree in Statistics at
 % \fancyhead[R]{}
 % \fancyfoot[C]{Page \thepage $\text{}$ of \pageref{LastPage}}
 % \renewcommand{\footrulewidth}{1pt}
+%\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\huge\bfseries}
+
 
 \usepackage{Sweave}
 \begin{document}
@@ -216,7 +222,7 @@ This report is submitted as part requirement for the MSc Degree in Statistics at
 \maketitle
 
 \section*{Abstract}
-Statistical Arbitrage is a computationally-intensive approach which involves the simultaneous buying and selling of securities according to statistical models. Statistical Arbitrage strategies are heavily based on the construction of stationary mean-reverting spreads and sophisticated models to identify opportunities. This thesis extends the classic cointegration-based pairs trading by considering two cases: triples and quadruples of securities. It is common, in pairs trading strategies to impose that the pairs belong to the same sector, for example in \cite{chan2009} and \cite{dunis2010}. Similar to \cite{caldeira2013} for pairs trading, we do not adopt this restriction for triple trading as the computational cost is still acceptable. It becomes much harder with quadruple trading with a dataset composed of the most liquid stocks traded on the US exchanges. Three strategies are discussed in this thesis: Bollinger bands with simple and complex volatility modelling and Z-score. In the complex modelling strategy, the volatility of the financial instruments is estimated with Stochastic Volatility models where the model parameters are estimated via \textit{Particle Markov Chain Monte Carlo}. The profitability of the strategies is assessed on the US Equity markets for the period 1990-2014. Empirical analysis shows that the proposed strategy accounts for excess returns of 38\% per year, average Sharpe ratio above 2 and low correlation with the market.
+Statistical Arbitrage is a computationally-intensive approach which involves the simultaneous buying and selling of securities according to statistical models. Statistical Arbitrage strategies are heavily based on the construction of stationary mean-reverting spreads and sophisticated models to identify opportunities. This thesis extends the classic cointegration-based pairs trading by considering two cases: triples and quadruples of securities. It is common, in pairs trading strategies to impose that the pairs belong to the same sector, for example in \cite{chan2009} and \cite{dunis2010}. Similar to \cite{caldeira2013} for pairs trading, we do not adopt this restriction for triple trading as the computational cost is still acceptable. It becomes much harder with quadruple trading with a dataset composed of the most liquid stocks traded on the US exchanges. Three strategies are discussed in this thesis: Bollinger bands with simple and complex volatility modelling and Z-score. In the complex modelling strategy, the volatility of the financial instruments is estimated with Stochastic Volatility models where the model parameters are estimated via \textit{Particle Markov Chain Monte Carlo}. The profitability of the strategies is assessed on the US Equity markets for the period 1990-2014. Empirical analysis shows that the Bollinger bands strategy with complex modelling accounts for excess returns of 33\% per year, average Sharpe ratio above 2 and low correlation with the market.
 
 \section*{Acknowledgements}
 First and foremost I offer my deepest gratitude to my tutor, Dr. Nikolas \textsc{Kantas}, who has supported me throughout my thesis with his patience and knowledge whilst allowing me the room to work in my own way. Without his encouragements and efforts, this project would not have been completed. One simply could not wish for a better tutor. \\
@@ -235,10 +241,12 @@ In my family, I thank my parents Catherine and Bertrand. Last but not least, I a
 \renewcommand{\contentsname}{Table of Contents}
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
-\tableofcontents
 
+\begin{spacing}{0.9}
+\tableofcontents
 \listoffigures
 \listoftables
+\end{spacing}
 
 \chapter*{Notation}
 The following notation is used throughout this thesis.
@@ -1110,10 +1118,11 @@ In order to estimate the rolling volatility of the spread $S_t$, we generate man
 \chapter{Statistical Arbitrage Strategies}
 Statistical arbitrage conjectures statistical mis-pricings or price relationships that are true in expectation, in the long run when repeating a trading strategy. It describes a variety of automated trading systems which commonly make use of data mining, statistical methods and artificial intelligence techniques. A popular strategy is pairs trade, in which stocks are put into pairs by fundamental or market-based similarities. When one stock in a pair outperforms the other, the poorer performing stock is bought (long) with the expectation that it will climb towards its outperforming partner, and the other is sold (short). This approach has the advantage of eliminating the market exposure. The idea can be easily generalized to $n$ stocks or assets where an asset can be a sector index. The investment strategy we aim at implementing is market neutral, thus we will hold a long and a short position both having approximately the same value in local currency. It is important to understand that the quantity to interest is the pseudo difference between the assets, better known as the spread. The approach abstracts the trading on the underlying assets and primarily focuses on spread trading. The common strategy is to evaluate if the spread instrument is either underpriced or overpriced. A typical way is to open a position once the spread deviates far from its long-run equilibrium, and unwind it when it reverts. Dealing with spreads instead of non-stationary assets is beneficial because stationary series are on average more reverting due to their nature. \\
 
-In this section, two strategies are presented: Bollinger bands and Z-score. The first one models a time-varying mean for the spread and time-varying volatility bands (with simple or complex modelling) to gauge the spread deviation, whereas the second one assumes a fixed non-zero mean and fixed volatility bands.
+In this section, two main strategies are presented: Bollinger bands and Z-score. The first one models a time-varying mean for the spread and time-varying volatility bands (with simple or complex modelling) to gauge the spread deviation, whereas the second one assumes a fixed non-zero mean and fixed volatility bands.
 
 \section{Bollinger Bands}
 \label{sec:bollinger_bands}
+
 Bollinger bands is a widely used technical volatility indicator invented by John Bollinger in the 1970s which consists of using a moving average $m_\theta(t)$ of lag $p$ with two volatility bands $B_\theta^+(t), B_\theta^-(t)$, above and below it. The computation of the volatility bands involves a windowed standard deviation of lag $p$ (Definition \ref{windowed_volatility}). The shift between the bands and the stochastic mean is proportional to a parameter called $\alpha$. The bands will expand and contract as the prices become volatile or bound into a tight trading pattern. When prices continually touch the upper bound $B_\theta^+(t)$, the spread is considered to be overbought. Conversely, when they continually touch the lower band, it is oversold. The indicator is calculated by
 \begin{align*}
 m_{SMA}(t,p) &= \frac{1}{p}\sum_{j=1}^p S_{t-j} \numberthis \label{bb_m} \\
@@ -1236,7 +1245,7 @@ An example is presented with $n=4$ in Appendix \ref{sec:corr_analysis_quad}. In 
 \end{figure}
 
 \chapter{Procedure}
-The workflow involves the preparation of the datasets and the selection of the cointegrated tuples. Then, the three strategies are applied and backtested on the data. Finally, the cumulative returns and some risk measures are presented to assess the performance of the strategies.
+The workflow involves the preparation of the datasets and the selection of the cointegrated tuples. Then, the three strategies $\mathcal{B}_{STD}$, $\mathcal{B}_{SV}$ and $\mathcal{Z}$ are applied and backtested on the data. Finally, the cumulative returns and some risk measures are presented to assess the performance of the strategies.
 
 \section{General Framework}
 
@@ -1252,7 +1261,7 @@ Only two types of transactions are considered: move into a new position and unwi
 
 The HRSRI (Highest-Ranked Sharpe Ratios on $\mathcal{I}$) portfolio approach consists in ranking the cointegrated tuples based on the best in-sample Sharpe ratios $\mathcal{SR}$ for every period training-testing. For each period, the 20 highest-ranked tuples are used to compose the portfolio. The first motivation of considering a portfolio is to lower the volatility associated to each tuple trading by smoothing the net value over time. The asset allocation in the portfolio follows an investing weighting scheme with no dynamic rebalancing. At each time, the portfolio valuation is a linear combination of each valuation, where the weights are constant and equally distributed. \\
 
-An example is provided with a portfolio composed of two spread instruments: $S_1$ and $S_2$. Denote their respective cumulative returns by $CR_{S_1}(t)$ and $CR_{S_2}(t)$. At each time, the valuation of the portfolio is simply given by $p(t) = 0.5 \times CR_{S_1}(t) + 0.5 \times CR_{S_2}(t)$ where the weights (0.5,0.5) will remain constant once the portfolio is created. Each $S_1$ and $S_2$ is strictly allocated $10000/2 = 5000$ USD, resulting in no money reallocations between the instruments. Note that a portfolio is always composed of 20 triples selected from a cross validation phase. As a triple is itself composed of 3 stocks, the maximum number of stocks to monitor is 60 for a single portfolio. 
+An example is provided with a portfolio composed of two spread instruments: $S_1$ and $S_2$. Denote their respective cumulative returns by $CR_{S_1}(t)$ and $CR_{S_2}(t)$. At each time, the valuation of the portfolio is simply given by $p(t) = 0.5 \times CR_{S_1}(t) + 0.5 \times CR_{S_2}(t)$ where the weights (0.5,0.5) will remain constant once the portfolio is created. Each $S_1$ and $S_2$ is strictly allocated $10000/2 = 5000$ USD, resulting in no money re-allocations between the instruments. Note that a portfolio is always composed of 20 triples selected from a cross validation phase. As a triple is itself composed of 3 stocks, the maximum number of stocks to monitor is 60 for a single portfolio. 
 
 \section{Optimization of the Strategies}
 \label{sec:optimization_strategy}
@@ -1288,13 +1297,14 @@ The Sharpe ratio ($\mathcal{SR}$) based on daily returns is defined as
 \begin{equation}
 \mathcal{SR} =  \frac{\hat{\mu}}{\hat{\sigma}} \text{ where, } \hat{\mu} =  252  \times \frac{1}{T} \sum_{t=1}^T y_t \text{ and } \hat{\sigma} = \sqrt{252} \times \frac{1}{T} \sum_{t=1}^T (y_t - \bar{\mu})^2 \label{sharpe_ratio_def}
 \end{equation}
-$\hat{\mu}$ represents the mean asset return and $\hat{\sigma}$ the standard deviation of the returns. The idea of the Sharpe ratio is to quantify how much additional return the investor is receiving for the additional volatility of holding the risky asset over a risk-free asset. A variant is to subtract the daily risk free return $y_{rf}$, given by the US Treasury bills, to the returns of the strategy. This version is expected to output a slightly lower value. \textbf{A general rule of thumb is: a ratio of 1 or better is considered good, 2 and better is very good, and 3 and better is considered excellent.} \\
+$\hat{\mu}$ represents the mean asset return and $\hat{\sigma}$ the standard deviation of the returns. According to the NYSE, there is about 252 trading days on average per year. The idea of the Sharpe ratio is to quantify how much additional return the investor is receiving for the additional volatility of holding the risky asset over a risk-free asset. A variant is to subtract the daily risk free return $y_{rf}$, given by the US Treasury bills, to the returns of the strategy. This version is expected to output a slightly lower but more accurate value. \textbf{A general rule of thumb is: a ratio of 1 or better is considered good, 2 and better is very good, and 3 and better is considered excellent.} \\
 
 \subsection{Buy and Hold Strategy}
 Finally, one technique to assess the performance of a strategy is to compare it to the standard Buy and Hold (B\&H) strategy where the holder has a portfolio replicating the stock index from time 0 to $T$.
 
-\chapter{Empirical Analysis}
-This chapter is structured in three main parts. Firstly, a case study is examined to show some interesting facts about volatility modelling. Next, the cross validation of the Bollinger bands parameters is presented in further details. Finally, the Bollinger bands with and without the complex volatility estimation are compared. Also, the Z-score and the Buy and Hold strategies are considered as a benchmark.
+\chapter{Empirical Analysis on Triple Trading}
+This chapter is focused on triple trading and is structured in four main parts. Firstly, a case study is examined to show some interesting facts about volatility modelling. Then, the three strategies are backtested on the Equity dataset and are compared to the SPX Buy and Hold strategy. On top of this, an exhaustive comparison between the two Bollinger bands is performed to evaluate whether using more advanced modelling will result to better performance than simple models used often in practice. Finally, parameters tuning is attempting to improve profitability. The aim is to assess  
+
 
 \section{Volatility Modelling of Spread Instruments with $\mathcal{M}_7$}
 Throughout this section, the same spread $S_t$ as that of Section \ref{sec:model_selection} is considered. This procedure is not restricted to this particular spread and is valid for any stationary spread and any stochastic volatility models. This section focused on the main points described in Section \ref{sec:estimation_bollinger_bands_sv}. The model $\mathcal{M}_7$ is used to estimate the conditional variance $S_t | S_{t-1}, \matr{x}_t, \theta$. From there and from Equation (\ref{equation_price_vol}), $M = 1000$ Monte Carlo trajectories are generated. Figure \ref{fig:generation_of_the_trajectories} shows the generation of the trajectories according to the estimated conditional variance.
@@ -1372,10 +1382,7 @@ where the notations of Section \ref{sec:bollinger_bands} apply. Figure \ref{fig:
     \label{fig:bollinger_bands_sma_ema}
 \end{figure}
 
-\section{Stochastic Volatility Modelling for Triple Trading}
-This section presents the results of the comparisons between Bollinger bands strategies with simple and complex Stochastic Volatility modelling. The aim is to assess whether using more advanced modelling will result to better performance than simple models used often in practice. 
-
-\subsection{Selection and Calibration Step}
+\section{Selection and Calibration Step}
 For each training set $(\mathcal{I}_i)_{1 \leq i \leq 12}$, the cointegrated triples are formed and the models calibrated. The same sector assumption is not considered but the sets of cointegrated triples are truncated to ensure a reasonable size. Table \ref{tab:calibration_selection} summarizes the selected triples for each period and to which sector they belong. The Bollinger bands strategy with simple modelling does not require a calibration phase. The function \texttt{bollinger} from the MATLAB Financial toolbox is used to compute the three bands\footnote{For more information, the reader can consult the MATLAB documentation: \url{http://mathworks.com/help/finance/bollinger.html}}. Complex modelling requires the estimation of each parameter of model $\mathcal{M}_7$ with \textit{Particle Markov Chain Monte Carlo}. As the number of spreads is big (46484 according to Table \ref{tab:calibration_selection}), a slightly different version of Algorithm \ref{algo_pmcmc} is used (Appendix \ref{app:cauchy_pmmh}).
 \begin{table}[H]
 \centering
@@ -1404,11 +1411,11 @@ Total & 46484 & 3540 (0.083) & 19850 (0.427) & 22796 (0.490) \\
 \label{tab:calibration_selection}
 \end{table}
 
-\subsection{Results with Default Bollinger Bands Parameters}
-In the first part, the tuning of the parameters is discarded and the default parameters $\theta (p=20, \alpha = 2, t = \text{EMA})$, as recommended by John Bollinger are considered. The cross validation phase could add a bias to the results because we aim to compare the two Bollinger bands strategies for a fixed $\theta$. The default parameters are widely used in practice among traders and it is therefore pertinent to base the comparison for those values. 
-% Later, a cross validation phase is performed to maximize the performance of the best strategy and it is tested against the Z-score and the Buy and Hold strategies.
+\section{HRSRI Portfolio Backtesting}
 
-\subsubsection{HRSRI Portfolio Approach}
+\subsection{Default Parameters}
+In the first part, the tuning of the parameters is discarded and the default parameters $\theta (p=20, \alpha = 2, t = \text{EMA})$, as recommended by John Bollinger are considered. The parameters tuning phase could add a bias to the results because we aim to compare the two Bollinger bands strategies for a fixed $\theta$. The default parameters are widely used in practice among traders and it is therefore pertinent to base the comparison for those values. \\
+
 For each period $i$ and for each strategy, the 20 best in-sample $\mathcal{SR}_{\mathcal{I}_i}$ triples are selected to compose the portfolio of the strategy. The assessment is done on the corresponding out-sample set $\mathcal{O}_i$. The procedure is explained for the period Jan, 01 2008 - Dec, 31 2009. Of the possible triples candidates, 5967 passed the cointegration tests described in Algorithm \ref{formation_spread_algorithm} (Table \ref{tab:calibration_selection}). Tables \ref{20_selected_triples_simple_bands}, \ref{20_selected_triples_complex_bands_sv} and \ref{20_selected_triples_zscore} show the 20 tradable triples used in each strategy. $\beta = (\beta_1, \beta_2, \beta_3)$ is the cointegrating vector associated to the triple. $\mathcal{SR}_\mathcal{O}$ corresponds to the Sharpe ratio on the out-sample set. The cumulative returns (CR) with costs and the number of trades are recorded on the out-sample step. A closer look shows that all the triples exhibit a very high Sharpe ratio on the in-sample period, as expected, and a lower but still promising Sharpe ratio on the out-sample period. Table \ref{tab:valuation_portfolio_2008_2009} summarizes some statistics for the three portfolios.
 
 \renewcommand{\arraystretch}{0.8}% Wider
@@ -1557,32 +1564,32 @@ Maximum Drawdown  												          & 0.0888  & 0.0839 & 0.0894 & 0.3273\\
         \includegraphics[width=1\textwidth]{res/strats/zscore}
         \caption{Z-score}
     \end{subfigure}
-    \caption{Portfolio valuation of each strategy on the period 2008-2009}
+    \caption{Portfolio valuation of each strategy on the period 2008-2009. Red is the strategy. Blue is SPX.}
     \label{fig:portfolio_valuations}
 \end{figure}
 
 The valuations for the other periods are provided in Appendices \ref{app:portfolio_valuation_simple} and \ref{app:portfolio_valuation_complex}.
 
-\subsubsection{Comparison of the Strategies}
-At first glance, Z-score seems to be the strategy having the most promising results. One reason is that spread instruments are assumed to have a non-zero constant mean. The results are in accordance with \cite{caldeira2013} who found an average Sharpe ratio of 2 with Z-score on Brazilian markets. However, this strategy could become risky if the cointegrating property was lost. In the period Jan 2008 - Jan 2010, the Z-score strategy had two triples 7 and 19 which clearly underperformed the others. Indeed, both triples lost their cointegration property. This is why stop losses or continuous cointegration tests should be put in place to stop trading. Because none of those termination conditions are considered here, such a comparison could be biased and thereby we consider the Z-score strategy as purely theoretical. Considering the Bollinger bands strategies, the complex modelling clearly smoothes the cumulative returns resulting in a lower volatility, as shown by the Sharpe ratio measures. On average, the simple modelling seem to have higher cumulative returns but it comes at a much higher volatility. Thereby, the complex modelling is more accurate and less aggressive in trading. A way of making the strategy even more profitable is to tune the Bollinger parameters, as shown partially in  Section \ref{sec:optimization_bb}.
+\subsection{Comparison of the Strategies}
+At first glance, Z-score seems to be the strategy having the most promising results. One reason is that spread instruments are assumed to have a non-zero constant mean. The results are in accordance with \cite{caldeira2013} who found an average Sharpe ratio of 2 with Z-score on Brazilian markets. However, this strategy could become risky if the cointegrating property was lost. In the period Jan 2008 - Jan 2010, the Z-score strategy had two triples 7 and 19 which clearly underperformed the others. Indeed, both triples lost their cointegration property. This is why stop losses or continuous cointegration tests should be put in place to stop trading. Because none of those termination conditions are considered here, such a comparison could be biased and thereby we consider the Z-score strategy as purely theoretical. Considering the Bollinger bands strategies, the complex modelling clearly smooths the cumulative returns resulting in a lower volatility, as shown by the Sharpe ratio measures. On average, the simple modelling seem to have higher cumulative returns but it comes at a much higher volatility. Thereby, the complex modelling is more accurate and less aggressive in trading. A way of making the strategy even more profitable is to tune the Bollinger parameters, as shown partially in  Section \ref{sec:optimization_bb}.
 
-\subsubsection{Comparison with SPX Index}
+\subsection{Comparison with SPX Index}
 
-The strategy is compared to the traditional buy and hold strategy where the investor buys a basket of stocks to reproduce the S\&P500 index and holds it until the end of the period where the position is unwound. Table \ref{tab:comparison_strategies_1990_2014} illustrates it. The Bollinger bands shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. Besides, the strategy with complex modelling accounts for a low and stable volatility for the whole period. A low correlation with the market returns confirms the market neutral property of the strategy. It is worth noticing from Table \ref{tab:comparison_strategies_1990_2014} that the excess returns are high during the crisis where the volatility was high. As highlighted by \cite{khandani2007}, the second semester of 2007 and the first semester of 2008 were hard times for quantitative investment funds. Many managers suffered losses and had to sell out their portfolios, not benefiting from the subsequent recovery. Due to its nature, the Bollinger bands is a very robust and adaptive trading indicator. Coupled with the high mean-reverting properties of a spread between three stocks, the strategy could maximize the returns over the crisis periods of 2000-2002 and 2008-2010. Indeed, the returns of our strategies are highly correlated to the volatility of the SP\&P500 index. The proposed statistical arbitrage generated average excess returns of 38\% per year in out-of-samples simulations, Sharpe ratio of 2.25 and low exposure to the equity market.
+The strategy is compared to the traditional buy and hold strategy where the investor buys a basket of stocks to reproduce the S\&P500 index and holds it until the end of the period where the position is unwound. Table \ref{tab:comparison_strategies_1990_2014} illustrates it. The Bollinger bands shows very little volatility compared to the Buy and Hold strategy of the S\&P500 index. Besides, the strategy with complex modelling accounts for a low and stable volatility for the whole period. A low correlation with the market returns confirms the market neutral property of the strategy. It is worth noticing from Table \ref{tab:comparison_strategies_1990_2014} that the excess returns are high during the crisis where the volatility was high. As highlighted by \cite{khandani2007}, the second semester of 2007 and the first semester of 2008 were hard times for quantitative investment funds. Many managers suffered losses and had to sell out their portfolios, not benefiting from the subsequent recovery. Due to its nature, the Bollinger bands is a very robust and adaptive trading indicator. Coupled with the high mean-reverting properties of a spread between three stocks, the strategy could maximize the returns over the crisis periods of 2000-2002 and 2008-2010. Indeed, the returns of our strategies are highly correlated to the volatility of the SP\&P500 index. The proposed statistical arbitrage generated average excess returns of 38\% per year in out-of-samples simulations or 33\% with taking into account the calibration phases with no trading, Sharpe ratio of 2.25 and low exposure to the equity market.
 
 \renewcommand{\arraystretch}{0.8} % Wider
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-Period & \multicolumn{1}{|l|}{\specialcell{Sharpe\\ Ratio}} & \multicolumn{1}{|l|}{\specialcell{Max\\Drawdown}} & \multicolumn{1}{|l|}{\specialcell{Annualized\\Returns}} & \multicolumn{1}{|l|}{\specialcell{Annualized\\ Returns \\SPX}} & \multicolumn{1}{|l|}{\specialcell{Sharpe \\Ratio \\SPX}} \\
+Testing Period 336 days ($\mathcal{O}_i$) & \multicolumn{1}{|l|}{\specialcell{Sharpe\\ Ratio}} & \multicolumn{1}{|l|}{\specialcell{Max\\Drawdown}} & \multicolumn{1}{|l|}{\specialcell{Annualized\\Returns \\on $\mathcal{O}$}} & \multicolumn{1}{|l|}{\specialcell{Annualized\\ Returns \\SPX}} & \multicolumn{1}{|l|}{\specialcell{Sharpe \\Ratio \\SPX}} \\
 \hline
 \hline
 Jan, 1 1990 - Jan, 1 1992 & \specialcell{2.210\\(1.777)} & \specialcell{0.0456\\(0.0725)}& \specialcell{16.30\%\\(19.89\%)}& 23.14\% & 1.399\\ \hline
 Jan, 1 1992 - Jan, 1 1994 & \specialcell{2.715\\(2.184)} & \specialcell{0.0318\\(0.0891)} & \specialcell{26.59\%\\(46.93\%)} & 9.21\% & 1.000 \\ \hline
 Jan, 1 1994 - Jan, 1 1996 & \specialcell{1.945\\(1.841)} & \specialcell{0.0363\\(0.0398)} & \specialcell{22.80\%\\(21.03\%)} & 20.74\% & 2.118 \\ \hline
 Jan, 1 1996 - Jan, 1 1998 & \specialcell{1.828\\(2.071)} & \specialcell{0.0712\\(0.1182)} & \specialcell{27.61\%\\(87.12\%)} & 39.90\% & 1.384 \\ \hline
-Jan, 1 1998 - Jan, 1 2000 & \specialcell{3.183\\(2.914)} & \specialcell{0.0418\\(0.0528)} & \specialcell{72.89\\(78.65\%)} & 31.05\% & 1.335 \\ \hline
+Jan, 1 1998 - Jan, 1 2000 & \specialcell{3.183\\(2.914)} & \specialcell{0.0418\\(0.0528)} & \specialcell{72.89\%\\(78.65\%)} & 31.05\% & 1.335 \\ \hline
 Jan, 1 2000 - Jan, 1 2002 & \specialcell{3.563\\(0.848)} & \specialcell{0.0346\\(0.1362)} & \specialcell{49.54\%\\(19.53\%)} & -16.82\% & -0.931 \\ \hline
 Jan, 1 2002 - Jan, 1 2004 & \specialcell{1.561\\(1.727)} & \specialcell{0.0355\\(0.0995)} & \specialcell{12.61\%\\(32.97\%)} & 30.99\% & 1.479 \\ \hline
 Jan, 1 2004 - Jan, 1 2006 & \specialcell{2.102\\(1.014)} & \specialcell{0.0856\\(0.0674)} & \specialcell{41.64\%\\(15.04\%)} & 11.12\% & 0.997 \\ \hline
@@ -1598,7 +1605,9 @@ Total Average & \specialcell{2.4603\\(1.998)} & \specialcell{0.0518\\(0.0834)} &
 \label{tab:comparison_strategies_1990_2014}
 \end{table}
 
-\subsubsection{Sharpe Ratio Distributions}
+\section{Impact of Complex Modelling on the Sharpe Ratio}
+
+\subsection{PMCMC Parameters}
 Building a portfolio is a good approach to highlight the positive impact of using more complex models. Nevertheless, this cannot be considered as a full proof because the inference is only done on a small set of selected triples and not on the entire population. To reinforce our thoughts, we consider the study without any portfolios on the whole population of the cointegrated triples listed in Table \ref{tab:calibration_selection}. The model calibration is performed for each spread with the Cauchy PMCMC algorithm (Algorithm \ref{algo_pmcmc_cauchy}). Table \ref{tab:param_stats_1992_2014} presents the results of the calibration step on the in-sample sets. Some distributions are presented in Appendix \ref{app:distribution_model_parameters_m7}. The facts $\rho < 0$, $\phi_X \rightarrow 1$, $\phi_Z<\phi_X$, $\sigma_Z > \sigma_X$ are in accordance with the stylized facts and the specifications of the $\mathcal{M}_7$ (TFSVL). Not surprisingly, the two crisis periods 2000-2002 and 2008-2010 are the ones which have the highest values of $\beta$ and $\sigma_X, \sigma_Z$. Recall that $\beta$ models the amplitude of the absolute daily returns and $\sigma_X, \sigma_Z$ represent respectively the long-run and short-run volatilities. It is of common knowledge that periods of crisis come along with high absolute returns and volatility.
 
 \renewcommand{\arraystretch}{0.9}% Wider
@@ -1627,7 +1636,8 @@ Jan, 1 2012 - Jan, 1 2014 &  0.9865 & 0.3685 & 0.3366 & 0.6508 & 0.4909 & -0.451
 
 %http://stattrek.com/hypothesis-test/difference-in-means.aspx?Tutorial=AP
 %http://stattrek.com/online-calculator/t-distribution.aspx
-The Sharpe ratios $\mathcal{SR}_\mathcal{O}$ statistics are presented in Table \ref{tab:sharpe_ratios_1992_2014}. The values in plain are for complex modelling and the ones in brackets for simple modelling. \textbf{It turns out that using complex modelling results in an average increase of 8.52\% in the Sharpe-Ratio.} A t-test\footnote{For more information, the reader can consult the MATLAB documentation on \url{http://mathworks.com/help/stats/ttest.html}} is conducted to assert that the pairwise difference between the means of simple and complex modelling Sharpe ratios has a mean equal to 0. With a t-score of 2.815 with 11 degrees of freedom and a pvalue of 0.0168, the Null hypothesis is rejected at the 5\% significance level. Figure \ref{fig:sr_comparison_2008_2010} shows the distributions of the Sharpe ratios with simple and complex modelling for the period 2008-2009. We can see clearly that using complex modellings leads to an improvement in this measure.
+\subsection{Comparison of the Sharpe Ratios}
+The Sharpe ratios $\mathcal{SR}_\mathcal{O}$ statistics are presented in Table \ref{tab:sharpe_ratios_1992_2014}. The values in plain are for complex modelling and the ones in brackets for simple modelling. \textbf{It turns out that using complex modelling results in an average increase of 8.52\% in the Sharpe-Ratio.} A t-test\footnote{For more information, the reader can consult the MATLAB documentation on \url{http://mathworks.com/help/stats/ttest.html}} is conducted to assert that the pairwise difference between the means of simple and complex modelling Sharpe ratios has a mean equal to 0. With a t-score of 2.815 with 11 degrees of freedom and a pvalue of 0.0168, the Null hypothesis is rejected at the 5\% significance level. Figure \ref{fig:sr_comparison_2008_2010} shows the distributions of the Sharpe ratios with simple and complex modelling for the period 2008-2009. We can see clearly that using complex modelling leads to an improvement in this measure.
 
 
 \renewcommand{\arraystretch}{0.8}% Wider
@@ -1665,10 +1675,14 @@ Total Average & \specialcell{0.4802\\(0.4425)} & \specialcell{0.4521\\(0.4121)} 
 \label{fig:sr_comparison_2008_2010}
 \end{figure}
 
-\subsection{Gradient and Optimization of the Bollinger bands}
+\section{Gradient and Optimization of the Bollinger Bands}
 \label{sec:optimization_bb}
 
-It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. To have an overview, 50 spreads are randomly selected and cross validated on each set $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ on $\mathcal{O}$ and the gradient $\nabla f$. The type of moving average is $t = \{ EMA \}$ and is fixed. At first sight, the region of the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0. It gives us a hint that the bands are optimal for very large values of $p$ and for $\alpha$ being in a range [0.5,1.5]. This result is in accordance with the good performance of the Z-score strategy that assumes a non-zero fixed mean. In fact, this case happens when $p \rightarrow \infty$. However, the whole population should be analyzed before making any hasty conclusions, which could be done in a future work.
+It becomes now interesting to see if the optimization of the default Bollinger bands parameters can lead to an increase of the profitability. \\
+
+To have an overview, 50 spreads are randomly selected and cross validated on each set $(\mathcal{I}_i, \mathcal{O}_i)_{1 \leq i \leq 12}$. Figure \ref{fig:sharpe_ratio_topology} introduces the topology of $f$ on $\mathcal{O}$ and the gradient $\nabla f$. The type of moving average is $t = \{ EMA \}$ and is fixed. At first sight, the region of the global maximum seems to be around $(80,1)$. In this region, the gradient seems to be fairly constant and close to 0. It gives us a hint that the bands are optimal for very large values of $p$ and for $\alpha$ being in a range [0.5,1.5]. \\
+
+This result is in accordance with the good performance of the Z-score strategy that assumes a non-zero fixed mean. In fact, this case happens when $p \rightarrow \infty$. However, the whole population should be analyzed before making any hasty conclusions, which could be done in a future work.
 
 \begin{figure}[H]
     \centering
@@ -1696,13 +1710,15 @@ It becomes now interesting to see if the optimization of the default Bollinger b
 
 \chapter{Conclusion and Future Work}
 
-This thesis has explored the cointegration theory and applied it to financial datasets to detect cointegrated prices. These spread instruments have a mean-reverting property which is very important among Statistical Arbitrage strategies because it ensures that the prices will revert sufficiently often to their short-run mean. \\
+The cointegration theory has been presented and applied to financial datasets to detect cointegrated prices. These spread instruments have a mean-reverting property which is the cornerstone of many Statistical Arbitrage strategies. Triple trading has been analyzed in depth and subsequent work could be done on quadruple trading, with one being a stock index. \\
 
 We also explored the design and implementation of state-of-the-art PMCMC algorithms for the purposes of estimating latent states and static parameters in the context of Stochastic Volatility models. This class of models models probabilistically the volatility of the returns of financial instruments. Also, parameters estimations have been demonstrated and the Two Factors Stochastic Volatility with Leverage has been selected as the best model with regard to the marginal likelihood on real world data.\\
 
 Three Statistical Arbitrage strategies based on the mean-reverting property of spread instruments have been presented: Bollinger bands with simple and complex modelling, and Z-score. While Z-score assumes a non-zero fixed mean and fixed volatility bands, the Bollinger bands assumes stochastic mean and volatility bands. Results showed that the volatility bands are slightly wider in the case of complex modelling. In order to compare the strategies, a portfolio approach is considered with a backtest window volatility of 169 days followed by a testing period of 336 days, done 12 times. \\
 
-Overall, Z-score and Bollinger bands with complex modelling outperform in terms of Sharpe ratio. However, the version of Z-score implemented in the scope of this thesis is theoretical and cannot be considered as fully predictable in a practical application due to its high sensitivity to cointegration. Coupled with the exhaustive study that showed that adding complex modelling results in a increase of the Sharpe ratio, the Bollinger bands strategy with this modelling is the most compelling in our opinion. A future work could consist in finding the best parameters of the strategy over the whole population of spread instruments to increase the profitability while keeping a low volatility on the returns. \\
+Overall, Z-score and Bollinger bands with complex modelling outperform in terms of Sharpe ratio. However, the version of Z-score implemented in the scope of this thesis is theoretical and cannot be considered as fully predictable in a practical application due to its high sensitivity to cointegration. Coupled with the exhaustive study that showed that adding complex modelling results in a increase of the Sharpe ratio, the Bollinger bands strategy with this modelling is the most compelling in our opinion. \\
+
+A future work could consist in finding the best parameters of the strategy over the whole population of spread instruments to increase the profitability while keeping a low volatility on the returns. Another one could continue the study of quadruples trading presented in Appendix \ref{sec:corr_analysis_quad}. \\
 
 Finally, all the source code and the raw results have been published online at an address specified in Appendix \ref{app:implementation} to make everyone being a possible future contributor to this project.
 
@@ -1711,9 +1727,10 @@ Finally, all the source code and the raw results have been published online at a
 \addcontentsline{toc}{chapter}{\bibname} % Add an entry for the Bibliography in the Table of Contents
 %\pagestyle{headings}
 
+\begin{spacing}{0.9}
 \bibliographystyle{abbrvnat} % set the bibliography style
 \bibliography{bibtexfile} % generate the bibliography
-
+\end{spacing}
 
 %\cleardoublepage \fancyhead[L]{APPENDIX}
  % This line declares that you are starting the appendix.
@@ -1724,20 +1741,21 @@ Finally, all the source code and the raw results have been published online at a
 \chapter{Appendices}
 
 \section{Implementation}
+\label{app:implementation}
 
 \subsection{Source Code}
-\label{app:implementation}
-All the source code (algorithms, scripts) has been written in Octave using MATLAB 2015a. Since it is open source, it is available to everyone although you have to follow the licenses as defined in the LICENSE file.
+All the source code (algorithms, scripts, workspace variables) has been written in Octave using MATLAB 2015a. Since it is open source, it is available to everyone although you have to follow the licenses as defined in the LICENSE file.
 
+\renewcommand{\arraystretch}{1}% Wider
 \begin{table}[H]
 \centering
-\begin{tabular}{ll}
+\begin{tabular}{|ll|}
 \hline
-\multicolumn{1}{|l}{Statistics}     & \multicolumn{1}{l|}{} \\ \hline
+\multicolumn{1}{|l}{\textbf{Repository}}     & \multicolumn{1}{l|}{} \\ \hline
 Repository URL 					   &  \url{https://github.com/philipperemy/Statistical-Arbitrage} \\
-Number of commits   			 &  165 \\
+Number of commits   			 &  176 \\
 Number of files   				 &  195 (MATLAB extension: .m) \\
-Codebase   				         &  8727 Lines\\
+Codebase   				         &  8727 lines\\
 Author          &  Philippe Remy \\
 First commit & May, 19 2015 \\
 \hline
@@ -1768,7 +1786,7 @@ Optimization Functions (number of particles, simulated annealing).
 \item \texttt{sandbox/} \\
 Experimental folder.
 \item \texttt{scripts/} \\
-Routine Scripts to run tests, validate models and interact with the git remote repository.
+Routine Scripts to run tests, validate models and interact with the Git remote repository.
 \item \texttt{strategy/} \\
 Trading framework gathering strategies (Bollinger bands, Z-score).
 \item \texttt{test/} \\
@@ -1842,8 +1860,62 @@ Figure \ref{dist_100_r2_quad} presents the distributions of $R^2$ for each stock
 
 \begin{figure}[H]
 \centering
-\includegraphics[width = 0.8\textwidth]{R2_ret_Quads_Jan_1_2012_Mar_27_2013}
-\caption{Densities of $100 \times R^2$ for the quadruples (not all are cointegrated). Period is from Jan 01, 2012 to May 27, 2013}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/1}
+        \caption{Consumer Discretionary}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/2}
+        \caption{Consumer Staples}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/3}
+        \caption{Energy}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/4}
+        \caption{Financials}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/5}
+        \caption{Health Care}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/6}
+        \caption{Industrials}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/7}
+        \caption{Information Technology}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/8}
+        \caption{Materials}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/9}
+        \caption{N.A.}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/10}
+        \caption{Telecommunication Services}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{quad/11}
+        \caption{Utilities}
+    \end{subfigure}
+\caption{Densities of $R^2$ for the quadruples. Not all are cointegrated. Period is from Jan 01, 2012 to May 27, 2013}
 \label{dist_100_r2_quad}
 \end{figure}
 
@@ -1869,6 +1941,7 @@ Utilities                          & 760164 & 0.72 & 1290\\
 \label{corr_quad}
 \end{table}
 
+\newpage
 \section{Cointegration on Foreign Exchange Rates (FX)}
 
 The dataset $\mathcal{FX}_{daily}$ presented in Section \ref{sec:presentation_data} is used in this section. Table \ref{coint_fx} presents an overview of the cointegrated prices between the different currency pairs for triple trading.
@@ -2096,7 +2169,7 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
         \includegraphics[width=1\textwidth]{res/backtest/12}
         \caption{Jan 2012 - Jan 2014}
     \end{subfigure}
-    \caption{Cumulative returns for Bollinger bands strategy with simple modelling on out-sample sets $\mathcal{O}$ where ratio($\mathcal{I}, \mathcal{O})$ = 1:2}
+    \caption{Cumulative returns for Bollinger bands strategy with simple modelling on out-sample sets $\mathcal{O}$ where ratio($\mathcal{I}, \mathcal{O})$ = 1:2. Red is the strategy. Blue is SPX.}
     \label{fig:bollinger_bands_strategy_simple}
 \end{figure}
 
@@ -2165,7 +2238,7 @@ In practical applications, $N = T$, $\epsilon = 1$, $k = 50$ and $q$ is the cent
         \includegraphics[width=1\textwidth]{res/backtest_cpx/12}
         \caption{Jan 2012 - Jan 2014}
     \end{subfigure}
-    \caption{Cumulative returns for Bollinger bands strategy with complex modelling on out-sample sets $\mathcal{O}$ where ratio($\mathcal{I}, \mathcal{O})$ = 1:2}
+    \caption{Cumulative returns for Bollinger bands strategy with complex modelling on out-sample sets $\mathcal{O}$ where ratio($\mathcal{I}, \mathcal{O})$ = 1:2. Red is the strategy. Blue is SPX.}
     \label{fig:bollinger_bands_strategy_simple}
 \end{figure}
 
